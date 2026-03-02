@@ -1,0 +1,363 @@
+/* ============================================================
+   CAMI TV — animations.css
+   Tüm @keyframes ve animasyon yardımcıları
+   ============================================================ */
+
+/* ────────────────────────────────────────────────────────────
+   TEMEL KEYFRAMES
+   ──────────────────────────────────────────────────────────── */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}
+
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    50% {
+        box-shadow: 0 0 40px var(--accent-glow), 0 0 60px var(--accent-glow);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in-scale {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-in-left {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ────────────────────────────────────────────────────────────
+   TICKER / KAYAN BANT
+   ──────────────────────────────────────────────────────────── */
+@keyframes ticker-scroll {
+    from {
+        transform: translateX(100vw);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+/* ────────────────────────────────────────────────────────────
+   GERI SAYIM — Vakit gelince titreme efekti
+   ──────────────────────────────────────────────────────────── */
+@keyframes countdown-shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-4px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(4px);
+    }
+}
+
+@keyframes countdown-flash {
+
+    0%,
+    100% {
+        color: var(--countdown-color);
+    }
+
+    50% {
+        color: white;
+    }
+}
+
+/* ────────────────────────────────────────────────────────────
+   EZAN / VAKİT ÖZEL EKRAN
+   ──────────────────────────────────────────────────────────── */
+@keyframes ezan-reveal {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+        filter: blur(20px);
+    }
+
+    60% {
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes ezan-text-appear {
+    0% {
+        opacity: 0;
+        letter-spacing: 0.5em;
+    }
+
+    100% {
+        opacity: 1;
+        letter-spacing: 0.1em;
+    }
+}
+
+@keyframes wave-radiate {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* ────────────────────────────────────────────────────────────
+   CAROUSEL GEÇİŞLERİ
+   ──────────────────────────────────────────────────────────── */
+@keyframes carousel-in {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes carousel-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+}
+
+/* ────────────────────────────────────────────────────────────
+   NAKLEDİLEN (SHIMMER) YÜKLEME EFEKTI
+   ──────────────────────────────────────────────────────────── */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg,
+            var(--bg-card) 25%,
+            var(--bg-card-hover) 50%,
+            var(--bg-card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+}
+
+/* ────────────────────────────────────────────────────────────
+   AKTIF VAKİT — solu çizgi nabız efekti
+   ──────────────────────────────────────────────────────────── */
+@keyframes aktif-bar-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* ────────────────────────────────────────────────────────────
+   ANIMASYOn YARDIMCI SINIFLARI
+   ──────────────────────────────────────────────────────────── */
+.animate-fade-in {
+    animation: fade-in 0.5s ease both;
+}
+
+.animate-fade-in-scale {
+    animation: fade-in-scale 0.4s ease both;
+}
+
+.animate-slide-up {
+    animation: slide-up 0.5s ease both;
+}
+
+.animate-slide-down {
+    animation: slide-down 0.5s ease both;
+}
+
+.animate-slide-right {
+    animation: slide-in-right 0.4s ease both;
+}
+
+.animate-slide-left {
+    animation: slide-in-left 0.4s ease both;
+}
+
+.animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-glow {
+    animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Geciktirme yardımcıları */
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+/* Düşük hareket tercihi — sistem ayarına saygı */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

@@ -1,0 +1,837 @@
+/* ============================================================
+   CAMI TV — landscape.css
+   TV birincil yatay (16:9) layout
+   ============================================================ */
+
+/* ────────────────────────────────────────────────────────────
+   ANA YAPI — Grid
+   ──────────────────────────────────────────────────────────── */
+#app-landscape {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    background: var(--bg-primary);
+    overflow: hidden;
+}
+
+#app-landscape.active {
+    display: flex;
+}
+
+/* ─── ÜST BAR ─────────────────────────────────────────────── */
+#ls-topbar {
+    height: var(--topbar-h);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    gap: 20px;
+}
+
+#ls-topbar .mosque-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+#ls-topbar .mosque-name .icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+#ls-topbar .mosque-name span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#ls-topbar .topbar-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+#ls-topbar .topbar-clock {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+#ls-topbar .topbar-date {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+}
+
+#ls-topbar .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+#ls-topbar .hijri-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+/* ─── ANA İÇERİK ALANI ───────────────────────────────────── */
+#ls-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 22fr 46fr 32fr;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* ─── SOL SÜTUN: Namaz Vakitleri ─────────────────────────── */
+#ls-left {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    padding: 24px 20px;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.ls-section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 4px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+}
+
+/* Vakit satırı */
+.prayer-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    gap: 16px;
+    border: 1px solid transparent;
+    transition: all var(--transition);
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.prayer-row.aktif {
+    background: var(--vakit-aktif-bg);
+    border-color: var(--vakit-aktif-border);
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+.prayer-row.aktif::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background: var(--vakit-aktif-text);
+    animation: aktif-bar-pulse 2s ease-in-out infinite;
+}
+
+.prayer-row .vakit-icon {
+    font-size: clamp(1.2rem, 2.2vh, 1.6rem);
+    width: 34px;
+    text-align: center;
+    flex-shrink: 0;
+    opacity: 0.8;
+}
+
+.prayer-row .vakit-name {
+    font-size: clamp(1rem, 1.8vh, 1.25rem);
+    font-weight: 600;
+    color: var(--text-secondary);
+    flex: 1;
+}
+
+.prayer-row.aktif .vakit-icon,
+.prayer-row.aktif .vakit-name {
+    color: var(--vakit-aktif-text);
+    font-weight: 700;
+    opacity: 1;
+}
+
+.prayer-row .vakit-time {
+    font-size: clamp(1.2rem, 2.2vh, 1.5rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.03em;
+}
+
+.prayer-row.aktif .vakit-time {
+    color: var(--vakit-aktif-text);
+    text-shadow: 0 0 10px rgba(var(--vakit-aktif-text-rgb), 0.3);
+}
+
+.prayer-row .vakit-cemaat {
+    font-size: clamp(0.75rem, 1.4vh, 1rem);
+    font-weight: 600;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+    margin-left: auto;
+}
+
+/* Sol alt bilgiler (hava, sıcaklık, kıble) */
+#ls-left-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.ls-info-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+}
+
+.ls-info-pill .icon {
+    font-size: 1rem;
+}
+
+.ls-info-pill .value {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* ─── ORTA SÜTUN: Saat + Geri Sayım ─────────────────────── */
+#ls-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ezan Okunuyor Bildirimi (Dinamik Renk) */
+#ezan-notification {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 32px;
+    border-radius: 50px;
+    background: var(--vakit-aktif-bg);
+    border: 2px solid var(--vakit-aktif-border);
+    box-shadow: 0 0 30px rgba(var(--vakit-aktif-text-rgb), 0.4);
+    position: absolute;
+    top: 40px;
+    z-index: 20;
+    animation: ezan-pulse 2s infinite alternate;
+}
+
+.ezan-ring {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--vakit-aktif-text);
+    box-shadow: 0 0 15px var(--vakit-aktif-text);
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.ezan-text {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--vakit-aktif-text);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+@keyframes ezan-pulse {
+    from {
+        opacity: 0.9;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.03);
+    }
+}
+
+@keyframes ping {
+
+    75%,
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Dairesel Progress Bar Container */
+.circular-progress-wrapper {
+    position: relative;
+    width: clamp(200px, 35vh, 320px);
+    height: clamp(200px, 35vh, 320px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    /* Start from top */
+}
+
+.progress-ring__bg {
+    fill: transparent;
+    stroke: var(--border);
+    stroke-width: 6;
+}
+
+.progress-ring__circle {
+    fill: transparent;
+    stroke: var(--countdown-color);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 339.292;
+    /* 2 * PI * 54 */
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
+}
+
+.progress-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    width: 87.5%;
+    height: 87.5%;
+    border-radius: 50%;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Vakit adı büyük */
+.countdown-target-name {
+    font-size: clamp(1rem, 2.5vh, 1.5rem);
+    font-weight: 800;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* Büyük geri sayım */
+.countdown-time {
+    font-size: clamp(2.2rem, 5.5vh, 3.5rem);
+    font-weight: 900;
+    color: var(--countdown-color);
+    text-shadow: var(--countdown-shadow);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    transition: color 0.5s ease;
+}
+
+.countdown-time.warning {
+    animation: countdown-flash 1s ease-in-out infinite;
+}
+
+/* "kaldı" yazısı */
+.countdown-label {
+    font-size: clamp(0.7rem, 1.5vh, 0.9rem);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+}
+
+/* Cemaat vakti */
+#ls-cemaat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--shadow-sm);
+    margin-top: 20px;
+}
+
+#ls-cemaat .ce-icon {
+    font-size: 1.5rem;
+}
+
+#ls-cemaat .ce-val {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--accent);
+}
+
+/* Ramazan bilgi kutusu */
+.ramadan-info-box {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 32px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.2));
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.ramadan-info-box.visible {
+    display: flex !important;
+}
+
+.rm-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.rm-icon {
+    font-size: 1.4rem;
+}
+
+.rm-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2ecc71;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.rm-value {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Haftalık imsakiye butonu */
+#ls-weekly-toggle {
+    position: relative;
+    z-index: 1;
+    margin-top: 16px;
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-family: var(--font-ui);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: none;
+    /* Haftalık imsakiye varsa görünür */
+}
+
+/* ─── SAĞ SÜTUN: Carousel ────────────────────────────────── */
+#ls-right {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border);
+    overflow: hidden;
+}
+
+#ls-carousel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-slide {
+    position: absolute;
+    inset: 0;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Carousel slide başlığı */
+.slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.slide-type-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid var(--border-accent);
+}
+
+.slide-counter {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* Ayet slide */
+.slide-arabic {
+    font-family: var(--font-arabic);
+    direction: rtl;
+    text-align: center;
+    color: var(--text-arabic);
+    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+    line-height: 1.8;
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    position: relative;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.slide-translation {
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.6;
+    padding: 12px 16px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    position: relative;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Ekrana sığmayan metinler için animasyon divi */
+.marquee-content {
+    width: 100%;
+}
+
+.marquee-content.marquee-active {
+    animation: marquee-vertical 25s linear infinite alternate;
+}
+
+@keyframes marquee-vertical {
+
+    0%,
+    15% {
+        transform: translateY(0);
+    }
+
+    85%,
+    100% {
+        transform: translateY(-50%);
+    }
+
+    /* Yüksekliğe göre -50% ideal bir kayma oranıdır */
+}
+
+.slide-reference {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+
+/* Esmaül Hüsna slide */
+.slide-esma-arabic {
+    font-family: var(--font-arabic);
+    font-size: clamp(3rem, 6vw, 5rem);
+    text-align: center;
+    color: var(--accent);
+    line-height: 1.4;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-esma-turkish {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.slide-esma-meaning {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    flex-shrink: 0;
+}
+
+/* İlerleme çubuğu (carousel alt bant) */
+#ls-carousel-progress {
+    height: 3px;
+    background: var(--border);
+    flex-shrink: 0;
+}
+
+#ls-carousel-progress-bar {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width linear;
+}
+
+/* ─── ALT TICKER BANDI ───────────────────────────────────── */
+#ls-ticker {
+    height: var(--ticker-h);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+}
+
+#ls-ticker .ticker-label {
+    flex-shrink: 0;
+    padding: 0 16px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-right: 1px solid var(--border);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background: var(--bg-secondary);
+    z-index: 1;
+}
+
+#ls-ticker .ticker-scroll {
+    flex: 1;
+    overflow: hidden;
+}
+
+#ls-ticker .ticker-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 60px;
+    white-space: nowrap;
+    animation: ticker-scroll 25s linear infinite;
+}
+
+/* ticker duraksatma — duyuru yok ya da hover */
+#ls-ticker:hover .ticker-inner {
+    animation-play-state: paused;
+}
+
+#ls-ticker .ticker-item {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#ls-ticker .ticker-item .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+/* ─── EZAN EKRANI (Landscape) ────────────────────────────── */
+#ls-ezan-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 80;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    text-align: center;
+    padding: 40px;
+}
+
+#ls-ezan-overlay.active {
+    display: flex;
+}
+
+.ezan-wave-ring {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 1px solid var(--accent-glow);
+    animation: wave-radiate 3s ease-out infinite;
+}
+
+.ezan-wave-ring:nth-child(2) {
+    animation-delay: 1s;
+}
+
+.ezan-wave-ring:nth-child(3) {
+    animation-delay: 2s;
+}
+
+.ezan-icon {
+    font-size: 4rem;
+    position: relative;
+    z-index: 1;
+    animation: float 3s ease-in-out infinite;
+    margin-bottom: 20px;
+}
+
+.ezan-prayer-name {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900;
+    color: var(--text-primary);
+    position: relative;
+    z-index: 1;
+    animation: ezan-text-appear 1s ease both;
+}
+
+.ezan-arabic {
+    font-family: var(--font-arabic);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    color: var(--text-arabic);
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
+    animation: ezan-text-appear 1.2s ease 0.3s both;
+}
+
+.ezan-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+    position: relative;
+    z-index: 1;
+    margin-top: 16px;
+    animation: fade-in 1s ease 0.6s both;
+}
+
+.ezan-cemaat-info {
+    margin-top: 24px;
+    padding: 12px 28px;
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    font-size: 1rem;
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 1;
+    animation: slide-up 0.8s ease 0.8s both;
+}
+
+/* ─── CENAZE DUYURUSU (Tam ekran devralma) ───────────────── */
+#ls-cenaze-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 90;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #1a0a0a;
+    border: 2px solid rgba(239, 68, 68, 0.3);
+}
+
+#ls-cenaze-overlay.active {
+    display: flex;
+}
+
+.cenaze-header {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #f87171;
+    margin-bottom: 20px;
+}
+
+.cenaze-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.cenaze-name {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: white;
+    text-align: center;
+}
+
+.cenaze-detail {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 12px;
+    text-align: center;
+}
+
+.cenaze-dua {
+    font-family: var(--font-arabic);
+    font-size: 1.5rem;
+    color: #fde68a;
+    margin-top: 24px;
+    direction: rtl;
+}

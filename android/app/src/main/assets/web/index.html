@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr" data-theme="">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Cami TV — Namaz vakitleri ve İslami içerik ekran sistemi">
+    <meta name="theme-color" content="#0a0f0d">
+    <title>Cami TV</title>
+
+    <!-- Önbelleğe alma: offline çalışma -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/landscape.css">
+    <link rel="stylesheet" href="css/portrait.css">
+</head>
+
+<body>
+
+    <!-- ════════════════════════════════════════════
+     YÜKLEME EKRANI
+  ════════════════════════════════════════════ -->
+    <div id="loading-screen" role="status" aria-live="polite">
+        <img src="img/cami_tv_logo.png" alt="Cami TV Logo" class="app-logo app-logo-large">
+        <div class="loading-ring"></div>
+        <p class="loading-text">Hazırlanıyor...</p>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+     KURULUM EKRANI (İlk Açılış)
+  ════════════════════════════════════════════ -->
+    <div id="setup-screen" role="main" aria-label="İlk Kurulum">
+        <div class="setup-box animate-fade-in-scale">
+            <div style="text-align:center;">
+                <img src="img/cami_tv_logo.png" alt="Cami TV Logo" class="app-logo app-logo-large">
+            </div>
+            <h1 class="setup-title">Cami TV Kurulumu</h1>
+            <p class="setup-subtitle">
+                İlk kurulum için internet bağlantısı gereklidir.<br>
+                Sonraki kullanımlarda tamamen çevrimdışı çalışır.
+            </p>
+
+            <div class="setup-field">
+                <label for="setup-cami">Cami Adı</label>
+                <input type="text" id="setup-cami" placeholder="örn: Fatih Camii" autocomplete="off" spellcheck="false"
+                    tabindex="1">
+            </div>
+
+            <div class="setup-field">
+                <label>İl</label>
+                <div id="setup-il-container" tabindex="2"></div>
+            </div>
+
+            <div class="setup-field">
+                <label>İlçe</label>
+                <div id="setup-ilce-container" tabindex="3"></div>
+            </div>
+
+            <!-- İndirme ilerleme bilgisi -->
+            <div id="setup-progress" class="setup-progress hidden" aria-live="polite">
+                <div class="mini-spinner"></div>
+                <span id="setup-progress-text">Bekleniyor...</span>
+            </div>
+
+            <p id="setup-error" class="setup-error" role="alert"></p>
+
+            <button id="setup-kaydet" class="btn-primary" tabindex="4">
+                Vakitleri İndir ve Başlat
+            </button>
+
+            <p style="font-size:0.75rem; color:var(--text-muted); text-align:center; line-height:1.6;">
+                Namaz vakitleri Diyanet İşleri Başkanlığı verileri esas alınarak hazırlanmaktadır.<br>
+                Kurulum tamamlandıktan sonra uygulama çevrimdışı (offline) çalışabilir.
+            </p>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+     EKRAN KARARTMA (Güç tasarrufu)
+  ════════════════════════════════════════════ -->
+    <div id="screen-dimmer" aria-hidden="true"></div>
+
+    <!-- ════════════════════════════════════════════
+     AYARLAR BUTONU (Sağ üst — fare ile görünür)
+  ════════════════════════════════════════════ -->
+    <button id="settings-trigger" aria-label="Ayarlar" onclick="window.location.href='settings.html'">
+        ⚙️
+    </button>
+
+    <!-- ════════════════════════════════════════════
+     YATAY (LANDSCAPE) LAYOUT — TV Birincil
+  ════════════════════════════════════════════ -->
+    <div id="app-landscape" role="main" aria-label="Cami TV — Yatay Görünüm">
+
+        <!-- Ezan Overlay (landscape) -->
+        <div id="ls-ezan-overlay" role="dialog" aria-label="Namaz vakti bildirimi"></div>
+
+        <!-- Cenaze Overlay (landscape) -->
+        <div id="ls-cenaze-overlay" role="dialog" aria-label="Cenaze duyurusu"></div>
+
+        <!-- Üst Bar -->
+        <header id="ls-topbar">
+            <div class="mosque-name">
+                <img src="img/cami_tv_logo.png" alt="Cami TV" class="app-logo" style="width: 32px; height: 32px;">
+                <span id="ls-mosque-name">Cami TV</span>
+            </div>
+
+            <div class="topbar-center">
+                <time id="ls-topbar-clock" class="topbar-clock" aria-label="Saat">00:00</time>
+                <div id="ls-miladi-date" class="topbar-date" aria-label="Tarih"></div>
+            </div>
+
+            <div class="topbar-right">
+                <div id="ls-hijri-date" class="hijri-date" aria-label="Hicri tarih"></div>
+                <div id="ls-esp32-info" class="ls-info-pill hidden" aria-label="Ortam verileri"></div>
+            </div>
+        </header>
+
+        <!-- Ana İçerik -->
+        <main id="ls-content">
+
+            <!-- Sol Sütun: Namaz Vakitleri -->
+            <aside id="ls-left" aria-label="Namaz vakitleri">
+                <div class="ls-section-title">Namaz Vakitleri</div>
+                <div id="ls-prayer-list" role="list" aria-label="Bugünün namaz vakitleri">
+                    <!-- prayer-row'lar JS tarafından doldurulur -->
+                    <div class="prayer-row"><span class="vakit-icon">🌙</span><span class="vakit-name skeleton"
+                            style="width:60px;height:14px;display:inline-block;">&nbsp;</span><span
+                            class="vakit-time skeleton"
+                            style="width:40px;height:14px;display:inline-block;">&nbsp;</span></div>
+                    <div class="prayer-row"><span class="vakit-icon">🌅</span><span class="vakit-name skeleton"
+                            style="width:50px;height:14px;display:inline-block;">&nbsp;</span><span
+                            class="vakit-time skeleton"
+                            style="width:40px;height:14px;display:inline-block;">&nbsp;</span></div>
+                    <div class="prayer-row"><span class="vakit-icon">☀️</span><span class="vakit-name skeleton"
+                            style="width:55px;height:14px;display:inline-block;">&nbsp;</span><span
+                            class="vakit-time skeleton"
+                            style="width:40px;height:14px;display:inline-block;">&nbsp;</span></div>
+                    <div class="prayer-row"><span class="vakit-icon">🕐</span><span class="vakit-name skeleton"
+                            style="width:40px;height:14px;display:inline-block;">&nbsp;</span><span
+                            class="vakit-time skeleton"
+                            style="width:40px;height:14px;display:inline-block;">&nbsp;</span></div>
+                    <div class="prayer-row"><span class="vakit-icon">🌤️</span><span class="vakit-name skeleton"
+                            style="width:55px;height:14px;display:inline-block;">&nbsp;</span><span
+                            class="vakit-time skeleton"
+                            style="width:40px;height:14px;display:inline-block;">&nbsp;</span></div>
+                    <div class="prayer-row"><span class="vakit-icon">🌆</span><span class="vakit-name skeleton"
+                            style="width:50px;height:14px;display:inline-block;">&nbsp;</span><span
+                            class="vakit-time skeleton"
+                            style="width:40px;height:14px;display:inline-block;">&nbsp;</span></div>
+                    <div class="prayer-row"><span class="vakit-icon">🌃</span><span class="vakit-name skeleton"
+                            style="width:45px;height:14px;display:inline-block;">&nbsp;</span><span
+                            class="vakit-time skeleton"
+                            style="width:40px;height:14px;display:inline-block;">&nbsp;</span></div>
+                </div>
+
+                <div id="ls-left-footer">
+                    <!-- Hava, kıble vb. -->
+                </div>
+            </aside>
+
+            <!-- Orta Sütun: Geri Sayım -->
+            <section id="ls-center" aria-label="Kalan süre sayacı">
+                <!-- Ezan okunuyor bildirimi (default gizli) -->
+                <div id="ezan-notification" class="hidden">
+                    <div class="ezan-ring"></div>
+                    <div class="ezan-text">Ezan Okunuyor</div>
+                </div>
+
+                <div class="circular-progress-wrapper" id="circular-progress-wrapper">
+                    <svg class="progress-ring" viewBox="0 0 120 120">
+                        <circle class="progress-ring__bg" cx="60" cy="60" r="54"></circle>
+                        <circle class="progress-ring__circle" cx="60" cy="60" r="54"></circle>
+                    </svg>
+                    <div class="progress-inner">
+                        <h2 id="ls-prayer-name" class="countdown-target-name">—</h2>
+                        <time id="ls-countdown" class="countdown-time" aria-label="Geri sayım">00:00:00</time>
+                    </div>
+                </div>
+
+                <div id="ls-cemaat" class="hidden">
+                    <span class="ce-icon">🕌</span>
+                    <span>Cemaat: </span>
+                    <span class="ce-val" id="ls-cemaat-val">—</span>
+                </div>
+
+                <!-- Ramazan bilgi -->
+                <div id="ls-ramadan-info" class="ramadan-info-box hidden" aria-label="Ramazan geri sayımı">
+                    <div class="rm-header">
+                        <span class="rm-icon">🌙</span> <span class="rm-title" id="rm-title-label">İftara Kalan
+                            Süre</span>
+                    </div>
+                    <time class="rm-value" id="ls-ramadan-countdown">00:00:00</time>
+                </div>
+            </section>
+
+            <!-- Sağ Sütun: Carousel -->
+            <section id="ls-right" aria-label="İslami içerik">
+                <div id="ls-carousel">
+                    <div id="ls-carousel-content" class="carousel-slide active">
+                        <!-- Carousel içeriği JS tarafından doldurulur -->
+                    </div>
+                </div>
+                <div id="ls-carousel-progress" aria-hidden="true">
+                    <div id="ls-carousel-progress-bar"></div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Alt Ticker Bandı -->
+        <footer id="ls-ticker" aria-label="Duyurular">
+            <div class="ticker-label">📢</div>
+            <div class="ticker-scroll">
+                <div id="ls-ticker-inner" class="ticker-inner">
+                    <!-- ticker içeriği JS tarafından doldurulur -->
+                </div>
+            </div>
+        </footer>
+
+    </div><!-- /app-landscape -->
+
+    <!-- ════════════════════════════════════════════
+     DİKEY (PORTRAIT) LAYOUT — Tablet / Telefon
+  ════════════════════════════════════════════ -->
+    <div id="app-portrait" role="main" aria-label="Cami TV — Dikey Görünüm">
+
+        <!-- Ezan Overlay (portrait) -->
+        <div id="pt-ezan-overlay" role="dialog" aria-label="Namaz vakti bildirimi"></div>
+
+        <!-- Üst Bar -->
+        <header id="pt-topbar">
+            <div class="mosque-name">
+                <img src="img/cami_tv_logo.png" alt="Cami TV" class="app-logo" style="width: 28px; height: 28px;">
+                <span id="pt-mosque-name">Cami TV</span>
+            </div>
+            <time id="pt-clock" class="pt-clock" aria-label="Saat">00:00</time>
+        </header>
+
+        <!-- Ramazan Banner (portrait) -->
+        <div id="pt-ramadan-banner" aria-label="Ramazan geri sayımı">
+            <span>☪️</span>
+            <span class="ramadan-label">İftara Kaldı</span>
+            <time class="ramadan-countdown">00:00:00</time>
+        </div>
+
+        <!-- Geri Sayım -->
+        <section id="pt-countdown-section" aria-label="Sonraki namaza kalan süre">
+            <div id="pt-next-label">SONRA</div>
+            <h2 id="pt-prayer-name">—</h2>
+            <time id="pt-countdown">00:00:00</time>
+            <div id="pt-countdown-sub">sonra kaldı</div>
+        </section>
+
+        <!-- Namaz Vakitleri Grid -->
+        <section id="pt-prayer-grid" aria-label="Namaz vakitleri">
+            <!-- hücreler JS tarafından doldurulur -->
+        </section>
+
+        <!-- Carousel -->
+        <section id="pt-carousel" aria-label="İslami içerik">
+            <div id="pt-carousel-content" class="carousel-slide active">
+            </div>
+        </section>
+
+        <!-- Alt Ticker -->
+        <footer id="pt-ticker" aria-label="Duyurular">
+            <div class="ticker-label">📢</div>
+            <div class="ticker-scroll">
+                <div id="pt-ticker-inner" class="ticker-inner"></div>
+            </div>
+        </footer>
+
+    </div><!-- /app-portrait -->
+
+    <!-- ════════════════════════════════════════════
+     JavaScript Modülleri (sıra önemli)
+  ════════════════════════════════════════════ -->
+    <script src="js/searchable-select.js"></script>
+    <script src="js/locations-data.js"></script>
+    <script src="js/content-data.js"></script>
+    <script src="js/settings-manager.js"></script>
+    <script src="js/data-manager.js"></script>
+    <script src="js/prayer-engine.js"></script>
+    <script src="js/power-manager.js"></script>
+    <script src="js/carousel-manager.js"></script>
+    <script src="js/display-manager.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        // Service Worker kaydı
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('[SW] Registered:', reg.scope))
+                    .catch(err => console.warn('[SW] Registration failed:', err));
+            });
+        }
+    </script>
+
+</body>
+
+</html>

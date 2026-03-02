@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr" data-theme="">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cami TV Ayarları">
+    <title>Cami TV — Ayarlar</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/settings.css">
+</head>
+
+<body>
+
+    <div class="settings-page">
+        <div class="settings-wrapper">
+
+            <!-- ─── HEADER ─────────────────────────────────────── -->
+            <header class="settings-header">
+                <a href="index.html" class="btn-back" aria-label="Geri">←</a>
+                <h1>⚙️ Ayarlar</h1>
+                <span class="version">v1.0</span>
+            </header>
+
+            <!-- ════════════════════════════════════════════════════
+         CAMİ BİLGİLERİ
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">🕌 Cami Bilgileri</h2>
+                <div class="section-card">
+                    <div class="setting-row">
+                        <span class="setting-icon">🏷️</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Cami Adı</div>
+                            <div class="setting-desc">Ekranda gösterilecek ad</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="text" id="s-cami-adi" class="setting-input" placeholder="Cami TV">
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">📍</span>
+                        <div class="setting-info">
+                            <div class="setting-label">İl</div>
+                        </div>
+                        <div class="setting-control">
+                            <div id="settings-il-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">📍</span>
+                        <div class="setting-info">
+                            <div class="setting-label">İlçe</div>
+                        </div>
+                        <div class="setting-control">
+                            <div id="settings-ilce-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         GÖRÜNÜM
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">🎨 Görünüm</h2>
+                <div class="section-card">
+                    <div class="setting-row">
+                        <span class="setting-icon">🌙</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Tema</div>
+                        </div>
+                        <div class="setting-control">
+                            <select id="s-tema" class="setting-select">
+                                <option value="default">Yeşil (Koyu)</option>
+                                <option value="gold">Altın / Türk</option>
+                                <option value="emerald">Zümrüt Yeşili</option>
+                                <option value="kufi">Kufi (Kahve)</option>
+                                <option value="navy">Lacivert</option>
+                                <option value="purple">Gece Moru</option>
+                                <option value="light">Açık (Beyaz)</option>
+                                <option value="auto">Otomatik</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">📐</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Ekran Yönü</div>
+                        </div>
+                        <div class="setting-control">
+                            <select id="s-ekran-yonu" class="setting-select">
+                                <option value="auto">Otomatik</option>
+                                <option value="landscape">Yatay (TV)</option>
+                                <option value="portrait">Dikey</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">🔤</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Yazı Boyutu</div>
+                        </div>
+                        <div class="setting-control">
+                            <select id="s-yazi-boyu" class="setting-select">
+                                <option value="small">Küçük</option>
+                                <option value="normal">Normal</option>
+                                <option value="large">Büyük</option>
+                                <option value="xlarge">Çok Büyük</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         İÇERİK GÖSTERİMİ
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">📖 İçerik Gösterimi</h2>
+                <div class="section-card">
+
+                    <div class="setting-row">
+                        <span class="setting-icon">📖</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Ayet Göster</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-ayet"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">📜</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Hadis Göster</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-hadis"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">✨</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Esmaül Hüsna Göster</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-esma"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">🤲</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Dua Göster</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-dua"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">📅</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Haftalık İmsakiye</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-imsakiye"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">📢</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Alt Ticker Bandı</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-ticker"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">🕌</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Hicri Tarih</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-hicri"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">⏱️</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Carousel Süresi</div>
+                            <div class="setting-desc">Her slide'ın gösterilme süresi</div>
+                        </div>
+                        <div class="setting-control">
+                            <div class="range-group">
+                                <input type="range" id="s-carousel-sure" min="5" max="60" step="5">
+                                <span class="range-value" id="s-carousel-sure-val">15s</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         EZAN & CEMAAT
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">🔔 Ezan & Cemaat</h2>
+                <div class="section-card">
+
+                    <div class="setting-row">
+                        <span class="setting-icon">⏰</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Ezan Öncesi Bildirim</div>
+                            <div class="setting-desc">Vakit girmeden kaç dk önce ezan ekranı açılsın</div>
+                        </div>
+                        <div class="setting-control">
+                            <div class="range-group">
+                                <input type="range" id="s-ezan-once" min="0" max="30" step="5">
+                                <span class="range-value" id="s-ezan-once-val">15dk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">🕌</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Cemaatle Namaz Saatlerini Göster</div>
+                            <div class="setting-desc">Ezandan sonra cemaatin birlikte namaza durduğu saat</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-cemaat"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <!-- Cemaat offset tablosu — toggle'a göre gizlenir/gösterilir -->
+                    <div id="cemaat-offsets-panel"
+                        style="display:none; padding:12px 8px 4px; border-top:1px solid var(--border); margin-top:4px;">
+                        <div
+                            style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">
+                            Cemaat Dakikaları (ezanın kaç dk sonrası)
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                            <div class="cemaat-row"><span>İmsak</span><input type="number" id="co-imsak" min="0"
+                                    max="60" value="0" class="setting-number"></div>
+                            <div class="cemaat-row"><span>Sabah</span><input type="number" id="co-sabah" min="0"
+                                    max="60" value="0" class="setting-number"></div>
+                            <div class="cemaat-row"><span>Öğle</span> <input type="number" id="co-ogle" min="0" max="60"
+                                    value="15" class="setting-number"></div>
+                            <div class="cemaat-row"><span>İkindi</span><input type="number" id="co-ikindi" min="0"
+                                    max="60" value="15" class="setting-number"></div>
+                            <div class="cemaat-row"><span>Akşam</span><input type="number" id="co-aksam" min="0"
+                                    max="60" value="15" class="setting-number"></div>
+                            <div class="cemaat-row"><span>Yatsı</span><input type="number" id="co-yatsi" min="0"
+                                    max="60" value="30" class="setting-number"></div>
+                        </div>
+                    </div>
+
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         GÜÇ YÖNETİMİ
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">🔋 Güç Yönetimi</h2>
+                <div class="section-card">
+
+
+                    <div class="setting-row">
+                        <span class="setting-icon">💡</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Ekran Modu</div>
+                            <div class="setting-desc">Ekranın ne zaman açık/kapalı olacağı</div>
+                        </div>
+                        <div class="setting-control">
+                            <select id="s-guc-mod" class="setting-select">
+                                <option value="always">Her Zaman Açık</option>
+                                <option value="fixed">Sabit Saat Aralığı</option>
+                                <option value="prayer">Namaz Vakti Bazlı</option>
+                                <option value="hybrid">Karma</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Sabit Saat Ayarları -->
+                    <div id="s-guc-fixed-block" class="hidden">
+                        <div class="setting-row">
+                            <span class="setting-icon">🌅</span>
+                            <div class="setting-info">
+                                <div class="setting-label">Açılış Saati</div>
+                            </div>
+                            <div class="setting-control">
+                                <input type="time" id="s-guc-acis" class="setting-time" value="05:30">
+                            </div>
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-icon">🌙</span>
+                            <div class="setting-info">
+                                <div class="setting-label">Kapanış Saati</div>
+                            </div>
+                            <div class="setting-control">
+                                <input type="time" id="s-guc-kapanis" class="setting-time" value="23:00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Namaz Vakti Bazlı Offset Tablosu -->
+                    <div id="s-guc-prayer-block" class="hidden" style="padding:8px 0;">
+                        <table class="offset-table">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left; padding-left:10px;">Vakit</th>
+                                    <th>Aktif</th>
+                                    <th>Önce (dk)</th>
+                                    <th>Sonra (dk)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="s-offset-tbody">
+                                <!-- JS tarafından doldurulur -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Parlaklık -->
+                    <div class="setting-row">
+                        <span class="setting-icon">☀️</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Aktif Parlaklık</div>
+                        </div>
+                        <div class="setting-control">
+                            <div class="range-group">
+                                <input type="range" id="s-parlaklik-aktif" min="10" max="100" step="10">
+                                <span class="range-value" id="s-parlaklik-aktif-val">100%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">🌑</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Pasif Parlaklık</div>
+                            <div class="setting-desc">Ekran kapalıyken karartma seviyesi</div>
+                        </div>
+                        <div class="setting-control">
+                            <div class="range-group">
+                                <input type="range" id="s-parlaklik-pasif" min="0" max="30" step="5">
+                                <span class="range-value" id="s-parlaklik-pasif-val">10%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         ESP32 ENTEGRASYONU
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">📡 ESP32 Entegrasyonu</h2>
+                <div class="section-card">
+
+                    <div class="setting-row">
+                        <span class="setting-icon">🔌</span>
+                        <div class="setting-info">
+                            <div class="setting-label">ESP32 Bağlantısı</div>
+                            <div class="setting-desc">Yerel ağdaki ESP32 cihazına bağlan</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-esp32-aktif"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div id="s-esp32-details" class="hidden">
+                        <div class="setting-row">
+                            <span class="setting-icon">🌐</span>
+                            <div class="setting-info">
+                                <div class="setting-label">ESP32 IP Adresi</div>
+                            </div>
+                            <div class="setting-control">
+                                <input type="text" id="s-esp32-ip" class="setting-input" placeholder="192.168.1.100">
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <span class="setting-icon">🌡️</span>
+                            <div class="setting-info">
+                                <div class="setting-label">Sıcaklık/Nem Göster</div>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch"><input type="checkbox" id="s-esp32-sicaklik"><span
+                                        class="toggle-slider"></span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         DUYURULAR
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">📢 Duyurular</h2>
+                <div class="section-card">
+                    <div id="s-duyuru-list" class="duyuru-list">
+                        <!-- JS tarafından doldurulur -->
+                        <div style="text-align:center; padding:12px; color:var(--text-muted); font-size:0.82rem;">
+                            Henüz duyuru eklenmedi.
+                        </div>
+                    </div>
+                    <div class="duyuru-add">
+                        <input type="text" id="s-duyuru-metin" placeholder="Duyuru metnini yazın...">
+                        <select id="s-duyuru-tip">
+                            <option value="normal">Normal</option>
+                            <option value="acil">Acil</option>
+                            <option value="cenaze">Cenaze</option>
+                        </select>
+                        <button id="s-duyuru-ekle" class="btn-add">Ekle</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         TV / ANDROID AYARLARI
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">📺 TV / Android Ayarları</h2>
+                <div class="section-card">
+                    <div class="setting-row">
+                        <span class="setting-icon">🔌</span>
+                        <div class="setting-info">
+                            <div class="setting-label">TV Açılışında Otomatik Başlat</div>
+                            <div class="setting-desc">TV fişe takıldığında veya yeniden başlatıldığında uygulama
+                                otomatik açılır</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-auto-boot" checked><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         TEHLİKELİ BÖLGE
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section danger-zone">
+                <h2 class="section-title" style="color:#f87171;">⚠️ Tehlikeli Bölge</h2>
+                <div class="section-card">
+                    <div class="setting-row">
+                        <span class="setting-icon">🗑️</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Tüm Verileri Sil</div>
+                            <div class="setting-desc">Ayarlar, indirilen vakitler ve önbellek silinir. Yeniden kurulum
+                                gerekir.</div>
+                        </div>
+                        <div class="setting-control">
+                            <button id="s-sil-tumu" class="btn-danger">Sıfırla</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div><!-- /settings-wrapper -->
+    </div><!-- /settings-page -->
+
+    <!-- ─── KAYDET BAR ─────────────────────────────────────── -->
+    <div class="save-bar" id="save-bar">
+        <span class="save-status" id="save-status"></span>
+        <button class="btn-save" id="btn-save">💾 Kaydet</button>
+    </div>
+
+    <!-- ─── JavaScript ─────────────────────────────────────── -->
+    <script src="js/locations-data.js"></script>
+    <script src="js/data-manager.js"></script>
+    <script src="js/searchable-select.js"></script>
+    <script src="js/settings-manager.js"></script>
+    <script src="js/settings.js"></script>
+
+
+</body>
+
+</html>

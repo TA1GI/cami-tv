@@ -1,0 +1,343 @@
+/* ============================================================
+   CAMI TV — portrait.css
+   Dikey (portrait) layout — telefon/tablet/dikey TV
+   ============================================================ */
+
+/* ────────────────────────────────────────────────────────────
+   ANA YAPI
+   ──────────────────────────────────────────────────────────── */
+#app-portrait {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    background: var(--bg-primary);
+    overflow: hidden;
+}
+
+#app-portrait.active {
+    display: flex;
+}
+
+/* ─── ÜST BAR ─────────────────────────────────────────────── */
+#pt-topbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+}
+
+#pt-topbar .mosque-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+
+#pt-topbar .mosque-name span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#pt-topbar .pt-clock {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+}
+
+/* ─── GERİ SAYIM BÖLÜMÜ ──────────────────────────────────── */
+#pt-countdown-section {
+    flex-shrink: 0;
+    padding: 20px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
+}
+
+#pt-next-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+#pt-prayer-name {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+#pt-countdown {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--countdown-color);
+    text-shadow: var(--countdown-shadow);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    line-height: 1;
+}
+
+#pt-countdown.warning {
+    animation: countdown-flash 1s ease-in-out infinite;
+}
+
+#pt-countdown-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+}
+
+/* ─── NAMAZ VAKİTLERİ TABLOSU ────────────────────────────── */
+#pt-prayer-grid {
+    flex-shrink: 0;
+    padding: 12px 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.pt-prayer-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 8px;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    background: var(--bg-card);
+    transition: all var(--transition);
+}
+
+.pt-prayer-cell.aktif {
+    background: var(--vakit-aktif-bg);
+    border-color: var(--vakit-aktif-border);
+}
+
+.pt-prayer-cell .cell-icon {
+    font-size: 1.1rem;
+}
+
+.pt-prayer-cell .cell-name {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.pt-prayer-cell.aktif .cell-name {
+    color: var(--vakit-aktif-text);
+}
+
+.pt-prayer-cell .cell-time {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.pt-prayer-cell.aktif .cell-time {
+    color: var(--vakit-aktif-text);
+}
+
+/* ─── CAROUSEL BÖLGESİ ───────────────────────────────────── */
+#pt-carousel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    min-height: 0;
+}
+
+/* Portrait carousel aynı slide sistemi */
+#pt-carousel .carousel-slide {
+    padding: 20px 18px;
+}
+
+#pt-carousel .slide-arabic {
+    font-size: clamp(1.3rem, 5vw, 1.8rem);
+}
+
+#pt-carousel .slide-esma-arabic {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+}
+
+/* ─── ALT TICKER BANDI ───────────────────────────────────── */
+#pt-ticker {
+    height: var(--ticker-h);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    overflow: hidden;
+}
+
+#pt-ticker .ticker-label {
+    flex-shrink: 0;
+    padding: 0 12px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-right: 1px solid var(--border);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background: var(--bg-secondary);
+    z-index: 1;
+}
+
+#pt-ticker .ticker-scroll {
+    flex: 1;
+    overflow: hidden;
+}
+
+#pt-ticker .ticker-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 50px;
+    white-space: nowrap;
+    animation: ticker-scroll 20s linear infinite;
+}
+
+#pt-ticker .ticker-item {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#pt-ticker .ticker-item .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+/* ─── EZAN EKRANI (Portrait) ─────────────────────────────── */
+#pt-ezan-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 80;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    text-align: center;
+    padding: 24px;
+}
+
+#pt-ezan-overlay.active {
+    display: flex;
+}
+
+#pt-ezan-overlay .ezan-icon {
+    font-size: 3rem;
+}
+
+#pt-ezan-overlay .ezan-prayer-name {
+    font-size: 2rem;
+}
+
+#pt-ezan-overlay .ezan-arabic {
+    font-size: 1.3rem;
+}
+
+#pt-ezan-overlay .ezan-wave-ring {
+    width: 150px;
+    height: 150px;
+}
+
+/* ─── RAMAZAN ÖZEL GÖRÜNÜM ───────────────────────────────── */
+#pt-ramadan-banner {
+    display: none;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(251, 191, 36, 0.05));
+    border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+    padding: 10px 18px;
+    align-items: center;
+    gap: 10px;
+}
+
+#pt-ramadan-banner.visible {
+    display: flex;
+}
+
+.ramadan-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fbbf24;
+}
+
+.ramadan-countdown {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #fbbf24;
+    font-variant-numeric: tabular-nums;
+    margin-left: auto;
+}
+
+/* ────────────────────────────────────────────────────────────
+   LANDSCAPE'TE RAMAZAN BANNER (orta sütun alt bölge)
+   ──────────────────────────────────────────────────────────── */
+#ls-ramadan-info {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 20px;
+    background: rgba(234, 179, 8, 0.07);
+    border-top: 1px solid rgba(234, 179, 8, 0.15);
+    margin-top: 16px;
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 280px;
+    position: relative;
+    z-index: 1;
+}
+
+#ls-ramadan-info.visible {
+    display: flex;
+}
+
+#ls-ramadan-info .rm-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #f59e0b;
+}
+
+#ls-ramadan-info .rm-value {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fbbf24;
+    font-variant-numeric: tabular-nums;
+}
+
+#ls-ramadan-info .rm-sub {
+    font-size: 0.75rem;
+    color: rgba(251, 191, 36, 0.7);
+}

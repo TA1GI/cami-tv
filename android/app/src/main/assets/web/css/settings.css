@@ -1,0 +1,643 @@
+/* ============================================================
+   CAMI TV — settings.css
+   Ayarlar paneli özel stilleri
+   ============================================================ */
+
+/* ────────────────────────────────────────────────────────────
+   GENEL YAPI — base.css'teki overflow:hidden'ı override et
+   ──────────────────────────────────────────────────────────── */
+html,
+body {
+    overflow-y: auto !important;
+    height: auto !important;
+}
+
+.settings-page {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    overflow-y: auto;
+}
+
+.settings-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+}
+
+/* ─── HEADER ──────────────────────────────────────────────── */
+.settings-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.settings-header h1 {
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.settings-header .version {
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+/* ─── BÖLÜM (SECTION) ────────────────────────────────────── */
+.settings-section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    padding-left: 4px;
+}
+
+.section-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: visible;
+    /* Dropdown taşması için visible yapıldı */
+}
+
+/* ─── AYAR SATIRI ─────────────────────────────────────────── */
+.setting-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    transition: background var(--transition-fast);
+}
+
+.setting-row:first-child {
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+}
+
+.setting-row:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+}
+
+.setting-row:hover {
+    background: var(--bg-card-hover);
+}
+
+.setting-icon {
+    font-size: 1.2rem;
+    width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.setting-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.setting-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.setting-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    line-height: 1.4;
+}
+
+.setting-control {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ─── TOGGLE SWITCH ───────────────────────────────────────── */
+.toggle-switch {
+    position: relative;
+    display: inline-flex;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: all var(--transition);
+}
+
+.toggle-switch input:checked+.toggle-slider {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.toggle-switch input:checked+.toggle-slider::before {
+    transform: translateX(20px);
+    background: white;
+}
+
+.toggle-switch input:focus-visible+.toggle-slider {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* ─── SELECT ──────────────────────────────────────────────── */
+.setting-select {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    cursor: pointer;
+    appearance: none;
+    min-width: 120px;
+    outline: none;
+    transition: border-color var(--transition-fast);
+}
+
+.setting-select:focus {
+    border-color: var(--accent);
+}
+
+/* ─── INPUT ───────────────────────────────────────────────── */
+.setting-input {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    width: 100%;
+    max-width: 200px;
+    outline: none;
+    transition: border-color var(--transition-fast);
+}
+
+.setting-input:focus {
+    border-color: var(--accent);
+}
+
+.setting-input-sm {
+    max-width: 80px;
+    text-align: center;
+}
+
+/* ─── TIME INPUT ──────────────────────────────────────────── */
+.setting-time {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    width: 100px;
+    outline: none;
+    cursor: pointer;
+}
+
+.setting-time:focus {
+    border-color: var(--accent);
+}
+
+/* ─── RANGE SLIDER ────────────────────────────────────────── */
+.range-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.range-group input[type="range"] {
+    width: 100px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+}
+
+.range-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+}
+
+.range-value {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 32px;
+    text-align: right;
+}
+
+/* ─── PRAYER OFFSET TABLOSU ───────────────────────────────── */
+.offset-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.offset-table th {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 8px 6px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.offset-table td {
+    padding: 6px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+}
+
+.offset-table tr:last-child td {
+    border-bottom: none;
+}
+
+.offset-table .vakit-name {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding-left: 10px;
+}
+
+.offset-table input[type="number"] {
+    width: 50px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    text-align: center;
+    outline: none;
+}
+
+.offset-table input[type="number"]:focus {
+    border-color: var(--accent);
+}
+
+/* ─── DUYURU YÖNETİMİ ────────────────────────────────────── */
+.duyuru-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 16px;
+}
+
+.duyuru-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.duyuru-item .duyuru-tip {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.duyuru-item .duyuru-tip.normal {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+}
+
+.duyuru-item .duyuru-tip.acil {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+}
+
+.duyuru-item .duyuru-tip.cenaze {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+}
+
+.duyuru-item .duyuru-text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.duyuru-item .btn-delete {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: #f87171;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+}
+
+.duyuru-item .btn-delete:hover {
+    background: rgba(248, 113, 113, 0.15);
+    border-color: #f87171;
+}
+
+.duyuru-add {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+}
+
+.duyuru-add input {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.duyuru-add input:focus {
+    border-color: var(--accent);
+}
+
+.duyuru-add select {
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.btn-add {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.btn-add:hover {
+    opacity: 0.85;
+}
+
+/* ─── TEHLİKELİ BÖLGE ────────────────────────────────────── */
+.danger-zone .section-card {
+    border-color: rgba(248, 113, 113, 0.2);
+}
+
+.btn-danger {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid #f87171;
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-danger:hover {
+    background: rgba(248, 113, 113, 0.2);
+}
+
+/* ─── KAYDET BANDI ────────────────────────────────────────── */
+.save-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 14px 20px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+}
+
+.save-bar.visible {
+    display: flex;
+}
+
+.save-bar .btn-save {
+    padding: 10px 28px;
+    border-radius: var(--radius-md);
+    border: none;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.save-bar .btn-save:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.save-bar .save-status {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* ─── QR KOD BÖLÜMÜ ──────────────────────────────────────── */
+.qr-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+}
+
+.qr-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: var(--radius-md);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #666;
+    flex-shrink: 0;
+}
+
+.qr-info {
+    flex: 1;
+}
+
+.qr-info .qr-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.qr-info .qr-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .settings-wrapper {
+        padding: 16px 12px 80px;
+    }
+
+    .setting-row {
+        flex-wrap: wrap;
+        padding: 12px;
+    }
+
+    .setting-control {
+        width: 100%;
+        margin-top: 6px;
+        justify-content: flex-end;
+    }
+
+    .duyuru-add {
+        flex-wrap: wrap;
+    }
+
+    .duyuru-add input {
+        width: 100%;
+    }
+}
+/* Cemaat vakitleri offset satiri */
+.cemaat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.setting-number {
+    width: 60px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    text-align: center;
+    outline: none;
+}
+.setting-number:focus {
+    border-color: var(--accent);
+}

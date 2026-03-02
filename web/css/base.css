@@ -1,0 +1,787 @@
+/* ============================================================
+   CAMI TV — base.css
+   Tüm CSS değişkenleri, tema sistemi ve temel stiller
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap');
+
+/* ────────────────────────────────────────────────────────────
+   CSS ÖZEL DEĞİŞKENLERİ — Koyu Tema (Varsayılan)
+   ──────────────────────────────────────────────────────────── */
+:root {
+  /* Renkler — Yeşil Tema (varsayılan) */
+  --accent: #4ade80;
+  --accent-dark: #16a34a;
+  --accent-glow: rgba(74, 222, 128, 0.2);
+  --accent-dim: rgba(74, 222, 128, 0.08);
+
+  /* Arka plan */
+  --bg-primary: #0a0f0d;
+  --bg-secondary: #111a15;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Kenarlık */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(74, 222, 128, 0.3);
+
+  /* Metin */
+  --text-primary: #f0fdf4;
+  --text-secondary: #86efac;
+  --text-muted: rgba(240, 253, 244, 0.45);
+  --text-arabic: #fef9c3;
+
+  /* Vakit durum renkleri */
+  --vakit-aktif-bg: rgba(74, 222, 128, 0.15);
+  --vakit-aktif-border: rgba(74, 222, 128, 0.5);
+  --vakit-aktif-text: #4ade80;
+
+  /* Sayısal ekran */
+  --countdown-color: #4ade80;
+  --countdown-shadow: 0 0 30px rgba(74, 222, 128, 0.4);
+
+  /* Yapısal */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.7);
+
+  /* Geçiş */
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s ease;
+
+  /* Yazı tipleri */
+  --font-ui: 'Inter', sans-serif;
+  --font-arabic: 'Amiri', 'Traditional Arabic', serif;
+
+  /* Yazı boyutu ölçeği */
+  --font-scale: 1;
+  --topbar-h: 64px;
+  --ticker-h: 44px;
+}
+
+/* ────────────────────────────────────────────────────────────
+   YAZI BOYUTU SEÇENEKLERİ
+   ──────────────────────────────────────────────────────────── */
+:root[data-font-size="small"] {
+  --font-scale: 0.85;
+}
+
+:root[data-font-size="normal"] {
+  --font-scale: 1;
+}
+
+:root[data-font-size="large"] {
+  --font-scale: 1.2;
+}
+
+:root[data-font-size="xlarge"] {
+  --font-scale: 1.45;
+}
+
+html {
+  font-size: calc(16px * var(--font-scale));
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: ALTIN (Premium Gold)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="gold"] {
+  --accent: #fbbf24;
+  --accent-dark: #b45309;
+  --accent-glow: rgba(251, 191, 36, 0.2);
+  --accent-dim: rgba(251, 191, 36, 0.08);
+  --bg-primary: #120f08;
+  --bg-secondary: #1a160c;
+  --text-primary: #fffbeb;
+  --text-secondary: #fde68a;
+  --text-muted: rgba(255, 251, 235, 0.45);
+  --countdown-color: #f59e0b;
+  --countdown-shadow: 0 0 30px rgba(251, 191, 36, 0.4);
+  --vakit-aktif-bg: rgba(251, 191, 36, 0.15);
+  --vakit-aktif-border: rgba(251, 191, 36, 0.5);
+  --vakit-aktif-text: #fbbf24;
+  --border-accent: rgba(251, 191, 36, 0.3);
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: ZÜMRÜT (Emerald)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="emerald"] {
+  --accent: #34d399;
+  --accent-dark: #047857;
+  --accent-glow: rgba(52, 211, 153, 0.2);
+  --accent-dim: rgba(52, 211, 153, 0.08);
+  --bg-primary: #022c22;
+  --bg-secondary: #064e3b;
+  --text-primary: #ecfdf5;
+  --text-secondary: #6ee7b7;
+  --text-muted: rgba(236, 253, 245, 0.5);
+  --countdown-color: #34d399;
+  --countdown-shadow: 0 0 30px rgba(52, 211, 153, 0.4);
+  --vakit-aktif-bg: rgba(52, 211, 153, 0.15);
+  --vakit-aktif-border: rgba(52, 211, 153, 0.5);
+  --vakit-aktif-text: #34d399;
+  --border-accent: rgba(52, 211, 153, 0.3);
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: KLASİK (Kufi / Mescid)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="kufi"] {
+  --accent: #d4af37;
+  --accent-dark: #8b6508;
+  --accent-glow: rgba(212, 175, 55, 0.2);
+  --accent-dim: rgba(212, 175, 55, 0.08);
+  --bg-primary: #2b1f1a;
+  --bg-secondary: #3b2a22;
+  --text-primary: #fdfaf6;
+  --text-secondary: #edd59e;
+  --text-muted: rgba(253, 250, 246, 0.5);
+  --countdown-color: #d4af37;
+  --countdown-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+  --vakit-aktif-bg: rgba(212, 175, 55, 0.15);
+  --vakit-aktif-border: rgba(212, 175, 55, 0.5);
+  --vakit-aktif-text: #d4af37;
+  --border-accent: rgba(212, 175, 55, 0.3);
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: AÇIK (Beyaz)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  --accent: #16a34a;
+  --accent-dark: #14532d;
+  --accent-glow: rgba(22, 163, 74, 0.15);
+  --accent-dim: rgba(22, 163, 74, 0.06);
+  --bg-primary: #f0fdf4;
+  --bg-secondary: #dcfce7;
+  --bg-card: rgba(0, 0, 0, 0.04);
+  --bg-card-hover: rgba(0, 0, 0, 0.07);
+  --bg-glass: rgba(0, 0, 0, 0.03);
+  --bg-overlay: rgba(0, 0, 0, 0.4);
+  --border: rgba(0, 0, 0, 0.1);
+  --border-accent: rgba(22, 163, 74, 0.4);
+  --text-primary: #14532d;
+  --text-secondary: #166534;
+  --text-muted: rgba(20, 83, 45, 0.5);
+  --text-arabic: #713f12;
+  --countdown-color: #15803d;
+  --countdown-shadow: 0 0 20px rgba(22, 163, 74, 0.25);
+  --vakit-aktif-bg: rgba(22, 163, 74, 0.12);
+  --vakit-aktif-border: rgba(22, 163, 74, 0.5);
+  --vakit-aktif-text: #15803d;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.15);
+}
+
+/* ────────────────────────────────────────────────────────────
+   GENEL SIFIRLAMALAR
+   ──────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.app-logo {
+  object-fit: contain;
+  border-radius: 20%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.app-logo-large {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 16px;
+}
+
+/* İslami Geometrik Arka Plan Filigranı (Su markası) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l15 15-15 15L15 15zM15 30l15 15-15 15-15-15zM45 30l15 15-15 15-15-15zM30 60l15 15-15 15-15-15z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-size: clamp(12px, 1.2vw + 0.5vh, 18px);
+  /* Responsive root font */
+  font-family: var(--font-ui);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+/* TV uzaktan kumanda odak göstergesi */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+/* ────────────────────────────────────────────────────────────
+   GENEL BILEŞENLER
+   ──────────────────────────────────────────────────────────── */
+
+/* Kart */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Ayraç çizgisi */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+/* Rozet */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--border-accent);
+}
+
+/* Arapça metin */
+.arabic-text {
+  font-family: var(--font-arabic);
+  direction: rtl;
+  text-align: center;
+  color: var(--text-arabic);
+  line-height: 1.8;
+}
+
+/* Soluk renk */
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+/* Tam ekran kaplayan overlay */
+.fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+}
+
+/* ────────────────────────────────────────────────────────────
+   NAMAZ VAKİT İSİMLERİ — ikon renkleri
+   ──────────────────────────────────────────────────────────── */
+.vakit-imsak {
+  --vakit-color: #93c5fd;
+}
+
+/* Mavi — gece */
+.vakit-sabah {
+  --vakit-color: #fde68a;
+}
+
+/* Sarı — şafak */
+.vakit-gunes {
+  --vakit-color: #fb923c;
+}
+
+/* Turuncu — güneş */
+.vakit-ogle {
+  --vakit-color: #fcd34d;
+}
+
+/* Altın — öğle */
+.vakit-ikindi {
+  --vakit-color: #a3e635;
+}
+
+/* Yeşil-sarı */
+.vakit-aksam {
+  --vakit-color: #f97316;
+}
+
+/* Turuncu — akşam */
+.vakit-yatsi {
+  --vakit-color: #818cf8;
+}
+
+/* Mor — gece */
+
+/* ────────────────────────────────────────────────────────────
+   YÜKLEME EKRANI
+   ──────────────────────────────────────────────────────────── */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  background: var(--bg-primary);
+  transition: opacity 0.5s ease;
+}
+
+#loading-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-ring {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  font-size: 1rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* ────────────────────────────────────────────────────────────
+   KURULUM EKRANI (Konum Seçim)
+   ──────────────────────────────────────────────────────────── */
+#setup-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  padding: 40px;
+}
+
+#setup-screen.visible {
+  display: flex;
+}
+
+.setup-box {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.setup-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.setup-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.setup-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setup-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.setup-field select,
+.setup-field input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color var(--transition-fast);
+  cursor: pointer;
+  appearance: none;
+}
+
+.setup-field select:focus,
+.setup-field input:focus {
+  border-color: var(--accent);
+}
+
+.setup-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.setup-progress .mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--accent);
+  color: #000;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.setup-error {
+  font-size: 0.85rem;
+  color: #f87171;
+  text-align: center;
+  display: none;
+}
+
+.setup-error.visible {
+  display: block;
+}
+
+/* ────────────────────────────────────────────────────────────
+   ÜSTTE SÜREKLI KAYAN BANT (Ticker)
+   ──────────────────────────────────────────────────────────── */
+#ticker-bar {
+  height: var(--ticker-h);
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-inner {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: ticker-scroll 30s linear infinite;
+  gap: 80px;
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.ticker-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ────────────────────────────────────────────────────────────
+   EKRAN KARARTMA (Güç yönetimi — CSS yöntemi)
+   ──────────────────────────────────────────────────────────── */
+#screen-dimmer {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+}
+
+#screen-dimmer.dimmed {
+  opacity: var(--dim-level, 0.7);
+  pointer-events: auto;
+  cursor: none;
+}
+
+#screen-dimmer.blackout {
+  opacity: 1;
+  pointer-events: auto;
+  cursor: none;
+}
+
+/* ────────────────────────────────────────────────────────────
+   AYARlAR BUTONU (Sağ üst köşe — uzaktan kumanda ile)
+   ──────────────────────────────────────────────────────────── */
+#settings-trigger {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+/* Fare hareket edince görünür */
+body:hover #settings-trigger {
+  opacity: 1;
+}
+
+#settings-trigger:hover,
+#settings-trigger:focus-visible {
+  opacity: 1;
+  background: var(--bg-card);
+  color: var(--accent);
+}
+
+/* ────────────────────────────────────────────────────────────
+   UTILITY CLASSES
+   ──────────────────────────────────────────────────────────── */
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: flex !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* ────────────────────────────────────────────────────────────
+   SEARCHABLE SELECT BİLEŞENİ
+   ──────────────────────────────────────────────────────────── */
+.ss-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.ss-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+  text-align: left;
+}
+
+.ss-trigger:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+}
+
+.ss-trigger:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ss-trigger-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ss-trigger-text.ss-has-value {
+  color: var(--text-primary);
+}
+
+.ss-arrow {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.ss-open .ss-arrow {
+  transform: rotate(180deg);
+}
+
+.ss-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.ss-open .ss-dropdown {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  max-height: 320px;
+  overflow: visible;
+}
+
+.ss-search {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.ss-search::placeholder {
+  color: var(--text-muted);
+}
+
+.ss-list {
+  max-height: 260px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.ss-option {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ss-option:hover,
+.ss-option.ss-focused {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.ss-option.ss-selected {
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.ss-empty {
+  padding: 16px 14px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.ss-disabled {
+  pointer-events: none;
+}
+
+/* Küçük ekranda (kurulum formu) */
+.setup-field .ss-trigger {
+  padding: 12px 16px;
+}
+
+/* Ayarlar sayfasında */
+.setting-control .ss-wrapper {
+  min-width: 180px;
+}

@@ -1,0 +1,25 @@
+# Android Build
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node (eğer tools eklenir)
+node_modules/
+
+# Logs
+*.log

@@ -1,0 +1,72 @@
+[
+    {
+        "id": 1,
+        "baslik": "Yemek Duası (Yemekten Önce)",
+        "arapca": "بِسْمِ اللَّهِ وَعَلَى بَرَكَةِ اللَّهِ",
+        "turkce": "Bismillâhi ve alâ berekâtillâh",
+        "anlam": "Allah'ın adıyla ve Allah'ın bereketi üzerine (yiyoruz)."
+    },
+    {
+        "id": 2,
+        "baslik": "Yemek Duası (Yemekten Sonra)",
+        "arapca": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مِنَ الْمُسْلِمِينَ",
+        "turkce": "Elhamdülillâhillezî et'amenâ ve sekânâ ve ce'alenâ minel muslimîn.",
+        "anlam": "Bizi yediren, içiren ve müslümanlardan kılan Allah'a hamdolsun."
+    },
+    {
+        "id": 3,
+        "baslik": "Sabah Duası",
+        "arapca": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ",
+        "turkce": "Esbahna ve esbehal mülkü lillâh.",
+        "anlam": "Sabaha çıktık ve mülk Allah'ındır."
+    },
+    {
+        "id": 4,
+        "baslik": "Akşam Duası",
+        "arapca": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ",
+        "turkce": "Emseynâ ve emsel mülkü lillâh.",
+        "anlam": "Akşama çıktık ve mülk Allah'ındır."
+    },
+    {
+        "id": 5,
+        "baslik": "Evden Çıkış Duası",
+        "arapca": "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+        "turkce": "Bismillâh, tevekkeltü alallâh, ve lâ havle ve lâ kuvvete illâ billâh.",
+        "anlam": "Allah'ın adıyla, Allah'a tevekkül ettim. Güç ve kuvvet yalnız Allah'tandır."
+    },
+    {
+        "id": 6,
+        "baslik": "Camiye Girme Duası",
+        "arapca": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+        "turkce": "Allâhümmefteh lî ebvâbe rahmetik.",
+        "anlam": "Allah'ım! Bana rahmetinin kapılarını aç."
+    },
+    {
+        "id": 7,
+        "baslik": "Camiden Çıkış Duası",
+        "arapca": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
+        "turkce": "Allâhümme innî es'elüke min fadlik.",
+        "anlam": "Allah'ım! Senden lütfunu istiyorum."
+    },
+    {
+        "id": 8,
+        "baslik": "Yolculuk Duası",
+        "arapca": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ",
+        "turkce": "Sübhânellezî sahhara lenâ hâzâ ve mâ künnâ lehû mukrinîn.",
+        "anlam": "Bunu bize kolaylaştıranı tesbih ederiz; yoksa biz buna güç yetiremezdik."
+    },
+    {
+        "id": 9,
+        "baslik": "Kelime-i Şehadet",
+        "arapca": "أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ",
+        "turkce": "Eşhedü en lâ ilâhe illallâh ve eşhedü enne Muhammeden rasûlullâh.",
+        "anlam": "Allah'tan başka ilah olmadığına ve Muhammed'in O'nun rasulü olduğuna şehadet ederim."
+    },
+    {
+        "id": 10,
+        "baslik": "İstiğfar",
+        "arapca": "أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ",
+        "turkce": "Estağfirullâhel azîmellezî lâ ilâhe illâ hüve, el hayyel kayyûme ve etûbü ileyh.",
+        "anlam": "Kendisinden başka ilah olmayan, Hay ve Kayyum olan Azim Allah'tan bağışlanmamı diler ve O'na tövbe ederim."
+    }
+]
