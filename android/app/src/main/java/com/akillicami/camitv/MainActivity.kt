@@ -144,28 +144,40 @@ class MainActivity : Activity() {
         )
     }
 
+    // ─── OTA Güncelleme Kontrolü ───────────────────────
+
+    private val CURRENT_VERSION = "1.0.0"
+    private val RELEASES_API = "https://api.github.com/repos/TA1GI/cami-tv/releases/latest"
+    private val updateHandler = Handler(Looper.getMainLooper())
+    private val updateRunnable = object : Runnable {
+        override fun run() {
+            checkForUpdate()
+            // 12 saatte bir (12 * 60 * 60 * 1000 ms) tekrar kontrol et
+            updateHandler.postDelayed(this, 12L * 60 * 60 * 1000)
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         webView.onPause()
+        // Uygulama arkaplanındayken periyodik kontrolü durdur
+        updateHandler.removeCallbacks(updateRunnable)
     }
 
     override fun onResume() {
         super.onResume()
         webView.onResume()
         hideSystemUI()
-        // OTA güncelleme kontrolü (arka planda)
-        checkForUpdate()
+        // Döngüyü başlat (öncekini temizleyerek çiftlenmesini önle)
+        updateHandler.removeCallbacks(updateRunnable)
+        updateHandler.post(updateRunnable)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         webView.destroy()
+        updateHandler.removeCallbacks(updateRunnable)
     }
-
-    // ─── OTA Güncelleme Kontrolü ───────────────────────
-
-    private val CURRENT_VERSION = "1.0.0"
-    private val RELEASES_API = "https://api.github.com/repos/TA1GI/cami-tv/releases/latest"
 
     fun checkForUpdate() {
         Thread {
