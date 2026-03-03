@@ -343,7 +343,7 @@ const DataManager = (() => {
     // 24 saatte bir çalışır — internet yoksa sessizce atlar
     // ──────────────────────────────────────────────────────
     const CONTENT_TYPES = ['ayetler', 'hadisler', 'esmaulhusna', 'dualar'];
-    const CONTENT_GH_BASE = 'https://ta1gi.github.io/namaz_vakitleri/data/';
+    const CONTENT_GH_BASE = 'https://ta1gi.github.io/cami-tv/web/data/';
     const CONTENT_REFRESH_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 saat
 
     async function refreshContentFromGitHub() {

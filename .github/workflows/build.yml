@@ -1,0 +1,62 @@
+name: Build & Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'   # v1.0.0, v1.2.3 gibi tag'lerde çalışır
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kaynak kodu al
+        uses: actions/checkout@v4
+
+      - name: Java 17 kur
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Gradle önbelleği
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('android/**/*.gradle*') }}
+
+      - name: APK derle
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: APK dosyasını bul
+        id: apk
+        run: |
+          APK=$(find android/app/build/outputs/apk/debug -name "*.apk" | head -1)
+          echo "path=$APK" >> $GITHUB_OUTPUT
+          # Sürüm adını tag'den al (v1.2.3 → 1.2.3)
+          VERSION=${GITHUB_REF_NAME#v}
+          NEW_NAME="cami-tv-${VERSION}.apk"
+          cp "$APK" "$NEW_NAME"
+          echo "name=$NEW_NAME" >> $GITHUB_OUTPUT
+
+      - name: GitHub Release oluştur ve APK yükle
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Cami TV ${{ github.ref_name }}"
+          body: |
+            ## 🕌 Cami TV ${{ github.ref_name }}
+
+            ### Kurulum
+            1. APK dosyasını indirin
+            2. Android TV / Fire Stick'e yükleyin
+
+            ### Değişiklikler
+            Bkz. [CHANGELOG.md](https://github.com/TA1GI/cami-tv/blob/master/CHANGELOG.md)
+          files: ${{ steps.apk.outputs.name }}
+          draft: false
+          prerelease: false

@@ -2,7 +2,11 @@ package com.akillicami.camitv
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
@@ -10,6 +14,12 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
+import androidx.core.content.FileProvider
+import org.json.JSONObject
+import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
  * Cami TV — Ana Activity
@@ -143,10 +153,93 @@ class MainActivity : Activity() {
         super.onResume()
         webView.onResume()
         hideSystemUI()
+        // OTA güncelleme kontrolü (arka planda)
+        checkForUpdate()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         webView.destroy()
+    }
+
+    // ─── OTA Güncelleme Kontrolü ───────────────────────
+
+    private val CURRENT_VERSION = "1.0.0"
+    private val RELEASES_API = "https://api.github.com/repos/TA1GI/cami-tv/releases/latest"
+
+    fun checkForUpdate() {
+        Thread {
+            try {
+                val url = URL(RELEASES_API)
+                val conn = url.openConnection() as HttpURLConnection
+                conn.setRequestProperty("Accept", "application/vnd.github+json")
+                conn.connectTimeout = 5000
+                conn.readTimeout = 5000
+
+                if (conn.responseCode != 200) return@Thread
+
+                val json = conn.inputStream.bufferedReader().readText()
+                val obj = JSONObject(json)
+                val latestTag = obj.getString("tag_name").trimStart('v')
+
+                if (isNewerVersion(latestTag, CURRENT_VERSION)) {
+                    // APK URL'ini bul
+                    val assets = obj.getJSONArray("assets")
+                    var apkUrl: String? = null
+                    for (i in 0 until assets.length()) {
+                        val asset = assets.getJSONObject(i)
+                        if (asset.getString("name").endsWith(".apk")) {
+                            apkUrl = asset.getString("browser_download_url")
+                            break
+                        }
+                    }
+                    apkUrl?.let { downloadAndInstall(it, latestTag) }
+                }
+            } catch (e: Exception) {
+                // Sessizce yoksay — internet yoksa veya API erişilemez
+            }
+        }.start()
+    }
+
+    private fun isNewerVersion(latest: String, current: String): Boolean {
+        val l = latest.split(".").map { it.toIntOrNull() ?: 0 }
+        val c = current.split(".").map { it.toIntOrNull() ?: 0 }
+        for (i in 0 until maxOf(l.size, c.size)) {
+            val lv = l.getOrElse(i) { 0 }
+            val cv = c.getOrElse(i) { 0 }
+            if (lv > cv) return true
+            if (lv < cv) return false
+        }
+        return false
+    }
+
+    private fun downloadAndInstall(apkUrl: String, version: String) {
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(this, "Yeni sürüm (v$version) indiriliyor...", Toast.LENGTH_LONG).show()
+        }
+        Thread {
+            try {
+                val apkFile = File(getExternalFilesDir(null), "cami-tv-update.apk")
+                val conn = URL(apkUrl).openConnection() as HttpURLConnection
+                conn.inputStream.use { input ->
+                    apkFile.outputStream().use { output -> input.copyTo(output) }
+                }
+                val uri: Uri = FileProvider.getUriForFile(
+                    this,
+                    "${packageName}.fileprovider",
+                    apkFile
+                )
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "application/vnd.android.package-archive")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(intent)
+            } catch (e: Exception) {
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(this, "Güncelleme indirilemedi.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }.start()
     }
 }
