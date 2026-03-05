@@ -66,11 +66,13 @@ const DisplayManager = (() => {
 
         // Landscape
         const lsName = document.getElementById('ls-mosque-name');
+        const lsLoc = document.getElementById('ls-mosque-location');
         const lsClock = document.getElementById('ls-topbar-clock');
         const lsMilladiDate = document.getElementById('ls-miladi-date');
         const lsHicriDate = document.getElementById('ls-hijri-date');
 
         if (lsName) lsName.textContent = camiAdi;
+        if (lsLoc && settings.ilce && settings.il) lsLoc.textContent = `${settings.ilce} / ${settings.il}`;
         if (lsClock) lsClock.textContent = PrayerEngine.formatClockNoSec();
         if (lsMilladiDate) lsMilladiDate.textContent = miladiDate;
         if (lsHicriDate) {
@@ -80,9 +82,11 @@ const DisplayManager = (() => {
 
         // Portrait
         const ptName = document.getElementById('pt-mosque-name');
+        const ptLoc = document.getElementById('pt-mosque-location');
         const ptClock = document.getElementById('pt-clock');
         const ptHicri = document.getElementById('pt-hijri-date');
         if (ptName) ptName.textContent = camiAdi;
+        if (ptLoc && settings.ilce && settings.il) ptLoc.textContent = `${settings.ilce} / ${settings.il}`;
         if (ptClock) ptClock.textContent = PrayerEngine.formatClockNoSec();
         if (ptHicri) ptHicri.classList.toggle('hidden', !settings.gosterHicriTarih);
     }
@@ -157,49 +161,43 @@ const DisplayManager = (() => {
     // NAMAZ VAKİTLERİ listesi — Landscape sol sütun
     // ──────────────────────────────────────────────────────
     function updatePrayerList(todayPT, nextPrayerKey, settings) {
-        const container = document.getElementById('ls-prayer-list');
-        if (!container || !todayPT) return;
+        const listEl = document.getElementById('ls-prayer-list');
+        if (!listEl || !todayPT) return;
 
-        const vakitler = [
-            { key: 'imsak', label: 'İmsak' },
-            { key: 'sabah', label: 'Sabah' },
-            { key: 'gunes', label: 'Güneş' },
-            { key: 'ogle', label: 'Öğle' },
-            { key: 'ikindi', label: 'İkindi' },
-            { key: 'aksam', label: 'Akşam' },
-            { key: 'yatsi', label: 'Yatsı' },
-        ];
+        listEl.innerHTML = '';
+        let keys = todayPT.sabah
+            ? PrayerEngine.VAKIT_KEYS
+            : PrayerEngine.VAKIT_KEYS.filter(k => k !== 'sabah');
 
-        const cemaatOffsets = settings?.cemaatOffsets || {};
-        const gosterCemaat = settings?.gosterCemaat || false;
+        if (settings.gosterSabah === false) {
+            keys = keys.filter(k => k !== 'sabah');
+        }
 
-        container.innerHTML = '';
-
-        vakitler.forEach(({ key, label }) => {
+        keys.forEach(key => {
             const val = todayPT[key];
-            if (!val && key !== 'imsak') return;
             if (!val) return;
-
-            // Cemaat vakti hesapla
-            let cemaatStr = '';
-            if (gosterCemaat && cemaatOffsets[key] > 0) {
+            const isNext = key === nextPrayerKey;
+            let cemaatHtml = '';
+            if (settings.gosterCemaat && settings.cemaatOffsets && settings.cemaatOffsets[key] > 0) {
+                const off = settings.cemaatOffsets[key];
                 const [h, m] = val.split(':').map(Number);
-                const total = h * 60 + m + cemaatOffsets[key];
-                const ch = Math.floor(total / 60) % 24;
-                const cm = total % 60;
-                cemaatStr = `<span class="vakit-cemaat">${String(ch).padStart(2, '0')}:${String(cm).padStart(2, '0')}</span>`;
+                const cm = h * 60 + m + off;
+                const ch = Math.floor(cm / 60) % 24;
+                const cemaatTime = `${String(ch).padStart(2, '0')}:${String(cm % 60).padStart(2, '0')}`;
+
+                cemaatHtml = `<span class="vakit-cemaat">${cemaatTime}</span>`;
             }
 
-            const isAktif = key === nextPrayerKey;
-            const row = document.createElement('div');
-            row.className = `prayer-row vakit-${key}${isAktif ? ' aktif' : ''}`;
-            row.innerHTML = `
-        <span class="vakit-icon">${VAKIT_ICONS[key] || '🕌'}</span>
-        <span class="vakit-name">${label}</span>
-        <span class="vakit-time">${val}</span>
-        ${cemaatStr}
+            const labelStr = typeof I18n !== 'undefined' ? I18n.get(key) : key;
+
+            listEl.innerHTML += `
+        <div class="prayer-row vakit-${key}${isNext ? ' aktif pulse-glow' : ''}">
+            <span class="vakit-icon">${PrayerEngine.VAKIT_ICONS[key] || '🕌'}</span>
+            <span class="vakit-name">${labelStr}</span>
+            <span class="vakit-time">${val}</span>
+            ${cemaatHtml}
+        </div>
       `;
-            container.appendChild(row);
         });
     }
 
@@ -207,45 +205,43 @@ const DisplayManager = (() => {
     // NAMAZ VAKİTLERİ grid — Portrait 3x2
     // ──────────────────────────────────────────────────────
     function updatePortraitPrayerGrid(todayPT, nextPrayerKey, settings) {
-        const container = document.getElementById('pt-prayer-grid');
-        if (!container || !todayPT) return;
+        const gridEl = document.getElementById('pt-prayer-grid');
+        if (!gridEl) return;
 
-        const vakitler = [
-            { key: 'imsak', label: 'İmsak' },
-            { key: 'gunes', label: 'Güneş' },
-            { key: 'ogle', label: 'Öğle' },
-            { key: 'ikindi', label: 'İkindi' },
-            { key: 'aksam', label: 'Akşam' },
-            { key: 'yatsi', label: 'Yatsı' },
-        ];
+        gridEl.innerHTML = '';
+        let keys = todayPT.sabah
+            ? PrayerEngine.VAKIT_KEYS.filter(k => k !== 'sabah')
+            : PrayerEngine.VAKIT_KEYS.filter(k => k !== 'sabah' && k !== 'gunes');
 
-        const cemaatOffsets = settings?.cemaatOffsets || {};
-        const gosterCemaat = settings?.gosterCemaat || false;
+        // Dikey planda (eğer sabahı tekrar göstermek isterlerse veya kapatırlarsa diye) varsayılan olarak zaten sabah gizli gibi yazılmış, fakat tutarlılık adına ek kontrol
+        if (settings.gosterSabah === false) {
+            keys = keys.filter(k => k !== 'sabah');
+        }
 
-        container.innerHTML = '';
-        vakitler.forEach(({ key, label }) => {
+        keys.forEach(key => {
             const val = todayPT[key];
             if (!val) return;
-
-            let cemaatStr = '';
-            if (gosterCemaat && cemaatOffsets[key] > 0) {
+            let cemaatHtml = '';
+            if (settings.gosterCemaat && settings.cemaatOffsets && settings.cemaatOffsets[key] > 0) {
+                const off = settings.cemaatOffsets[key];
                 const [h, m] = val.split(':').map(Number);
-                const total = h * 60 + m + cemaatOffsets[key];
-                const ch = Math.floor(total / 60) % 24;
-                const cm = total % 60;
-                cemaatStr = `<span class="cell-cemaat">${String(ch).padStart(2, '0')}:${String(cm).padStart(2, '0')}</span>`;
+                const cm = h * 60 + m + off;
+                const ch = Math.floor(cm / 60) % 24;
+                const cemaatTime = `${String(ch).padStart(2, '0')}:${String(cm % 60).padStart(2, '0')}`;
+
+                cemaatHtml = `<span class="cell-cemaat">${cemaatTime}</span>`;
             }
 
-            const isAktif = key === nextPrayerKey;
-            const cell = document.createElement('div');
-            cell.className = `pt-prayer-cell${isAktif ? ' aktif' : ''}`;
-            cell.innerHTML = `
-        <span class="cell-icon">${VAKIT_ICONS[key]}</span>
-        <span class="cell-name">${label}</span>
-        <span class="cell-time">${val}</span>
-        ${cemaatStr}
+            const isNext = key === nextPrayerKey;
+            const labelStr = typeof I18n !== 'undefined' ? I18n.get(key) : key;
+            gridEl.innerHTML += `
+        <div class="pt-prayer-cell${isNext ? ' aktif pulse-glow' : ''}">
+           <span class="cell-icon">${PrayerEngine.VAKIT_ICONS[key] || '🕌'}</span>
+           <span class="cell-name">${labelStr}</span>
+           <span class="cell-time">${val}</span>
+           ${cemaatHtml}
+        </div>
       `;
-            container.appendChild(cell);
         });
     }
 
@@ -336,7 +332,7 @@ const DisplayManager = (() => {
           <div class="slide-header">
             <span class="slide-type-badge">🤲 Dua</span>${counter}
           </div>
-          <div class="slide-arabic arabic-text" style="font-size:clamp(1.2rem,2vw,1.6rem);flex:1;display:flex;align-items:center;justify-content:center;">
+          <div class="slide-arabic arabic-text" style="font-size:clamp(1.2rem,4vmin,1.6rem);flex:1;display:flex;align-items:center;justify-content:center;">
             <div class="marquee-content">${slide.data.arapca}</div>
           </div>
           <div class="slide-translation text-muted" style="font-size:0.8rem;font-style:italic;">
@@ -354,9 +350,19 @@ const DisplayManager = (() => {
             <span class="slide-type-badge" style="background:rgba(251,191,36,0.1);color:#fbbf24;border-color:rgba(251,191,36,0.3);">📢 Duyuru</span>${counter}
           </div>
           <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:24px;">
-            <div style="font-size:clamp(1rem,1.8vw,1.4rem);color:var(--text-primary);text-align:center;line-height:1.7;">
+            <div style="font-size:clamp(1rem,2.5vmin,1.4rem);color:var(--text-primary);text-align:center;line-height:1.7;">
               ${slide.data.metin}
             </div>
+          </div>
+        `;
+
+            case 'camibilgi':
+                return `
+          <div class="slide-header">
+            <span class="slide-type-badge" style="background:rgba(52,211,153,0.1);color:#34d399;border-color:rgba(52,211,153,0.3);">🏛️ Cami Bilgileri</span>${counter}
+          </div>
+          <div class="slide-translation" style="flex:1; display:flex; padding:24px; text-align:center;">
+             <div class="marquee-content" style="font-size:clamp(1.1rem, 2.5vmin, 1.5rem); line-height:1.6; color:var(--text-secondary); white-space:pre-wrap;">${slide.data.metin.replace(/\\n/g, '<br/>')}</div>
           </div>
         `;
 
@@ -377,36 +383,36 @@ const DisplayManager = (() => {
 
         const today = new Date().toLocaleDateString('tr-TR');
         let rows = '';
-        weekData.slice(0, 15).forEach(day => {
+        weekData.slice(0, 30).forEach(day => {
             const isToday = day.miladiTarih?.startsWith(String(new Date().getDate()).padStart(2, '0'));
             rows += `
         <tr style="${isToday ? 'background:var(--vakit-aktif-bg);color:var(--accent);' : 'color:var(--text-secondary);'}">
-          <td style="padding:5px 8px;font-size:0.75rem;font-weight:${isToday ? '700' : '400'}">${day.miladiTarih?.split(' ').slice(0, 2).join(' ')}</td>
-          <td style="padding:5px 8px;font-size:0.75rem;text-align:center">${day.imsak}</td>
-          <td style="padding:5px 8px;font-size:0.75rem;text-align:center">${day.gunes}</td>
-          <td style="padding:5px 8px;font-size:0.75rem;text-align:center">${day.ogle}</td>
-          <td style="padding:5px 8px;font-size:0.75rem;text-align:center">${day.ikindi}</td>
-          <td style="padding:5px 8px;font-size:0.75rem;text-align:center">${day.aksam}</td>
-          <td style="padding:5px 8px;font-size:0.75rem;text-align:center">${day.yatsi}</td>
+          <td style="padding:4px 6px;font-size:clamp(0.65rem, 1.8vmin, 1.15rem);font-weight:${isToday ? '700' : '400'}">${day.miladiTarih?.split(' ').slice(0, 2).join(' ')}</td>
+          <td style="padding:4px 6px;font-size:clamp(0.65rem, 1.8vmin, 1.15rem);text-align:center">${day.imsak}</td>
+          <td style="padding:4px 6px;font-size:clamp(0.65rem, 1.8vmin, 1.15rem);text-align:center">${day.gunes}</td>
+          <td style="padding:4px 6px;font-size:clamp(0.65rem, 1.8vmin, 1.15rem);text-align:center">${day.ogle}</td>
+          <td style="padding:4px 6px;font-size:clamp(0.65rem, 1.8vmin, 1.15rem);text-align:center">${day.ikindi}</td>
+          <td style="padding:4px 6px;font-size:clamp(0.65rem, 1.8vmin, 1.15rem);text-align:center">${day.aksam}</td>
+          <td style="padding:4px 6px;font-size:clamp(0.65rem, 1.8vmin, 1.15rem);text-align:center">${day.yatsi}</td>
         </tr>
       `;
         });
 
         return `
       <div class="slide-header">
-        <span class="slide-type-badge">📅 15 Günlük İmsakiye</span>${counter}
+        <span class="slide-type-badge">📅 30 Günlük İmsakiye</span>${counter}
       </div>
       <div style="flex:1;overflow:auto;">
         <table style="width:100%;border-collapse:collapse;">
           <thead>
-            <tr style="color:var(--text-muted);font-size:0.65rem;letter-spacing:0.05em;text-transform:uppercase;">
-              <th style="padding:4px 8px;text-align:left">Tarih</th>
-              <th style="padding:4px 8px">İmsak</th>
-              <th style="padding:4px 8px">Güneş</th>
-              <th style="padding:4px 8px">Öğle</th>
-              <th style="padding:4px 8px">İkindi</th>
-              <th style="padding:4px 8px">Akşam</th>
-              <th style="padding:4px 8px">Yatsı</th>
+            <tr style="color:var(--text-muted);font-size:clamp(0.55rem, 1.4vmin, 0.95rem);letter-spacing:0.02em;text-transform:uppercase;">
+              <th style="padding:4px 6px;text-align:left">${typeof I18n !== 'undefined' ? I18n.get('tarih') || 'Tarih' : 'Tarih'}</th>
+              <th style="padding:4px 6px">${typeof I18n !== 'undefined' ? I18n.get('imsak') : 'İmsak'}</th>
+              <th style="padding:4px 6px">${typeof I18n !== 'undefined' ? I18n.get('gunes') : 'Güneş'}</th>
+              <th style="padding:4px 6px">${typeof I18n !== 'undefined' ? I18n.get('ogle') : 'Öğle'}</th>
+              <th style="padding:4px 6px">${typeof I18n !== 'undefined' ? I18n.get('ikindi') : 'İkindi'}</th>
+              <th style="padding:4px 6px">${typeof I18n !== 'undefined' ? I18n.get('aksam') : 'Akşam'}</th>
+              <th style="padding:4px 6px">${typeof I18n !== 'undefined' ? I18n.get('yatsi') : 'Yatsı'}</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -431,26 +437,35 @@ const DisplayManager = (() => {
     function showEzanOverlay(prayerInfo) {
         // Yeni tasarıma göre inline notification gösterilir
         const ezanNotif = document.getElementById('ezan-notification');
-        const lsCenterWrapper = document.getElementById('circular-progress-wrapper');
         const ptOverlay = document.getElementById('pt-ezan-overlay');
 
         if (ezanNotif) {
             ezanNotif.classList.remove('hidden');
             const txt = ezanNotif.querySelector('.ezan-text');
-            if (txt) txt.textContent = `${prayerInfo.label} Ezanı Okunuyor`;
-        }
-        if (lsCenterWrapper) {
-            // center countdown alanını çok ezmemesi için isteğe göre gizlenebilir veya kalsın.
-            // lsCenterWrapper.style.opacity = '0.1'; // isterseniz
+            if (txt) {
+                if (prayerInfo.isEzanTime) {
+                    txt.textContent = `${prayerInfo.label} Ezanı Okunuyor`;
+                    ezanNotif.classList.add('is-ezan');
+                } else {
+                    txt.textContent = `${prayerInfo.label} Vakti Yaklaştı`;
+                    ezanNotif.classList.remove('is-ezan');
+                }
+            }
         }
 
         // Portrait için eski overlayı koruyabiliriz veya değiştirebiliriz.
-        if (ptOverlay) {
+        if (ptOverlay && prayerInfo.isEzanTime) {
             ptOverlay.innerHTML = `
                 <div class="ezan-wave-ring"></div>
                 <div class="ezan-icon">${PrayerEngine.VAKIT_ICONS[prayerInfo.key] || '🕌'}</div>
                 <div class="ezan-prayer-name">${prayerInfo.label} Ezanı Okunuyor</div>
                 <div class="ezan-arabic">اللَّهُ أَكْبَرُ</div>
+            `;
+            ptOverlay.classList.add('active');
+        } else if (ptOverlay) {
+            ptOverlay.innerHTML = `
+                <div class="ezan-icon">${PrayerEngine.VAKIT_ICONS[prayerInfo.key] || '🕌'}</div>
+                <div class="ezan-prayer-name">${prayerInfo.label} Vakti Yaklaştı</div>
             `;
             ptOverlay.classList.add('active');
         }
@@ -486,7 +501,7 @@ const DisplayManager = (() => {
             lsBanner.classList.add('visible');
             const lbl = lsBanner.querySelector('.rm-title');
             const val = lsBanner.querySelector('.rm-value');
-            if (lbl) lbl.textContent = `${ramadanCountdown.label} Kalan Süre`;
+            if (lbl) lbl.textContent = ramadanCountdown.label;
             if (val) val.textContent = formatted;
         }
 
@@ -495,7 +510,7 @@ const DisplayManager = (() => {
             ptBanner.classList.add('visible');
             const lbl = ptBanner.querySelector('.ramadan-label');
             const cnt = ptBanner.querySelector('.ramadan-countdown');
-            if (lbl) lbl.textContent = `${ramadanCountdown.label} Kaldı`;
+            if (lbl) lbl.textContent = ramadanCountdown.label;
             if (cnt) cnt.textContent = formatted;
         }
     }
@@ -508,7 +523,9 @@ const DisplayManager = (() => {
         tickers.forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
-            el.innerHTML = [...items, ...items].map(t =>
+            // Kayan yazıda CSS döngüsü için yalnızca öğe sayısı az ise diziyi ikile (ekran boş kalmasın)
+            const displayItems = items.length < 5 ? [...items, ...items, ...items] : [...items, ...items];
+            el.innerHTML = displayItems.map(t =>
                 `<span class="ticker-item"><span class="dot"></span>${t}</span>`
             ).join('');
         });

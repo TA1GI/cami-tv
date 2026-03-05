@@ -33,7 +33,7 @@
 }
 
 #ls-topbar .mosque-name {
-    font-size: 1.15rem;
+    font-size: calc(var(--font-scale) * 1.15rem);
     font-weight: 700;
     color: var(--text-primary);
     display: flex;
@@ -44,7 +44,7 @@
 }
 
 #ls-topbar .mosque-name .icon {
-    font-size: 1.4rem;
+    font-size: calc(var(--font-scale) * 1.4rem);
     flex-shrink: 0;
 }
 
@@ -63,7 +63,7 @@
 }
 
 #ls-topbar .topbar-clock {
-    font-size: 2rem;
+    font-size: calc(var(--font-scale) * 2rem);
     font-weight: 900;
     color: var(--text-primary);
     letter-spacing: 0.04em;
@@ -72,7 +72,7 @@
 }
 
 #ls-topbar .topbar-date {
-    font-size: 0.78rem;
+    font-size: calc(var(--font-scale) * 0.78rem);
     color: var(--text-muted);
     letter-spacing: 0.03em;
 }
@@ -86,7 +86,7 @@
 }
 
 #ls-topbar .hijri-date {
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     color: var(--text-secondary);
     text-align: right;
 }
@@ -95,7 +95,7 @@
 #ls-content {
     flex: 1;
     display: grid;
-    grid-template-columns: 22fr 46fr 32fr;
+    grid-template-columns: 22% 43% 35%;
     min-height: 0;
     overflow: hidden;
 }
@@ -105,13 +105,14 @@
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border);
-    padding: 24px 20px;
-    gap: 12px;
+    padding: clamp(10px, 2vmin, 24px) clamp(8px, 1.5vmin, 20px);
+    gap: clamp(6px, 1.2vmin, 12px);
     overflow: hidden;
+    min-width: 0;
 }
 
 .ls-section-title {
-    font-size: 0.8rem;
+    font-size: calc(var(--font-scale) * 0.8rem);
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -125,9 +126,9 @@
 .prayer-row {
     display: flex;
     align-items: center;
-    padding: 14px 18px;
+    padding: clamp(8px, 1.5vmin, 14px) clamp(8px, 1.5vmin, 18px);
     border-radius: var(--radius-md);
-    gap: 16px;
+    gap: clamp(6px, 1.5vmin, 16px);
     border: 1px solid transparent;
     transition: all var(--transition);
     position: relative;
@@ -154,18 +155,21 @@
 }
 
 .prayer-row .vakit-icon {
-    font-size: clamp(1.2rem, 2.2vh, 1.6rem);
-    width: 34px;
+    font-size: calc(var(--font-scale) * clamp(1.1rem, 2.5vmin, 1.6rem));
+    width: 32px;
     text-align: center;
     flex-shrink: 0;
     opacity: 0.8;
 }
 
 .prayer-row .vakit-name {
-    font-size: clamp(1rem, 1.8vh, 1.25rem);
+    font-size: calc(var(--font-scale) * clamp(0.9rem, 2vmin, 1.3rem));
     font-weight: 600;
     color: var(--text-secondary);
     flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .prayer-row.aktif .vakit-icon,
@@ -176,7 +180,7 @@
 }
 
 .prayer-row .vakit-time {
-    font-size: clamp(1.2rem, 2.2vh, 1.5rem);
+    font-size: calc(var(--font-scale) * clamp(1.1rem, 2.8vmin, 1.6rem));
     font-weight: 800;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
@@ -189,7 +193,7 @@
 }
 
 .prayer-row .vakit-cemaat {
-    font-size: clamp(0.75rem, 1.4vh, 1rem);
+    font-size: calc(var(--font-scale) * clamp(0.7rem, 1.5vmin, 1.1rem));
     font-weight: 600;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
@@ -198,6 +202,7 @@
     border-radius: var(--radius-sm);
     padding: 2px 6px;
     margin-left: auto;
+    white-space: nowrap;
 }
 
 /* Sol alt bilgiler (hava, sıcaklık, kıble) */
@@ -214,7 +219,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.8rem;
+    font-size: calc(var(--font-scale) * 0.8rem);
     color: var(--text-muted);
     padding: 6px 8px;
     border-radius: var(--radius-sm);
@@ -222,7 +227,7 @@
 }
 
 .ls-info-pill .icon {
-    font-size: 1rem;
+    font-size: calc(var(--font-scale) * 1rem);
 }
 
 .ls-info-pill .value {
@@ -240,6 +245,7 @@
     gap: 1.5rem;
     position: relative;
     overflow: hidden;
+    min-width: 0;
 }
 
 /* Ezan Okunuyor Bildirimi (Dinamik Renk) */
@@ -247,13 +253,13 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 16px 32px;
+    padding: 12px 24px;
     border-radius: 50px;
     background: var(--vakit-aktif-bg);
     border: 2px solid var(--vakit-aktif-border);
     box-shadow: 0 0 30px rgba(var(--vakit-aktif-text-rgb), 0.4);
     position: absolute;
-    top: 40px;
+    top: 20px;
     z-index: 20;
     animation: ezan-pulse 2s infinite alternate;
 }
@@ -268,7 +274,7 @@
 }
 
 .ezan-text {
-    font-size: 1.8rem;
+    font-size: calc(var(--font-scale) * 1.8rem);
     font-weight: 900;
     color: var(--vakit-aktif-text);
     text-transform: uppercase;
@@ -299,11 +305,13 @@
 /* Dairesel Progress Bar Container */
 .circular-progress-wrapper {
     position: relative;
-    width: clamp(200px, 35vh, 320px);
-    height: clamp(200px, 35vh, 320px);
+    width: 100%;
+    max-width: clamp(200px, 45vmin, 400px);
+    aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 1;
 }
 
 .progress-ring {
@@ -341,33 +349,41 @@
     align-items: center;
     justify-content: center;
     background: var(--bg-card);
-    width: 87.5%;
-    height: 87.5%;
+    width: 86%;
+    height: 86%;
     border-radius: 50%;
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+    /* İçeriklerin yuvarlağın dışına çıkmasını engelleme */
+    overflow: hidden;
+    padding: clamp(4px, 1vmin, 10px);
+    box-sizing: border-box;
 }
 
 /* Vakit adı büyük */
 .countdown-target-name {
-    font-size: clamp(1rem, 2.5vh, 1.5rem);
+    font-size: calc(var(--font-scale) * clamp(1.1rem, 3.2vmin, 1.8rem));
     font-weight: 800;
     color: var(--text-secondary);
     text-align: center;
-    margin-bottom: 4px;
-    letter-spacing: 0.05em;
+    margin-bottom: clamp(2px, 0.5vmin, 4px);
+    letter-spacing: 0.02em;
     text-transform: uppercase;
+    white-space: nowrap;
+    width: 100%;
 }
 
 /* Büyük geri sayım */
 .countdown-time {
-    font-size: clamp(2.2rem, 5.5vh, 3.5rem);
+    font-size: calc(var(--font-scale) * clamp(1.8rem, 6vmin, 4.2rem));
     font-weight: 900;
     color: var(--countdown-color);
     text-shadow: var(--countdown-shadow);
     font-variant-numeric: tabular-nums;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
     line-height: 1.1;
     transition: color 0.5s ease;
+    width: 100%;
+    text-align: center;
 }
 
 .countdown-time.warning {
@@ -376,12 +392,14 @@
 
 /* "kaldı" yazısı */
 .countdown-label {
-    font-size: clamp(0.7rem, 1.5vh, 0.9rem);
+    font-size: calc(var(--font-scale) * clamp(0.8rem, 2vmin, 1.1rem));
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-top: 4px;
+    width: 100%;
+    text-align: center;
 }
 
 /* Cemaat vakti */
@@ -400,12 +418,12 @@
 }
 
 #ls-cemaat .ce-icon {
-    font-size: 1.5rem;
+    font-size: calc(var(--font-scale) * 1.5rem);
 }
 
 #ls-cemaat .ce-val {
     font-weight: 800;
-    font-size: 1.2rem;
+    font-size: calc(var(--font-scale) * 1.2rem);
     color: var(--accent);
 }
 
@@ -435,19 +453,20 @@
 }
 
 .rm-icon {
-    font-size: 1.4rem;
+    font-size: calc(var(--font-scale) * 1.4rem);
 }
 
 .rm-title {
-    font-size: 1rem;
+    font-size: calc(var(--font-scale) * clamp(0.9rem, 2vmin, 1.3rem));
     font-weight: 700;
     color: #2ecc71;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    white-space: nowrap;
 }
 
 .rm-value {
-    font-size: 2.2rem;
+    font-size: calc(var(--font-scale) * clamp(1.8rem, 4.5vmin, 2.8rem));
     font-weight: 900;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
@@ -464,7 +483,7 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     color: var(--text-muted);
-    font-size: 0.75rem;
+    font-size: calc(var(--font-scale) * 0.75rem);
     font-family: var(--font-ui);
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -478,6 +497,7 @@
     flex-direction: column;
     border-left: 1px solid var(--border);
     overflow: hidden;
+    min-width: 0;
 }
 
 #ls-carousel {
@@ -514,7 +534,7 @@
 }
 
 .slide-type-badge {
-    font-size: 0.65rem;
+    font-size: calc(var(--font-scale) * 0.65rem);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -526,7 +546,7 @@
 }
 
 .slide-counter {
-    font-size: 0.7rem;
+    font-size: calc(var(--font-scale) * 0.7rem);
     color: var(--text-muted);
 }
 
@@ -536,7 +556,7 @@
     direction: rtl;
     text-align: center;
     color: var(--text-arabic);
-    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+    font-size: calc(var(--font-scale) * clamp(1.4rem, 4vmin, 2.4rem));
     line-height: 1.8;
     flex: 1;
     display: flex;
@@ -550,7 +570,7 @@
 }
 
 .slide-translation {
-    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    font-size: calc(var(--font-scale) * clamp(0.9rem, 2vmin, 1.25rem));
     color: var(--text-secondary);
     text-align: center;
     line-height: 1.6;
@@ -588,7 +608,7 @@
 }
 
 .slide-reference {
-    font-size: 0.7rem;
+    font-size: calc(var(--font-scale) * 0.7rem);
     color: var(--text-muted);
     text-align: center;
     margin-top: 8px;
@@ -598,7 +618,7 @@
 /* Esmaül Hüsna slide */
 .slide-esma-arabic {
     font-family: var(--font-arabic);
-    font-size: clamp(3rem, 6vw, 5rem);
+    font-size: calc(var(--font-scale) * clamp(2.5rem, 8vmin, 5rem));
     text-align: center;
     color: var(--accent);
     line-height: 1.4;
@@ -610,7 +630,7 @@
 
 .slide-esma-turkish {
     text-align: center;
-    font-size: 1.3rem;
+    font-size: calc(var(--font-scale) * clamp(0.9rem, 2.2vmin, 1.3rem));
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 8px;
@@ -619,7 +639,7 @@
 
 .slide-esma-meaning {
     text-align: center;
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * clamp(0.7rem, 1.5vmin, 0.95rem));
     color: var(--text-muted);
     line-height: 1.5;
     flex-shrink: 0;
@@ -654,7 +674,7 @@
 #ls-ticker .ticker-label {
     flex-shrink: 0;
     padding: 0 16px;
-    font-size: 0.7rem;
+    font-size: calc(var(--font-scale) * 0.7rem);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -670,6 +690,8 @@
 #ls-ticker .ticker-scroll {
     flex: 1;
     overflow: hidden;
+    display: flex;
+    white-space: nowrap;
 }
 
 #ls-ticker .ticker-inner {
@@ -686,7 +708,7 @@
 }
 
 #ls-ticker .ticker-item {
-    font-size: 0.82rem;
+    font-size: calc(var(--font-scale) * 0.82rem);
     color: var(--text-secondary);
     display: inline-flex;
     align-items: center;
@@ -736,7 +758,7 @@
 }
 
 .ezan-icon {
-    font-size: 4rem;
+    font-size: calc(var(--font-scale) * 4rem);
     position: relative;
     z-index: 1;
     animation: float 3s ease-in-out infinite;
@@ -744,7 +766,7 @@
 }
 
 .ezan-prayer-name {
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: calc(var(--font-scale) * clamp(2.5rem, 5vw, 4rem));
     font-weight: 900;
     color: var(--text-primary);
     position: relative;
@@ -754,7 +776,7 @@
 
 .ezan-arabic {
     font-family: var(--font-arabic);
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-size: calc(var(--font-scale) * clamp(1.5rem, 3vw, 2.5rem));
     color: var(--text-arabic);
     position: relative;
     z-index: 1;
@@ -763,7 +785,7 @@
 }
 
 .ezan-subtitle {
-    font-size: 1rem;
+    font-size: calc(var(--font-scale) * 1rem);
     color: var(--text-muted);
     position: relative;
     z-index: 1;
@@ -777,7 +799,7 @@
     border-radius: var(--radius-full);
     background: var(--bg-card);
     border: 1px solid var(--border-accent);
-    font-size: 1rem;
+    font-size: calc(var(--font-scale) * 1rem);
     color: var(--text-secondary);
     position: relative;
     z-index: 1;
@@ -802,7 +824,7 @@
 }
 
 .cenaze-header {
-    font-size: 0.8rem;
+    font-size: calc(var(--font-scale) * 0.8rem);
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: #f87171;
@@ -810,19 +832,19 @@
 }
 
 .cenaze-icon {
-    font-size: 3rem;
+    font-size: calc(var(--font-scale) * 3rem);
     margin-bottom: 16px;
 }
 
 .cenaze-name {
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: calc(var(--font-scale) * clamp(2rem, 4vw, 3rem));
     font-weight: 700;
     color: white;
     text-align: center;
 }
 
 .cenaze-detail {
-    font-size: 1rem;
+    font-size: calc(var(--font-scale) * 1rem);
     color: rgba(255, 255, 255, 0.6);
     margin-top: 12px;
     text-align: center;
@@ -830,7 +852,7 @@
 
 .cenaze-dua {
     font-family: var(--font-arabic);
-    font-size: 1.5rem;
+    font-size: calc(var(--font-scale) * 1.5rem);
     color: #fde68a;
     margin-top: 24px;
     direction: rtl;

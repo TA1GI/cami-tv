@@ -32,7 +32,7 @@
 }
 
 #pt-topbar .mosque-name {
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     font-weight: 700;
     color: var(--text-primary);
     display: flex;
@@ -49,7 +49,7 @@
 }
 
 #pt-topbar .pt-clock {
-    font-size: 1.4rem;
+    font-size: calc(var(--font-scale) * 1.4rem);
     font-weight: 900;
     color: var(--text-primary);
     letter-spacing: 0.04em;
@@ -69,7 +69,7 @@
 }
 
 #pt-next-label {
-    font-size: 0.7rem;
+    font-size: calc(var(--font-scale) * 0.7rem);
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -77,14 +77,14 @@
 }
 
 #pt-prayer-name {
-    font-size: 1.8rem;
+    font-size: calc(var(--font-scale) * 1.8rem);
     font-weight: 900;
     color: var(--text-primary);
     line-height: 1;
 }
 
 #pt-countdown {
-    font-size: 3rem;
+    font-size: calc(var(--font-scale) * 3rem);
     font-weight: 900;
     color: var(--countdown-color);
     text-shadow: var(--countdown-shadow);
@@ -98,7 +98,7 @@
 }
 
 #pt-countdown-sub {
-    font-size: 0.75rem;
+    font-size: calc(var(--font-scale) * 0.75rem);
     color: var(--text-muted);
     letter-spacing: 0.08em;
 }
@@ -130,11 +130,11 @@
 }
 
 .pt-prayer-cell .cell-icon {
-    font-size: 1.1rem;
+    font-size: calc(var(--font-scale) * 1.1rem);
 }
 
 .pt-prayer-cell .cell-name {
-    font-size: 0.65rem;
+    font-size: calc(var(--font-scale) * 0.65rem);
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -146,7 +146,7 @@
 }
 
 .pt-prayer-cell .cell-time {
-    font-size: 1rem;
+    font-size: calc(var(--font-scale) * 1rem);
     font-weight: 800;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
@@ -171,11 +171,11 @@
 }
 
 #pt-carousel .slide-arabic {
-    font-size: clamp(1.3rem, 5vw, 1.8rem);
+    font-size: calc(var(--font-scale) * clamp(1.3rem, 5vw, 1.8rem));
 }
 
 #pt-carousel .slide-esma-arabic {
-    font-size: clamp(2.5rem, 10vw, 4rem);
+    font-size: calc(var(--font-scale) * clamp(2.5rem, 10vw, 4rem));
 }
 
 /* ─── ALT TICKER BANDI ───────────────────────────────────── */
@@ -192,7 +192,7 @@
 #pt-ticker .ticker-label {
     flex-shrink: 0;
     padding: 0 12px;
-    font-size: 0.65rem;
+    font-size: calc(var(--font-scale) * 0.65rem);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -219,7 +219,7 @@
 }
 
 #pt-ticker .ticker-item {
-    font-size: 0.75rem;
+    font-size: calc(var(--font-scale) * 0.75rem);
     color: var(--text-secondary);
     display: inline-flex;
     align-items: center;
@@ -252,15 +252,15 @@
 }
 
 #pt-ezan-overlay .ezan-icon {
-    font-size: 3rem;
+    font-size: calc(var(--font-scale) * 3rem);
 }
 
 #pt-ezan-overlay .ezan-prayer-name {
-    font-size: 2rem;
+    font-size: calc(var(--font-scale) * 2rem);
 }
 
 #pt-ezan-overlay .ezan-arabic {
-    font-size: 1.3rem;
+    font-size: calc(var(--font-scale) * 1.3rem);
 }
 
 #pt-ezan-overlay .ezan-wave-ring {
@@ -284,7 +284,7 @@
 }
 
 .ramadan-label {
-    font-size: 0.7rem;
+    font-size: calc(var(--font-scale) * 0.7rem);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -292,7 +292,7 @@
 }
 
 .ramadan-countdown {
-    font-size: 1.2rem;
+    font-size: calc(var(--font-scale) * 1.2rem);
     font-weight: 900;
     color: #fbbf24;
     font-variant-numeric: tabular-nums;
@@ -323,7 +323,7 @@
 }
 
 #ls-ramadan-info .rm-label {
-    font-size: 0.7rem;
+    font-size: calc(var(--font-scale) * 0.7rem);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -331,13 +331,13 @@
 }
 
 #ls-ramadan-info .rm-value {
-    font-size: 1.8rem;
+    font-size: calc(var(--font-scale) * 1.8rem);
     font-weight: 900;
     color: #fbbf24;
     font-variant-numeric: tabular-nums;
 }
 
 #ls-ramadan-info .rm-sub {
-    font-size: 0.75rem;
+    font-size: calc(var(--font-scale) * 0.75rem);
     color: rgba(251, 191, 36, 0.7);
 }

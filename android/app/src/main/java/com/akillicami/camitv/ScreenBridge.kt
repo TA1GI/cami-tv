@@ -39,6 +39,14 @@ class ScreenBridge(private val activity: Activity) {
         return prefs.getBoolean("auto_boot", true)
     }
 
+    // ─── Ayarlar Senkronizasyonu ───────────────────────────
+
+    @JavascriptInterface
+    fun syncSettings(json: String) {
+        val prefs = activity.getSharedPreferences("cami_tv_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putString("settings", json).apply()
+    }
+
     // ─── Ekran aç/kapat ────────────────────────────────────
 
     @JavascriptInterface
@@ -142,6 +150,28 @@ class ScreenBridge(private val activity: Activity) {
                 }
             }
         }
+    }
+
+    // ─── IP Adres Bilgisi ───────────────────────────────────
+
+    @JavascriptInterface
+    fun getLocalIPAddress(): String {
+        try {
+            val interfaces = java.net.NetworkInterface.getNetworkInterfaces()
+            while (interfaces.hasMoreElements()) {
+                val intf = interfaces.nextElement()
+                val addrs = intf.inetAddresses
+                while (addrs.hasMoreElements()) {
+                    val addr = addrs.nextElement()
+                    if (!addr.isLoopbackAddress && addr is java.net.Inet4Address) {
+                        return addr.hostAddress ?: ""
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return ""
     }
 
     // ─── Tepkisel metodlar ──────────────────────────────────

@@ -29,6 +29,7 @@ import java.net.URL
 class MainActivity : Activity() {
 
     private lateinit var webView: WebView
+    private var settingsServer: SettingsServer? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,17 +104,39 @@ class MainActivity : Activity() {
         // ─── Ana sayfayı yükle ─────────────────────────────
         // Web dosyaları assets/web/ klasöründe
         webView.loadUrl("file:///android_asset/web/index.html")
+
+        // ─── Yerel Web Sunucuyu Başlat (Telefonla Ayar) ────
+        try {
+            settingsServer = SettingsServer(this, webView, 8080)
+            settingsServer?.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private var backPressedTime: Long = 0
 
-    // ─── Çıkış için çift dokunma uyarısı ──────────────────
+    // ─── Çıkış ve Navigasyon İçin Geri Tuşu ────────────────
     override fun onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack()
+            return
+        }
+
+        val url = webView.url ?: ""
+        
+        // Eğer ayarlar sayfasındaysa index.html (Ana ekran) sayfasına dön
+        if (url.contains("settings.html")) {
+            webView.loadUrl("file:///android_asset/web/index.html")
+            return
+        }
+
+        // Ana ekrandaysa çift basım ile çıkış yap
         if (backPressedTime + 2000 > System.currentTimeMillis()) {
             super.onBackPressed()
-            // finish() veya exitProcess(0) gerekebilir, ama super yeterli
+            finishAffinity()
         } else {
-            android.widget.Toast.makeText(this, "Çıkmak için tekrar basın", android.widget.Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(this, "Uygulamadan çıkmak için tekrar basın", android.widget.Toast.LENGTH_SHORT).show()
         }
         backPressedTime = System.currentTimeMillis()
     }
@@ -146,7 +169,7 @@ class MainActivity : Activity() {
 
     // ─── OTA Güncelleme Kontrolü ───────────────────────
 
-    private val CURRENT_VERSION = "1.0.0"
+    private val CURRENT_VERSION = "1.0.1"
     private val RELEASES_API = "https://api.github.com/repos/TA1GI/cami-tv/releases/latest"
     private val updateHandler = Handler(Looper.getMainLooper())
     private val updateRunnable = object : Runnable {
@@ -177,6 +200,7 @@ class MainActivity : Activity() {
         super.onDestroy()
         webView.destroy()
         updateHandler.removeCallbacks(updateRunnable)
+        settingsServer?.stop()
     }
 
     fun checkForUpdate() {

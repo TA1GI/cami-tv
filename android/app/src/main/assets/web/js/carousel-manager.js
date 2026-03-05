@@ -60,6 +60,10 @@ const CarouselManager = (() => {
             _queue.push({ type: 'ayet', data: _contents.ayetler[idx] });
         }
 
+        if (_settings.gosterCamiBilgi && _settings.camiBilgiMetin) {
+            _queue.push({ type: 'camibilgi', data: { metin: _settings.camiBilgiMetin } });
+        }
+
         if (_settings.gosterHadis && _contents.hadisler?.length) {
             const idx = (_dayIndex + 3) % _contents.hadisler.length;
             _queue.push({ type: 'hadis', data: _contents.hadisler[idx] });

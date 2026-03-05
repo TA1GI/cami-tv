@@ -16,6 +16,7 @@
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
+        android:banner="@drawable/banner"
         android:label="Cami TV"
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="true"

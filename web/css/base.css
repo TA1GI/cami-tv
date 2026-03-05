@@ -86,6 +86,21 @@
   --font-scale: 1.45;
 }
 
+/* ────────────────────────────────────────────────────────────
+   GLOBAL KAYDIRMA ÇUBUĞUNU (SCROLLBAR) GİZLEME
+   ──────────────────────────────────────────────────────────── */
+* {
+  -ms-overflow-style: none;
+  /* IE + Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari ve Android WebView */
+}
+
 html {
   font-size: calc(16px * var(--font-scale));
 }
@@ -151,6 +166,48 @@ html {
   --vakit-aktif-border: rgba(212, 175, 55, 0.5);
   --vakit-aktif-text: #d4af37;
   --border-accent: rgba(212, 175, 55, 0.3);
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: LACİVERT (Navy Blue)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="navy"] {
+  --accent: #60a5fa;
+  --accent-dark: #2563eb;
+  --accent-glow: rgba(96, 165, 250, 0.2);
+  --accent-dim: rgba(96, 165, 250, 0.08);
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #93c5fd;
+  --text-muted: rgba(248, 250, 252, 0.5);
+  --countdown-color: #60a5fa;
+  --countdown-shadow: 0 0 30px rgba(96, 165, 250, 0.4);
+  --vakit-aktif-bg: rgba(96, 165, 250, 0.15);
+  --vakit-aktif-border: rgba(96, 165, 250, 0.5);
+  --vakit-aktif-text: #60a5fa;
+  --border-accent: rgba(96, 165, 250, 0.3);
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: GECE MORU (Night Purple)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="purple"] {
+  --accent: #c084fc;
+  --accent-dark: #7e22ce;
+  --accent-glow: rgba(192, 132, 252, 0.2);
+  --accent-dim: rgba(192, 132, 252, 0.08);
+  --bg-primary: #1e1b4b;
+  --bg-secondary: #2e1065;
+  --text-primary: #faf5ff;
+  --text-secondary: #d8b4fe;
+  --text-muted: rgba(250, 245, 255, 0.5);
+  --countdown-color: #c084fc;
+  --countdown-shadow: 0 0 30px rgba(192, 132, 252, 0.4);
+  --vakit-aktif-bg: rgba(192, 132, 252, 0.15);
+  --vakit-aktif-border: rgba(192, 132, 252, 0.5);
+  --vakit-aktif-text: #c084fc;
+  --border-accent: rgba(192, 132, 252, 0.3);
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -224,7 +281,7 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-size: clamp(12px, 1.2vw + 0.5vh, 18px);
+  font-size: calc(var(--font-scale) * clamp(12px, 1.2vw + 0.5vh, 18px));
   /* Responsive root font */
   font-family: var(--font-ui);
   background: var(--bg-primary);
@@ -268,7 +325,7 @@ body {
   gap: 4px;
   padding: 4px 10px;
   border-radius: var(--radius-full);
-  font-size: 0.7rem;
+  font-size: calc(var(--font-scale) * 0.7rem);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -381,7 +438,7 @@ body {
 }
 
 .loading-text {
-  font-size: 1rem;
+  font-size: calc(var(--font-scale) * 1rem);
   color: var(--text-muted);
   letter-spacing: 0.05em;
 }
@@ -406,26 +463,43 @@ body {
 }
 
 .setup-box {
-  width: 100%;
-  max-width: 480px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  padding: 40px;
+  padding: 30px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 15px;
+  box-shadow: var(--shadow-lg);
+  margin: auto;
 }
 
+/* Scrollbar Gizle Ama Scroll Edilsin */
+.setup-box::-webkit-scrollbar {
+  display: none;
+}
+
+.setup-box {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+
 .setup-title {
-  font-size: 1.5rem;
+  font-size: calc(var(--font-scale) * 1.5rem);
   font-weight: 700;
   color: var(--text-primary);
   text-align: center;
 }
 
 .setup-subtitle {
-  font-size: 0.9rem;
+  font-size: calc(var(--font-scale) * 0.9rem);
   color: var(--text-muted);
   text-align: center;
   line-height: 1.6;
@@ -438,7 +512,7 @@ body {
 }
 
 .setup-field label {
-  font-size: 0.8rem;
+  font-size: calc(var(--font-scale) * 0.8rem);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -454,7 +528,7 @@ body {
   background: var(--bg-secondary);
   color: var(--text-primary);
   font-family: var(--font-ui);
-  font-size: 1rem;
+  font-size: calc(var(--font-scale) * 1rem);
   outline: none;
   transition: border-color var(--transition-fast);
   cursor: pointer;
@@ -474,7 +548,7 @@ body {
   border-radius: var(--radius-md);
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  font-size: 0.85rem;
+  font-size: calc(var(--font-scale) * 0.85rem);
   color: var(--text-secondary);
 }
 
@@ -496,7 +570,7 @@ body {
   background: var(--accent);
   color: #000;
   font-family: var(--font-ui);
-  font-size: 1rem;
+  font-size: calc(var(--font-scale) * 1rem);
   font-weight: 700;
   cursor: pointer;
   transition: opacity var(--transition-fast), transform var(--transition-fast);
@@ -513,7 +587,7 @@ body {
 }
 
 .setup-error {
-  font-size: 0.85rem;
+  font-size: calc(var(--font-scale) * 0.85rem);
   color: #f87171;
   text-align: center;
   display: none;
@@ -547,7 +621,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.8rem;
+  font-size: calc(var(--font-scale) * 0.8rem);
   color: var(--text-secondary);
 }
 
@@ -657,7 +731,7 @@ body:hover #settings-trigger {
   background: var(--bg-secondary);
   color: var(--text-muted);
   font-family: var(--font-ui);
-  font-size: 1rem;
+  font-size: calc(var(--font-scale) * 1rem);
   cursor: pointer;
   transition: border-color var(--transition-fast), background var(--transition-fast);
   text-align: left;
@@ -686,7 +760,7 @@ body:hover #settings-trigger {
 }
 
 .ss-arrow {
-  font-size: 0.75rem;
+  font-size: calc(var(--font-scale) * 0.75rem);
   color: var(--text-muted);
   transition: transform var(--transition-fast);
   flex-shrink: 0;
@@ -730,7 +804,7 @@ body:hover #settings-trigger {
   background: transparent;
   color: var(--text-primary);
   font-family: var(--font-ui);
-  font-size: 0.9rem;
+  font-size: calc(var(--font-scale) * 0.9rem);
   outline: none;
   box-sizing: border-box;
 }
@@ -747,7 +821,7 @@ body:hover #settings-trigger {
 
 .ss-option {
   padding: 10px 14px;
-  font-size: 0.9rem;
+  font-size: calc(var(--font-scale) * 0.9rem);
   color: var(--text-secondary);
   cursor: pointer;
   transition: background var(--transition-fast), color var(--transition-fast);
@@ -768,7 +842,7 @@ body:hover #settings-trigger {
 .ss-empty {
   padding: 16px 14px;
   text-align: center;
-  font-size: 0.82rem;
+  font-size: calc(var(--font-scale) * 0.82rem);
   color: var(--text-muted);
 }
 
@@ -784,4 +858,46 @@ body:hover #settings-trigger {
 /* Ayarlar sayfasında */
 .setting-control .ss-wrapper {
   min-width: 180px;
+}
+
+/* ────────────────────────────────────────────────────────────
+   QR SPLIT LAYOUT (Responsive Yatay/Dikey Ayırıcı)
+   ──────────────────────────────────────────────────────────── */
+.qr-split-layout {
+  display: flex;
+  flex-direction: column;
+  /* Mobilde (Dikeyde) alt alta dizilsin */
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+  max-width: 900px;
+  margin: auto;
+}
+
+@media (min-width: 600px) {
+  .qr-split-layout {
+    flex-direction: row;
+    /* TV'de (Yatayda) yan yana dizilsin */
+    max-height: 90vh;
+  }
+}
+
+.qr-split-panel-left {
+  flex: 1;
+  padding: 40px;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.qr-split-panel-right {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

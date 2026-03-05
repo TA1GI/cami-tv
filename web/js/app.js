@@ -29,17 +29,36 @@ const App = (() => {
         // 3) Ayarları yükle
         _settings = SettingsManager.load();
 
-        // 4) Tema uygula
+        // 4) Dil ayarını uygula
+        if (typeof I18n !== 'undefined') {
+            I18n.setLanguage(_settings.dil || 'tr');
+        }
+
+        // 5) Tema uygula
         DisplayManager.applyTheme(_settings.tema);
 
-        // 5) Kurulum kontrolü
+        // EXTRA: Telefondan gelen "kaydet ve indir" (SettingsServer) uyarısı
+        // NOT: WebView file:/// protokolü URL query desteklemeyebileceği için localStorage flag kullanıyoruz.
+        if (localStorage.getItem('force_download_flag') === '1' && _settings.ilce && _settings.ilceId) {
+            localStorage.removeItem('force_download_flag');
+            console.log('[App] Telefon üzerinden eşleştirme tamamlandı, vakitler indiriliyor...');
+            showLoading(true);
+            try {
+                await DataManager.downloadAndSetup(_settings.il, _settings.ilce, _settings.ilceId);
+                console.log('[App] İndirme başarılı.');
+            } catch (e) {
+                console.error('[App] force_download başarısız:', e);
+            }
+        }
+
+        // 6) Kurulum kontrolü
         if (!SettingsManager.isSetupComplete()) {
             showLoading(false);
             showSetup();
             return;
         }
 
-        // 6) Veritabanından vakit verisini yükle
+        // 7) Veritabanından vakit verisini yükle
         const hasData = await DataManager.loadFromDB();
         if (!hasData) {
             // Kayıtlı veri yok, kuruluma yönlendir
@@ -48,10 +67,10 @@ const App = (() => {
             return;
         }
 
-        // 7) Ana uygulamayı başlat
+        // 8) Ana uygulamayı başlat
         await startMainApp();
 
-        // 8) Arka planda yıl güncelleme kontrolü
+        // 9) Arka planda yıl güncelleme kontrolü
         setTimeout(async () => {
             const ilce = _settings.ilce;
             const ilceId = _settings.ilceId;
@@ -64,11 +83,38 @@ const App = (() => {
     }
 
     // ──────────────────────────────────────────────────────
+    // SABAH NAMAZI İMSAK/GÜNEŞ KURALI (Yardımcı)
+    // ──────────────────────────────────────────────────────
+    function applySabahLogic(pt, settings) {
+        if (!pt) return pt;
+        const dayType = PrayerEngine.getDayType(pt);
+        const adjusted = { ...pt };
+
+        if (settings.sabahImsagaGore || dayType?.ramazan) {
+            adjusted.sabah = adjusted.imsak;
+        } else if (adjusted.gunes) {
+            // Normal günlerde sabah ezanı güneşten 1 saat önce okunur
+            const [h, m] = adjusted.gunes.split(':').map(Number);
+            let totalMin = h * 60 + m - 60;
+            if (totalMin < 0) totalMin += 24 * 60;
+            const sh = Math.floor(totalMin / 60);
+            const sm = totalMin % 60;
+            adjusted.sabah = `${String(sh).padStart(2, '0')}:${String(sm).padStart(2, '0')}`;
+        }
+        return adjusted;
+    }
+
+    function applySabahLogicList(list, settings) {
+        if (!list) return list;
+        return list.map(pt => applySabahLogic(pt, settings));
+    }
+
+    // ──────────────────────────────────────────────────────
     // ANA UYGULAMA
     // ──────────────────────────────────────────────────────
     async function startMainApp() {
         // Bugünün vakitlerini al
-        _todayPT = DataManager.getTodayPrayerTimes();
+        _todayPT = applySabahLogic(DataManager.getTodayPrayerTimes(), _settings);
         _tomorrowImsak = DataManager.getTomorrowImsak();
         _dayType = PrayerEngine.getDayType(_todayPT);
 
@@ -81,7 +127,7 @@ const App = (() => {
         PowerManager.init(_settings, _todayPT);
 
         // Carousel başlat
-        const weekPrayer = DataManager.getWeekPrayerTimes();
+        let weekPrayer = applySabahLogicList(DataManager.getWeekPrayerTimes(), _settings);
         await CarouselManager.init(_settings, weekPrayer, (slide, idx, total) => {
             DisplayManager.renderSlide(slide, idx, total);
         });
@@ -122,11 +168,13 @@ const App = (() => {
         const todayStr = PrayerEngine.getTodayStr();
         if (_todayPT.miladiTarih !== todayStr) {
             // Yeni gün — verileri yenile
-            _todayPT = DataManager.getTodayPrayerTimes();
+            _todayPT = applySabahLogic(DataManager.getTodayPrayerTimes(), _settings);
             _tomorrowImsak = DataManager.getTomorrowImsak();
             _dayType = PrayerEngine.getDayType(_todayPT);
             PowerManager.updatePrayerTimes(_todayPT);
-            CarouselManager.refresh(_settings, DataManager.getWeekPrayerTimes());
+
+            const newWeekPrayer = applySabahLogicList(DataManager.getWeekPrayerTimes(), _settings);
+            CarouselManager.refresh(_settings, newWeekPrayer);
         }
 
         // Sonraki vakit hesapla
@@ -290,6 +338,8 @@ const App = (() => {
     // ──────────────────────────────────────────────────────
     function showSetup(errorMsg) {
         const screen = document.getElementById('setup-screen');
+        const qrView = document.getElementById('setup-qr-view');
+        const formView = document.getElementById('setup-form-view');
         if (!screen) return;
         screen.classList.add('visible');
 
@@ -298,6 +348,59 @@ const App = (() => {
             if (errorEl) {
                 errorEl.textContent = errorMsg;
                 errorEl.classList.add('visible');
+            }
+            if (qrView) qrView.style.display = 'none';
+            if (formView) formView.style.display = 'block';
+        } else {
+            // Android platformu kontrolü (Yerel ağ IP'si varsa TV uygulamasındayız demektir)
+            if (window.AndroidBridge && typeof AndroidBridge.getLocalIPAddress === 'function' && qrView && formView) {
+                const bridgeIp = AndroidBridge.getLocalIPAddress();
+                if (bridgeIp && bridgeIp !== "0.0.0.0") {
+                    qrView.style.display = 'flex';
+                    formView.style.display = 'none';
+
+                    const qrUrl = `http://${bridgeIp}:8080/settings.html`;
+                    document.getElementById('setup-qr-url-text').textContent = qrUrl;
+
+                    const qrContainer = document.getElementById('setup-qr-container');
+                    if (qrContainer) {
+                        qrContainer.innerHTML = '';
+                        try {
+                            new QRCode(qrContainer, {
+                                text: qrUrl,
+                                width: 220,
+                                height: 220,
+                                colorDark: "#000000",
+                                colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.H
+                            });
+                        } catch (e) {
+                            console.error("QR Code Error:", e);
+                            qrView.style.display = 'none';
+                            formView.style.display = 'block';
+                        }
+                    }
+
+                    // Kumandayla devam et butonu eylemi
+                    const btnContinue = document.getElementById('btn-setup-continue-tv');
+                    if (btnContinue) {
+                        btnContinue.onclick = () => {
+                            qrView.style.display = 'none';
+                            formView.style.display = 'block';
+                            // Form yüklendiğinde içerisindeki elemanlara focus olabilmesi için
+                            const firstInput = document.getElementById('setup-cami');
+                            if (firstInput) firstInput.focus();
+                        };
+                    }
+                } else {
+                    // IP Yoksa doğrudan formu göster
+                    if (qrView) qrView.style.display = 'none';
+                    if (formView) formView.style.display = 'block';
+                }
+            } else {
+                // TV dışındaki bir cihazdan (PC, Telefon tarayıcısı vb.) giriliyorsa form göster
+                if (qrView) qrView.style.display = 'none';
+                if (formView) formView.style.display = 'block';
             }
         }
 

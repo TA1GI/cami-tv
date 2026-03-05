@@ -8,6 +8,11 @@ function initSettingsPage() {
     const settings = SettingsManager.load();
     let isDirty = false;
 
+    // Sayfa açılışında kayıtlı dili uygula
+    if (typeof I18n !== 'undefined') {
+        I18n.setLanguage(settings.dil || 'tr');
+    }
+
     // ──────────────────────────────────────────────────────
     // Tema uygula (ayarlar sayfasına da)
     // ──────────────────────────────────────────────────────
@@ -77,15 +82,49 @@ function initSettingsPage() {
     setVal('s-tema', settings.tema);
     setVal('s-ekran-yonu', settings.ekranYonu);
     setVal('s-yazi-boyu', settings.yaziBoyu);
+    if (document.getElementById('s-dil')) {
+        setVal('s-dil', settings.dil || 'tr');
+        document.getElementById('s-dil').addEventListener('change', (e) => {
+            if (window.I18n) window.I18n.setLanguage(e.target.value);
+            markDirty();
+        });
+    }
 
-    // İçerik
     setCheck('s-goster-ayet', settings.gosterAyet);
     setCheck('s-goster-hadis', settings.gosterHadis);
+    setCheck('s-goster-sabah', settings.gosterSabah);
     setCheck('s-goster-esma', settings.gosterEsma);
     setCheck('s-goster-dua', settings.gosterDua);
+    setCheck('s-goster-camibilgi', settings.gosterCamiBilgi);
     setCheck('s-goster-imsakiye', settings.gosterImsakiye);
     setCheck('s-goster-ticker', settings.gosterTickerBant);
     setCheck('s-goster-hicri', settings.gosterHicriTarih);
+
+    // Cami Bilgi Textarea Toggle Logic
+    const camiBilgiToggle = document.getElementById('s-goster-camibilgi');
+    const camiBilgiContainer = document.getElementById('s-camibilgi-container');
+    const camiBilgiMetin = document.getElementById('s-camibilgi-metin');
+
+    if (camiBilgiMetin) {
+        camiBilgiMetin.value = settings.camiBilgiMetin || '';
+    }
+
+    function updateCamiBilgiPanel() {
+        if (camiBilgiContainer) {
+            camiBilgiContainer.style.display = camiBilgiToggle?.checked ? 'flex' : 'none';
+        }
+    }
+    updateCamiBilgiPanel();
+
+    if (camiBilgiToggle) {
+        camiBilgiToggle.addEventListener('change', () => {
+            updateCamiBilgiPanel();
+            markDirty();
+        });
+    }
+    if (camiBilgiMetin) {
+        camiBilgiMetin.addEventListener('input', markDirty);
+    }
 
     // Carousel süre
     const carouselSlider = document.getElementById('s-carousel-sure');
@@ -98,6 +137,7 @@ function initSettingsPage() {
     });
 
     // Ezan
+    setCheck('s-sabah-imsaga-gore', settings.sabahImsagaGore);
     const ezanSlider = document.getElementById('s-ezan-once');
     const ezanVal = document.getElementById('s-ezan-once-val');
     ezanSlider.value = settings.ezanOnceDk;
@@ -133,6 +173,61 @@ function initSettingsPage() {
             autoBootBtn.disabled = true;
             autoBootBtn.parentElement.parentElement.parentElement.style.opacity = '0.4';
         }
+    }
+
+    // ──────────────────────────────────────────────────────
+    // KIOSK / MİMARİ — TELEFONDAN KURULUM (Ayarlar Sayfası İçi)
+    // ──────────────────────────────────────────────────────
+    const qrView = document.getElementById('settings-qr-view');
+    const formView = document.getElementById('settings-form-view');
+
+    // Sadece Android üzerinde (TV'de) ve ağ IP'si varken QR formunu varsayılan olarak göster
+    if (window.AndroidBridge && typeof AndroidBridge.getLocalIPAddress === 'function' && qrView && formView) {
+        const bridgeIp = AndroidBridge.getLocalIPAddress();
+        if (bridgeIp && bridgeIp !== "0.0.0.0") {
+            qrView.style.display = 'flex';
+            formView.style.display = 'none';
+
+            const qrUrl = `http://${bridgeIp}:8080/settings.html`;
+            const urlTextElement = document.getElementById('settings-main-qr-url');
+            if (urlTextElement) urlTextElement.textContent = qrUrl;
+
+            const qrContainer = document.getElementById('settings-main-qr-container');
+            if (qrContainer) {
+                qrContainer.innerHTML = '';
+                try {
+                    new QRCode(qrContainer, {
+                        text: qrUrl,
+                        width: 250,
+                        height: 250,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                } catch (e) {
+                    console.error("QR Code Error:", e);
+                    qrView.style.display = 'none';
+                    formView.style.display = 'block';
+                }
+            }
+
+            // Kumandayla devam et butonu eylemi
+            const btnContinue = document.getElementById('btn-settings-continue-tv');
+            if (btnContinue) {
+                btnContinue.onclick = () => {
+                    qrView.style.display = 'none';
+                    formView.style.display = 'block';
+                };
+            }
+        } else {
+            // IP Yoksa doğrudan formu göster
+            if (qrView) qrView.style.display = 'none';
+            if (formView) formView.style.display = 'block';
+        }
+    } else {
+        // TV dışındaki bir cihazdan (PC, Telefon tarayıcısı vb.) giriliyorsa formu göster
+        if (qrView) qrView.style.display = 'none';
+        if (formView) formView.style.display = 'block';
     }
 
     // Güç yönetimi
@@ -203,6 +298,40 @@ function initSettingsPage() {
     }
 
     // ──────────────────────────────────────────────────────
+    // UZAKTAN AYAR (QR KOD)
+    // ──────────────────────────────────────────────────────
+    if (window.AndroidBridge && typeof AndroidBridge.getLocalIPAddress === 'function') {
+        const ip = AndroidBridge.getLocalIPAddress();
+        if (ip && ip !== "" && location.protocol !== 'http:') {
+            const qrBtn = document.getElementById('btn-remote-qr');
+            if (qrBtn) {
+                qrBtn.style.display = 'flex';
+                qrBtn.addEventListener('click', () => {
+                    const qrContainer = document.getElementById('qr-code-container');
+                    const urlStr = `http://${ip}:8080/settings.html`;
+
+                    document.getElementById('qr-url-text').textContent = urlStr;
+                    qrContainer.innerHTML = ''; // Temizle
+                    try {
+                        new QRCode(qrContainer, {
+                            text: urlStr,
+                            width: 200,
+                            height: 200,
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.H
+                        });
+                    } catch (e) {
+                        console.error('QR Oluşturulamadı:', e);
+                    }
+
+                    document.getElementById('qr-modal').classList.remove('hidden');
+                });
+            }
+        }
+    }
+
+    // ──────────────────────────────────────────────────────
     // KAYDET
     // ──────────────────────────────────────────────────────
     document.getElementById('btn-save')?.addEventListener('click', async () => {
@@ -262,18 +391,25 @@ function initSettingsPage() {
         s.tema = getVal('s-tema');
         s.ekranYonu = getVal('s-ekran-yonu');
         s.yaziBoyu = getVal('s-yazi-boyu');
+        if (document.getElementById('s-dil')) {
+            s.dil = getVal('s-dil');
+        }
 
         // İçerik
         s.gosterAyet = getCheck('s-goster-ayet');
         s.gosterHadis = getCheck('s-goster-hadis');
+        s.gosterSabah = getCheck('s-goster-sabah');
         s.gosterEsma = getCheck('s-goster-esma');
         s.gosterDua = getCheck('s-goster-dua');
+        s.gosterCamiBilgi = getCheck('s-goster-camibilgi', false);
+        s.camiBilgiMetin = document.getElementById('s-camibilgi-metin') ? document.getElementById('s-camibilgi-metin').value.trim() : '';
         s.gosterImsakiye = getCheck('s-goster-imsakiye');
         s.gosterTickerBant = getCheck('s-goster-ticker');
         s.gosterHicriTarih = getCheck('s-goster-hicri');
         s.carouselSure = parseInt(carouselSlider.value) || 15;
 
         // Ezan & Cemaat
+        s.sabahImsagaGore = getCheck('s-sabah-imsaga-gore');
         s.ezanOnceDk = parseInt(ezanSlider.value) || 15;
         s.gosterCemaat = getCheck('s-goster-cemaat');
         s.cemaatOffsets = {
@@ -307,6 +443,22 @@ function initSettingsPage() {
 
         const ok = SettingsManager.save(s);
         if (ok) {
+            // Eğer telefon tarayıcısından (HTTP) açılmışsa ayarları TV'ye gönder
+            if (location.protocol === 'http:') {
+                fetch('/api/save', { method: 'POST', body: JSON.stringify(s) })
+                    .then(() => {
+                        statusEl.textContent = '✓ TV\'ye Gönderildi';
+                        statusEl.style.color = 'var(--accent)';
+                        isDirty = false;
+                        setTimeout(() => location.reload(), 1500);
+                    })
+                    .catch(err => {
+                        statusEl.textContent = '✗ Gönderim hatası';
+                        statusEl.style.color = '#f87171';
+                    });
+                return;
+            }
+
             statusEl.textContent = '✓ Kaydedildi';
             statusEl.style.color = 'var(--accent)';
             isDirty = false;

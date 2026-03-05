@@ -28,8 +28,11 @@ const SettingsManager = (() => {
     // İçerik toggle'ları
     gosterAyet: true,
     gosterHadis: true,
+    gosterSabah: true,
     gosterEsma: true,
     gosterDua: true,
+    gosterCamiBilgi: false,
+    camiBilgiMetin: '',
     gosterImsakiye: true,
     gosterHavaDurumu: false,  // internet gerektirir
     gosterKible: true,
@@ -41,6 +44,7 @@ const SettingsManager = (() => {
     carouselSure: 15,
 
     // Ezan ekranı
+    sabahImsagaGore: false, // Sabah ezanını imsaka göre hesaba kat
     ezanOnceDk: 15,       // kaç dakika önce açılsın
     cemaatOffsets: {         // her vakit için cemaat dakikası (dk sonra)
       imsak: 0,
@@ -92,9 +96,16 @@ const SettingsManager = (() => {
   function load() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return structuredClone(DEFAULTS);
-      // Derin birleştirme: kayıtlı ayarları defaults ile birleştir
-      return deepMerge(structuredClone(DEFAULTS), JSON.parse(raw));
+      let result = structuredClone(DEFAULTS);
+      if (raw) {
+        result = deepMerge(result, JSON.parse(raw));
+      }
+
+      // Ayarları Android SharedPreferences katmanına yedekle (Telefondan ilk girişte görünebilmesi için)
+      if (window.AndroidBridge && typeof AndroidBridge.syncSettings === 'function') {
+        AndroidBridge.syncSettings(JSON.stringify(result));
+      }
+      return result;
     } catch (e) {
       console.warn('[Settings] Yükleme hatası, varsayılanlar kullanılıyor:', e);
       return structuredClone(DEFAULTS);
@@ -104,6 +115,12 @@ const SettingsManager = (() => {
   function save(settings) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+
+      // Ayarları Android SharedPreferences katmanına senkronize et
+      if (window.AndroidBridge && typeof AndroidBridge.syncSettings === 'function') {
+        AndroidBridge.syncSettings(JSON.stringify(settings));
+      }
+
       return true;
     } catch (e) {
       console.error('[Settings] Kaydetme hatası:', e);

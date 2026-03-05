@@ -228,7 +228,7 @@ const DataManager = (() => {
         const gunler = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
         const result = [];
 
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 30; i++) {
             const d = new Date();
             d.setDate(d.getDate() + i);
             const str = `${String(d.getDate()).padStart(2, '0')} ${aylar[d.getMonth()]} ${d.getFullYear()} ${gunler[d.getDay()]}`;

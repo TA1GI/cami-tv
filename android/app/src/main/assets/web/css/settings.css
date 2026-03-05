@@ -47,7 +47,7 @@ body {
     border: 1px solid var(--border);
     background: var(--bg-card);
     color: var(--text-secondary);
-    font-size: 1.2rem;
+    font-size: calc(var(--font-scale) * 1.2rem);
     cursor: pointer;
     transition: all var(--transition-fast);
     flex-shrink: 0;
@@ -61,13 +61,13 @@ body {
 }
 
 .settings-header h1 {
-    font-size: 1.3rem;
+    font-size: calc(var(--font-scale) * 1.3rem);
     font-weight: 800;
 }
 
 .settings-header .version {
     margin-left: auto;
-    font-size: 0.7rem;
+    font-size: calc(var(--font-scale) * 0.7rem);
     color: var(--text-muted);
     padding: 4px 10px;
     border-radius: var(--radius-full);
@@ -81,7 +81,7 @@ body {
 }
 
 .section-title {
-    font-size: 0.7rem;
+    font-size: calc(var(--font-scale) * 0.7rem);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -124,7 +124,7 @@ body {
 }
 
 .setting-icon {
-    font-size: 1.2rem;
+    font-size: calc(var(--font-scale) * 1.2rem);
     width: 32px;
     text-align: center;
     flex-shrink: 0;
@@ -136,13 +136,13 @@ body {
 }
 
 .setting-label {
-    font-size: 0.9rem;
+    font-size: calc(var(--font-scale) * 0.9rem);
     font-weight: 600;
     color: var(--text-primary);
 }
 
 .setting-desc {
-    font-size: 0.75rem;
+    font-size: calc(var(--font-scale) * 0.75rem);
     color: var(--text-muted);
     margin-top: 2px;
     line-height: 1.4;
@@ -216,7 +216,7 @@ body {
     background: var(--bg-secondary);
     color: var(--text-primary);
     font-family: var(--font-ui);
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     cursor: pointer;
     appearance: none;
     min-width: 120px;
@@ -236,7 +236,7 @@ body {
     background: var(--bg-secondary);
     color: var(--text-primary);
     font-family: var(--font-ui);
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     width: 100%;
     max-width: 200px;
     outline: none;
@@ -260,7 +260,7 @@ body {
     background: var(--bg-secondary);
     color: var(--text-primary);
     font-family: var(--font-ui);
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     width: 100px;
     outline: none;
     cursor: pointer;
@@ -297,7 +297,7 @@ body {
 }
 
 .range-value {
-    font-size: 0.8rem;
+    font-size: calc(var(--font-scale) * 0.8rem);
     font-weight: 600;
     color: var(--text-secondary);
     min-width: 32px;
@@ -311,7 +311,7 @@ body {
 }
 
 .offset-table th {
-    font-size: 0.65rem;
+    font-size: calc(var(--font-scale) * 0.65rem);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -325,7 +325,7 @@ body {
     padding: 6px;
     text-align: center;
     border-bottom: 1px solid var(--border);
-    font-size: 0.82rem;
+    font-size: calc(var(--font-scale) * 0.82rem);
 }
 
 .offset-table tr:last-child td {
@@ -347,7 +347,7 @@ body {
     background: var(--bg-secondary);
     color: var(--text-primary);
     font-family: var(--font-ui);
-    font-size: 0.8rem;
+    font-size: calc(var(--font-scale) * 0.8rem);
     text-align: center;
     outline: none;
 }
@@ -372,12 +372,12 @@ body {
     border-radius: var(--radius-sm);
     background: var(--bg-secondary);
     border: 1px solid var(--border);
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     color: var(--text-secondary);
 }
 
 .duyuru-item .duyuru-tip {
-    font-size: 0.65rem;
+    font-size: calc(var(--font-scale) * 0.65rem);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -417,7 +417,7 @@ body {
     background: transparent;
     color: #f87171;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -445,7 +445,7 @@ body {
     background: var(--bg-secondary);
     color: var(--text-primary);
     font-family: var(--font-ui);
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     outline: none;
 }
 
@@ -460,7 +460,7 @@ body {
     background: var(--bg-secondary);
     color: var(--text-primary);
     font-family: var(--font-ui);
-    font-size: 0.8rem;
+    font-size: calc(var(--font-scale) * 0.8rem);
     appearance: none;
     cursor: pointer;
     outline: none;
@@ -473,7 +473,7 @@ body {
     background: var(--accent);
     color: #000;
     font-family: var(--font-ui);
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     font-weight: 700;
     cursor: pointer;
     flex-shrink: 0;
@@ -496,7 +496,7 @@ body {
     background: rgba(248, 113, 113, 0.1);
     color: #f87171;
     font-family: var(--font-ui);
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -534,7 +534,7 @@ body {
     background: var(--accent);
     color: #000;
     font-family: var(--font-ui);
-    font-size: 0.95rem;
+    font-size: calc(var(--font-scale) * 0.95rem);
     font-weight: 700;
     cursor: pointer;
     transition: opacity var(--transition-fast), transform var(--transition-fast);
@@ -546,7 +546,7 @@ body {
 }
 
 .save-bar .save-status {
-    font-size: 0.82rem;
+    font-size: calc(var(--font-scale) * 0.82rem);
     color: var(--text-muted);
 }
 
@@ -566,7 +566,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.7rem;
+    font-size: calc(var(--font-scale) * 0.7rem);
     color: #666;
     flex-shrink: 0;
 }
@@ -576,14 +576,14 @@ body {
 }
 
 .qr-info .qr-title {
-    font-size: 0.9rem;
+    font-size: calc(var(--font-scale) * 0.9rem);
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 4px;
 }
 
 .qr-info .qr-desc {
-    font-size: 0.75rem;
+    font-size: calc(var(--font-scale) * 0.75rem);
     color: var(--text-muted);
     line-height: 1.5;
 }
@@ -623,7 +623,7 @@ body {
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     gap: 8px;
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     color: var(--text-secondary);
 }
 
@@ -634,7 +634,7 @@ body {
     border: 1px solid var(--border);
     background: var(--bg-secondary);
     color: var(--text-primary);
-    font-size: 0.85rem;
+    font-size: calc(var(--font-scale) * 0.85rem);
     text-align: center;
     outline: none;
 }

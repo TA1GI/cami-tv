@@ -15,24 +15,20 @@ const PrayerEngine = (() => {
     const VAKIT_KEYS = ['imsak', 'sabah', 'gunes', 'ogle', 'ikindi', 'aksam', 'yatsi'];
     // Vakit ikonları
     const VAKIT_ICONS = {
-        imsak: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12.1,22c-5,0-9.1-4.1-9.1-9.1c0-4.3,3-8,7.2-8.9C9.1,6,8,8.4,8,11c0,4.4,3.6,8,8,8c1.6,0,3.1-0.5,4.3-1.3C19,20.2,15.7,22,12.1,22z"/></svg>`,
-        sabah: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5,18l2-2h10l2,2H5z M12,4c2.8,0,5.2,1.8,6.1,4.4l-1.9,0.6C15.6,7.2,13.9,6,12,6S8.4,7.2,7.7,9l-1.9-0.6C6.8,5.8,9.2,4,12,4z M12,10c1.1,0,2,0.9,2,2h-4C10,10.9,10.9,10,12,10z"/></svg>`,
-        gunes: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><path d="M12,2v3 M12,19v3 M2,12h3 M19,12h3 M4.9,4.9l2.1,2.1 M17,17l2.1,2.1 M4.9,19.1l2.1-2.1 M17,7l2.1-2.1" stroke="currentColor" stroke-width="2"/></svg>`,
-        ogle: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12,7v5l3,3"/></svg>`,
-        ikindi: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17,10c1.66,0,3-1.34,3-3s-1.34-3-3-3s-3,1.34-3,3S15.34,10,17,10z M11,12c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S13.76,12,11,12z"/></svg>`,
-        aksam: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,11c1.1,0,2.16,0.13,3.2,0.36L16,10l-4-4l-4,4l0.8,1.36C9.84,11.13,10.9,11,12,11z M5.54,12.43L4,14l7.63,7.63l1.83-4.27C12.98,17.13,12.51,17,12,17C9.36,17,7.18,15.1,6.58,12.64L5.54,12.43z M20,14l-1.54-1.57l-1.04,0.21C16.82,15.1,14.64,17,12,17c-0.51,0-0.98,0.13-1.46,0.36L12.37,21.63L20,14z"/></svg>`,
-        yatsi: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z M19,3l-0.78,1.72L16.5,5.5l1.72,0.78L19,8l0.78-1.72L21.5,5.5l-1.72-0.78L19,3z M20.5,14l-0.39,0.86L19.25,15.25l0.86,0.39L20.5,16.5l0.39-0.86L21.75,15.25l-0.86-0.39L20.5,14z M8.5,4L7.72,5.72L6,6.5l1.72,0.78L8.5,9l0.78-1.72L11,6.5L9.28,5.72L8.5,4z"/></svg>`,
-        kible: '🧭'
+        imsak: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/><polygon points="14 6 15 8 17 8 15.5 9.5 16 11.5 14 10.5 12 11.5 12.5 9.5 11 8 13 8 14 6"/></svg>`,
+        sabah: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v4"/><path d="M4.22 8.22l2.83 2.83"/><path d="M19.78 8.22l-2.83 2.83"/><path d="M2 18h20"/><path d="M6 14a6 6 0 0 1 12 0"/></svg>`,
+        gunes: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>`,
+        ogle: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16"/><path d="M12 4A6 6 0 0 0 6 10v12"/><path d="M12 4A6 6 0 0 1 18 10v12"/><path d="M12 4V2"/><path d="M2 22v-8"/><path d="M22 22v-8"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M9 22v-4a3 3 0 0 1 6 0v4"/></svg>`,
+        ikindi: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20"/><rect x="6" y="6" width="12" height="16"/><path d="M6 10h12"/><path d="M6 14h12"/></svg>`,
+        aksam: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h20"/><path d="M5 22h14"/><path d="M8 14a4 4 0 0 1 8 0"/><path d="M12 6v4"/><path d="M6.3 8.3l2.8 2.8"/><path d="M17.7 8.3l-2.8 2.8"/></svg>`,
+        yatsi: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M9 4h6l2 4H7l2-4z"/><path d="M7 8v10l2 4h6l2-4V8H7z"/><path d="M12 13v3"/></svg>`,
+        kible: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`
     };
-    const VAKIT_LABELS = {
-        imsak: 'İmsak',
-        sabah: 'Sabah',
-        gunes: 'Güneş',
-        ogle: 'Öğle',
-        ikindi: 'İkindi',
-        aksam: 'Akşam',
-        yatsi: 'Yatsı',
-    };
+
+    // Dinamik get için wrapper
+    function getVakitLabel(key) {
+        return typeof I18n !== 'undefined' ? I18n.get(key) : key;
+    }
 
     // ──────────────────────────────────────────────────────
     // Vakit string'ini dakikaya çevir (HH:MM → dk)
@@ -71,14 +67,7 @@ const PrayerEngine = (() => {
             const [h, m] = val.split(':').map(Number);
             const vakitSec = h * 3600 + m * 60;
             if (vakitSec > nowSec) {
-                let label = VAKIT_LABELS[key];
-                if (key === 'imsak') label = 'İmsaka Kalan Süre';
-                else if (key === 'sabah') label = 'Sabaha Kalan Süre';
-                else if (key === 'gunes') label = 'Güneşe Kalan Süre';
-                else if (key === 'ogle') label = 'Öğleye Kalan Süre';
-                else if (key === 'ikindi') label = 'İkindiye Kalan Süre';
-                else if (key === 'aksam') label = 'Akşama Kalan Süre';
-                else if (key === 'yatsi') label = 'Yatsıya Kalan Süre';
+                let label = typeof I18n !== 'undefined' ? I18n.get('kalan_sure', { vakit: I18n.get(key) }) : key;
 
                 return {
                     key,
@@ -99,7 +88,7 @@ const PrayerEngine = (() => {
             const remainingSec = Math.floor((tomorrow - now) / 1000);
             return {
                 key: 'imsak',
-                label: 'İmsaka Kalan Süre',
+                label: typeof I18n !== 'undefined' ? I18n.get('kalan_sure', { vakit: I18n.get('imsak') }) : 'imsak',
                 icon: VAKIT_ICONS['imsak'],
                 time: tomorrowImsak,
                 remainingSec,
@@ -173,7 +162,7 @@ const PrayerEngine = (() => {
                 // Önce bugünün imsağı üzerinden hesapla
                 return {
                     tip: 'sahur',
-                    label: 'İmsaka',
+                    label: typeof I18n !== 'undefined' ? I18n.get('kalan_sure', { vakit: I18n.get('sahur') }) : 'Sahur',
                     remainingSec: imsakSec - nowSec,
                 };
             }
@@ -183,7 +172,7 @@ const PrayerEngine = (() => {
         if (nowSec >= imsakSec && nowSec < aksamSec) {
             return {
                 tip: 'iftar',
-                label: 'İftara',
+                label: typeof I18n !== 'undefined' ? I18n.get('kalan_sure', { vakit: I18n.get('iftar') }) : 'İftar',
                 remainingSec: aksamSec - nowSec,
             };
         }
@@ -196,7 +185,7 @@ const PrayerEngine = (() => {
             tomorrow.setHours(h, m, 0, 0);
             return {
                 tip: 'sahur',
-                label: 'İmsaka',
+                label: typeof I18n !== 'undefined' ? I18n.get('kalan_sure', { vakit: I18n.get('sahur') }) : 'Sahur',
                 remainingSec: Math.floor((tomorrow - now) / 1000),
             };
         }
@@ -275,7 +264,7 @@ const PrayerEngine = (() => {
             if (nowSec >= windowStart && nowSec < vakitSec) {
                 return {
                     key,
-                    label: VAKIT_LABELS[key],
+                    label: getVakitLabel(key),
                     icon: VAKIT_ICONS[key],
                     time: val,
                     remainingSec: vakitSec - nowSec,
@@ -287,7 +276,7 @@ const PrayerEngine = (() => {
             if (nowSec >= vakitSec && nowSec < vakitSec + 600) { // 10 dk ezan ekranı kalır
                 return {
                     key,
-                    label: VAKIT_LABELS[key],
+                    label: getVakitLabel(key),
                     icon: VAKIT_ICONS[key],
                     time: val,
                     remainingSec: 0,
@@ -350,7 +339,7 @@ const PrayerEngine = (() => {
     return {
         VAKIT_KEYS,
         VAKIT_ICONS,
-        VAKIT_LABELS,
+        getVakitLabel,
         calcNextPrayer,
         getDayType,
         getRamadanCountdown,

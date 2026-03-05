@@ -35,7 +35,41 @@
      KURULUM EKRANI (İlk Açılış)
   ════════════════════════════════════════════ -->
     <div id="setup-screen" role="main" aria-label="İlk Kurulum">
-        <div class="setup-box animate-fade-in-scale">
+        <!-- 1. QR KOD GÖRÜNÜMÜ (VARSAYILAN) -->
+        <div id="setup-qr-view" class="setup-box animate-fade-in-scale qr-split-layout">
+            <!-- Sol Panel -->
+            <div class="qr-split-panel-left">
+                <img src="img/cami_tv_logo.png" alt="Cami TV Logo" class="app-logo app-logo-large"
+                    style="margin-bottom:20px; width:80px; height:80px;">
+                <h1 class="setup-title" style="font-size: 2rem; margin-bottom: 15px; text-align: left;">Cami
+                    TV'ye<br>Hoş Geldiniz</h1>
+                <p class="setup-subtitle"
+                    style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 30px; text-align: left; line-height: 1.5;">
+                    İlk kurulumu çok daha hızlı ve kolay tamamlamak için lütfen sağdaki QR kodu telefonunuzla okutun.
+                </p>
+                <div style="flex-grow: 1;"></div>
+                <button id="btn-setup-continue-tv"
+                    style="background: transparent; border: 2px solid var(--border-accent); color: var(--text-primary); font-size: 1rem; padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: all 0.3s; width: 100%;">
+                    Kurulumu TV Kumandasıyla Yap
+                </button>
+            </div>
+            <!-- Sağ Panel -->
+            <div class="qr-split-panel-right">
+                <div id="setup-qr-container"
+                    style="background: white; padding: 20px; border-radius: 16px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 20px;">
+                    <!-- QR kod buraya çizilir -->
+                </div>
+                <p id="setup-qr-url-text"
+                    style="font-size: 1.1rem; font-weight: bold; color: var(--accent); margin-bottom: 10px;"></p>
+                <div
+                    style="font-size: 0.85rem; color: #fbbf24; font-weight: bold; background: rgba(251, 191, 36, 0.1); padding: 8px 12px; border-radius: 6px; display: inline-block; text-align: center;">
+                    ⚠️ Telefonunuzun TV ile aynı Wi-Fi ağında<br>olduğundan emin olun.
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. TV KUMANDASI FORM GÖRÜNÜMÜ (ALTERNATİF) -->
+        <div id="setup-form-view" class="setup-box animate-fade-in-scale" style="display:none;">
             <div style="text-align:center;">
                 <img src="img/cami_tv_logo.png" alt="Cami TV Logo" class="app-logo app-logo-large">
             </div>
@@ -73,7 +107,7 @@
                 Vakitleri İndir ve Başlat
             </button>
 
-            <p style="font-size:0.75rem; color:var(--text-muted); text-align:center; line-height:1.6;">
+            <p style="font-size:0.75rem; color:var(--text-muted); text-align:center; line-height:1.6; margin-top:20px;">
                 Namaz vakitleri Diyanet İşleri Başkanlığı verileri esas alınarak hazırlanmaktadır.<br>
                 Kurulum tamamlandıktan sonra uygulama çevrimdışı (offline) çalışabilir.
             </p>
@@ -106,8 +140,13 @@
         <!-- Üst Bar -->
         <header id="ls-topbar">
             <div class="mosque-name">
-                <img src="img/cami_tv_logo.png" alt="Cami TV" class="app-logo" style="width: 32px; height: 32px;">
-                <span id="ls-mosque-name">Cami TV</span>
+                <img src="img/cami_tv_logo.png" alt="Cami TV" class="app-logo" style="width: 40px; height: 40px;">
+                <div
+                    style="display:flex; flex-direction:column; align-items:flex-start; justify-content:center; line-height:1.2;">
+                    <span id="ls-mosque-name">Cami TV</span>
+                    <span id="ls-mosque-location"
+                        style="font-size:0.65em; color:var(--text-muted); font-weight:normal;"></span>
+                </div>
             </div>
 
             <div class="topbar-center">
@@ -236,8 +275,13 @@
         <!-- Üst Bar -->
         <header id="pt-topbar">
             <div class="mosque-name">
-                <img src="img/cami_tv_logo.png" alt="Cami TV" class="app-logo" style="width: 28px; height: 28px;">
-                <span id="pt-mosque-name">Cami TV</span>
+                <img src="img/cami_tv_logo.png" alt="Cami TV" class="app-logo" style="width: 32px; height: 32px;">
+                <div
+                    style="display:flex; flex-direction:column; align-items:flex-start; justify-content:center; line-height:1.2;">
+                    <span id="pt-mosque-name">Cami TV</span>
+                    <span id="pt-mosque-location"
+                        style="font-size:0.7em; color:var(--text-muted); font-weight:normal;"></span>
+                </div>
             </div>
             <time id="pt-clock" class="pt-clock" aria-label="Saat">00:00</time>
         </header>
@@ -286,6 +330,8 @@
     <script src="js/content-data.js"></script>
     <script src="js/settings-manager.js"></script>
     <script src="js/data-manager.js"></script>
+    <script src="js/qrcode.min.js"></script>
+    <script src="js/i18n.js"></script>
     <script src="js/prayer-engine.js"></script>
     <script src="js/power-manager.js"></script>
     <script src="js/carousel-manager.js"></script>

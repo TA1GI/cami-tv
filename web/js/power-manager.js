@@ -142,18 +142,21 @@ const PowerManager = (() => {
     // Ekran Kontrol Fonksiyonları
     // ──────────────────────────────────────────────────────
     function turnOn() {
-        if (_isScreenOn && !document.getElementById('screen-dimmer').classList.contains('dimmed')) return;
         _isScreenOn = true;
-
         const dimmer = document.getElementById('screen-dimmer');
-        dimmer.classList.remove('dimmed', 'blackout');
+        const aktif = Number(_settings.gucAktifParlaklik || 100);
+
+        if (aktif >= 100) {
+            dimmer.style.removeProperty('--dim-level');
+            dimmer.classList.remove('dimmed', 'blackout');
+        } else {
+            dimmer.style.setProperty('--dim-level', String(1 - aktif / 100));
+            dimmer.classList.add('dimmed');
+            dimmer.classList.remove('blackout');
+        }
 
         if (_hasAndroidBridge) {
-            try {
-                AndroidBridge.turnScreenOn();
-                const brt = _settings.gucAktifParlaklik;
-                AndroidBridge.setBrightness(brt);
-            } catch (e) { /* eski bridge */ }
+            try { AndroidBridge.turnScreenOn(); } catch (e) { }
         }
     }
 
@@ -171,7 +174,7 @@ const PowerManager = (() => {
     // Kısmi karartma (prayer modunda, pasif pencere)
     function setDimmed() {
         _isScreenOn = false;
-        const pasif = _settings.gucPasifParlaklik;
+        const pasif = Number(_settings.gucPasifParlaklik || 10);
 
         const dimmer = document.getElementById('screen-dimmer');
         dimmer.style.setProperty('--dim-level', String(1 - pasif / 100));
@@ -186,7 +189,7 @@ const PowerManager = (() => {
             dimmer.classList.add('dimmed');
             dimmer.classList.remove('blackout');
             if (_hasAndroidBridge) {
-                try { AndroidBridge.setBrightness(pasif); } catch (e) { }
+                try { AndroidBridge.turnScreenOn(); } catch (e) { }
             }
         }
     }
