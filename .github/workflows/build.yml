@@ -30,16 +30,31 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ hashFiles('android/**/*.gradle*') }}
 
+      - name: Kalıcı Keystore Oluştur ve Kaydet (Yoksa)
+        run: |
+          if [ ! -f "android/app/cami-tv.keystore" ]; then
+            echo "Kalıcı Keystore dosyası bulunamadı! Yeni bir tane oluşturuluyor..."
+            keytool -genkeypair -v -storetype PKCS12 -keystore android/app/cami-tv.keystore -alias camitv -keyalg RSA -keysize 2048 -validity 10000 -storepass camitv123 -keypass camitv123 -dname "CN=CamiTV, OU=IT, O=AkilliCami, L=Istanbul, S=Istanbul, C=TR"
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add android/app/cami-tv.keystore
+            git commit -m "chore: OTA guncellemeleri icin kalici Android Keystore olusturuldu"
+            git push origin HEAD:master
+          fi
+
       - name: APK derle
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleRelease
 
       - name: APK dosyasını bul
         id: apk
         run: |
-          APK=$(find android/app/build/outputs/apk/debug -name "*.apk" | head -1)
+          APK=$(find android/app/build/outputs/apk/release -name "*-release.apk" -o -name "*-unsigned.apk" | head -1)
+          if [ -z "$APK" ]; then
+             APK=$(find android/app/build/outputs/apk/release -name "*.apk" | head -1)
+          fi
           echo "path=$APK" >> $GITHUB_OUTPUT
           # Sürüm adını tag'den al (v1.2.3 → 1.2.3)
           VERSION=${GITHUB_REF_NAME#v}

@@ -1,5 +1,10 @@
 # Değişiklik Günlüğü
 
+## v1.0.2 (2026-03-06)
+### Kritik OTA Onarımı
+- **Android İmza (Keystore) Eşleşme Düzeltmesi:** GitHub Actions sunucularında APK üretilirken her defasında farklı bir geçici şifre ile mühürlenmesi sorunu giderildi. Uygulamanın OTA otomatik kurulumları esnasında "Uygulama Yüklenemedi" (App not installed) hatası almasını engellemek için projeye kalıcı ve sabit bir `cami-tv.keystore` anahtarı dâhil edildi. Bundan sonraki tüm güncellemeler tek bir imza ile çıkarak sorunsuz bir şekilde birbiri üzerine yazılabilecektir.
+
+
 ## v1.0.1 (2026-03-06)
 ### Yeni Özellikler & Düzeltmeler
 - **Çoklu Dil Desteği:** TR, EN, AR dilleri sisteme entegre edildi, çevirileri tamamlandı. (i18n)
