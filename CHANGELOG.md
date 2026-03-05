@@ -1,5 +1,17 @@
 # Değişiklik Günlüğü
 
+## v1.0.1 (2026-03-06)
+### Yeni Özellikler & Düzeltmeler
+- **Çoklu Dil Desteği:** TR, EN, AR dilleri sisteme entegre edildi, çevirileri tamamlandı. (i18n)
+- **Yeni Tasarım İkonlar:** Eski imsak ve namaz ikonları uyumlu 2px çizgi tabanlı SVG ikon setiyle değiştirildi.
+- **Sabah Vaktini Gizleme:** Ayarlar menüsüne "Sabah" satırını gizleme seçeneği eklendi.
+- **Genişletilmiş İmsakiye:** Sağ paneldeki İmsakiye listesi 15 günden tam 30 güne uzatıldı.
+- **Cami Bilgileri:** Ana ekrana alt duyuru olarak "Cami Bilgileri" paneli eklendi.
+- **TV Ayarları:** Ayarlar ve Kurulum ekranları için TV üzerinden taranabilen, telefondan anında değişen **QR Code** yönetim sistemi kuruldu.
+- **Tema Düzeltmeleri:** Çalışmayan "Lacivert" (Navy) ve "Gece Moru" (Purple) temalarındaki CSS eksikleri onarıldı, tasarımlar yenilendi.
+- **Görünüm İyileştirmeleri:** Android TV ikon logoları eklendi, scrollbar (kaydırma çubukları) temizlendi ve ekran büyültme işlemleri `container queries` ile dinamik (Auto-Fit) hale getirildi.
+
+
 ## v1.0.0 (2026-03-02)
 ### İlk Sürüm
 - Namaz vakitleri (Diyanet verileri, GitHub üzerinden)
