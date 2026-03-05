@@ -15,6 +15,11 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import android.widget.FrameLayout
+import android.widget.Button
+import android.widget.TextView
+import android.graphics.Color
+import android.view.Gravity
 import androidx.core.content.FileProvider
 import org.json.JSONObject
 import java.io.File
@@ -30,6 +35,11 @@ class MainActivity : Activity() {
 
     private lateinit var webView: WebView
     private var settingsServer: SettingsServer? = null
+    
+    // OTA Update için Onay Değişkenleri
+    private lateinit var updateButton: Button
+    private var pendingApkUrl: String? = null
+    private var pendingVersion: String? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +63,65 @@ class MainActivity : Activity() {
 
         // ─── WebView Kurulum ───────────────────────────────
         webView = WebView(this)
-        setContentView(webView)
+
+        val rootLayout = FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+        rootLayout.addView(webView)
+
+        // Güncelleme Butonu Oluştur (Başlangıçta Gizli, Sağ Üst Köşe)
+        updateButton = Button(this).apply {
+            text = "YENİ SÜRÜM VAR\nYüklemek için tıklayın"
+            visibility = View.GONE
+            
+            // TV Kumandası Uyumlu Odaklanma (Focusable) Ayarları
+            isFocusable = true
+            isFocusableInTouchMode = true
+            
+            setBackgroundColor(Color.parseColor("#1976D2")) // Mavi arka plan
+            setTextColor(Color.WHITE)
+            textSize = 18f
+            setPadding(60, 30, 60, 30)
+            elevation = 15f
+            
+            // Kumanda ile butona gelindiğinde renk/boyut değiştirsin
+            setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    setBackgroundColor(Color.parseColor("#4CAF50")) // Odaklanınca Yeşil
+                    scaleX = 1.05f
+                    scaleY = 1.05f
+                } else {
+                    setBackgroundColor(Color.parseColor("#1976D2")) // Normal Mavi
+                    scaleX = 1.0f
+                    scaleY = 1.0f
+                }
+            }
+            
+            val params = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.TOP or Gravity.END
+                topMargin = 60
+                rightMargin = 60
+            }
+            layoutParams = params
+            
+            setOnClickListener {
+                visibility = View.GONE
+                pendingApkUrl?.let { url -> 
+                    pendingVersion?.let { ver ->
+                        downloadAndInstall(url, ver)
+                    }
+                }
+            }
+        }
+        rootLayout.addView(updateButton)
+
+        setContentView(rootLayout)
 
         val settings: WebSettings = webView.settings
         settings.javaScriptEnabled = true
@@ -169,7 +237,7 @@ class MainActivity : Activity() {
 
     // ─── OTA Güncelleme Kontrolü ───────────────────────
 
-    private val CURRENT_VERSION = "1.0.2"
+    private val CURRENT_VERSION = "1.0.4"
     private val RELEASES_API = "https://api.github.com/repos/TA1GI/cami-tv/releases/latest"
     private val updateHandler = Handler(Looper.getMainLooper())
     private val updateRunnable = object : Runnable {
@@ -229,7 +297,17 @@ class MainActivity : Activity() {
                             break
                         }
                     }
-                    apkUrl?.let { downloadAndInstall(it, latestTag) }
+                    apkUrl?.let { url -> 
+                        // Güncelleme dosyasını indirip zorla kurmak yerine
+                        // ekrana manuel "Yükle" butonu getir
+                        pendingApkUrl = url
+                        pendingVersion = latestTag
+                        Handler(Looper.getMainLooper()).post {
+                            updateButton.text = "GÜNCELLEME (v$latestTag)\nİndir ve Kur"
+                            updateButton.visibility = View.VISIBLE
+                            updateButton.requestFocus() // Doğrudan odaklansın ki kumanda ile tıklanabilsin
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 // Sessizce yoksay — internet yoksa veya API erişilemez
