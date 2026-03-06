@@ -5,6 +5,15 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap');
 
+@font-face {
+  font-family: 'Shaikh Hamdullah';
+  src: url('../fonts/ShaikhHamdullah.woff2') format('woff2'),
+    url('../fonts/ShaikhHamdullah.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ────────────────────────────────────────────────────────────
    CSS ÖZEL DEĞİŞKENLERİ — Koyu Tema (Varsayılan)
    ──────────────────────────────────────────────────────────── */
@@ -59,7 +68,7 @@
 
   /* Yazı tipleri */
   --font-ui: 'Inter', sans-serif;
-  --font-arabic: 'Amiri', 'Traditional Arabic', serif;
+  --font-arabic: 'Shaikh Hamdullah', 'Amiri', 'Traditional Arabic', serif;
 
   /* Yazı boyutu ölçeği */
   --font-scale: 1;

@@ -1,5 +1,12 @@
 # Değişiklik Günlüğü
 
+## v1.0.7 (2026-03-06)
+### Yazı Tipi & İçerik İyileştirmesi
+- **Şeyh Hamdullah Mushaf Fontu:** Arapça metinler artık geleneksel hat sanatına uygun, çok daha okunaklı Mushaf fontuyla gösteriliyor.
+- **Hadis Veritabanı Düzeltmesi:** Hadis kartlarındaki `undefined` hatası giderildi; Arapça hat, Türkçe çeviri ve kaynak referansları kusursuz çalışıyor.
+- **3 Yeni Ramazan Ayeti:** Bakara 185, Bakara 183 ve Kadir Suresi (tam metin) içerik akışına eklendi.
+- Gereksiz geliştirme scriptleri (`fix_fonts.js`, `update-i18n.js`) projeden temizlendi.
+
 ## v1.0.6 (2026-03-06)
 ### Yeni İçerikler & Veri İyileştirmeleri
 - **Ayet ve Hadis Veritabanı Genişletildi:** Sahadan toplanan PDF dokümanlarından yapay zeka tarafından ayıklanan 13 Hadis ve 3 Kuran-ı Kerim Ayeti; tamamen orijinal Arapça hat metinleri, şematik çevirileri ve kaynak referanslarıyla birlikte Diyanet TV formatında akış sistemine dahil edildi.
