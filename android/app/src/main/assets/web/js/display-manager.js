@@ -312,9 +312,9 @@ const DisplayManager = (() => {
           <div class="slide-header">
             <span class="slide-type-badge">📜 Günün Hadisi</span>${counter}
           </div>
-          ${slide.data.arapca ? `<div class="slide-arabic arabic-text"><div class="marquee-content">${slide.data.arapca}</div></div>` : ''}
-          <div class="slide-translation"><div class="marquee-content">${slide.data.metin}</div></div>
-          <div class="slide-reference text-muted">${slide.data.kaynak} — ${slide.data.referans}</div>
+          <div class="slide-arabic arabic-text"><div class="marquee-content">${slide.data.arapca}</div></div>
+          <div class="slide-translation"><div class="marquee-content">${slide.data.turkce}</div></div>
+          <div class="slide-reference text-muted">${slide.data.referans}</div>
         `;
 
             case 'esma':

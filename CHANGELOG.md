@@ -1,5 +1,10 @@
 # Değişiklik Günlüğü
 
+## v1.0.6 (2026-03-06)
+### Yeni İçerikler & Veri İyileştirmeleri
+- **Ayet ve Hadis Veritabanı Genişletildi:** Sahadan toplanan PDF dokümanlarından yapay zeka tarafından ayıklanan 13 Hadis ve 3 Kuran-ı Kerim Ayeti; tamamen orijinal Arapça hat metinleri, şematik çevirileri ve kaynak referanslarıyla birlikte Diyanet TV formatında akış sistemine dahil edildi.
+- JS arayüzündeki Hadis kartlarının görsel mimarisi, Tıpkı Ayet kartlarında olduğu gibi "Kusursuz Arapça Hat" tipografisini destekleyecek şekilde baştan kodlandı.
+
 ## v1.0.5 (2026-03-06)
 ### İyileştirmeler & Kullanıcı Deneyimi
 - **Kişiselleştirilmiş Güncelleme Ekranı:** Arayüz deneyimi geliştirildi. Uygulama bir yeni sürüm algıladığında artık izinsiz indirme başlatıp televizyon ekranını (namaz duyurularını) doğrudan kapatmıyor. Bunun yerine Android TV kumandanızdaki "Yön Tuşları (D-Pad)" ile kolaylıkla ilerleyebileceğiniz ve üzerine gelindiğinde yeşile dönerek tıklandığını hissettiren "Güncelleme Var" sağ üst köşe onayı eklendi.
