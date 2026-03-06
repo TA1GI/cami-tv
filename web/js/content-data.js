@@ -1,121 +1,139 @@
-// content-data.js — UTF-8 NoBOM
+﻿// content-data.js — UTF-8 NoBOM
 window.AYETLER_DATA = [
     {
         "id": 1,
+        "arapca": "شَهْرُ رَمَضَانَ الَّذِي أُنزِلَ فِيهِ الْقُرْآنُ هُدًى لِّلنَّاسِ وَبَيِّنَاتٍ مِّنَ الْهُدَىٰ وَالْفُرْقَانِ ۚ فَمَن شَهِدَ مِنكُمُ الشَّهْرَ فَلْيَصُمْهُ ۖ وَمَن كَانَ مَرِيضًا أَوْ عَلَىٰ سَفَرٍ فَعِدَّةٌ مِّنْ أَيَّامٍ أُخَرَ ۗ يُرِيدُ اللَّهُ بِكُمُ الْيُسْرَ وَلَا يُرِيدُ بِكُمُ الْعُسْرَ وَلِتُكْمِلُوا الْعِدَّةَ وَلِتُكَبِّرُوا اللَّهَ عَلَىٰ مَا هَدَاكُمْ وَلَعَلَّكُمْ تَشْكُرُونَ",
+        "turkce": "(O sayılı günler), insanlar için bir hidayet rehberi, doğru yolun ve hak ile batılı birbirinden ayırmanın apaçık delilleri olarak Kur'an kendisinde indirildiği Ramazan ayıdır...",
+        "referans": "Bakara Suresi, 2/185."
+    },
+    {
+        "id": 2,
+        "arapca": "إِنَّا أَنزَلْنَاهُ فِي لَيْلَةِ الْقَدْرِ ﴿١﴾ وَمَا أَدْرَاكَ مَا لَيْلَةُ الْقَدْرِ ﴿٢﴾ لَيْلَةُ الْقَدْرِ خَيْرٌ مِّنْ أَلْفِ شَهْرٍ ﴿٣﴾ تَنَزَّلُ الْمَلَائِكَةُ وَالرُّوحُ فِيهَا بِإِذْنِ رَبِّهِم مِّن كُلِّ أَمْرٍ ﴿٤﴾ سَلَامٌ هِيَ حَتَّىٰ مَطْلَعِ الْفَجْرِ ﴿٥﴾",
+        "turkce": "Doğrusu biz Kur'an-ı Kadir gecesinde indirmişizdir. Kadir Gecesi'nin ne olduğunu bilir misin? Kadir Gecesi bin aydan daha hayırlıdır, melekler ve ruh (Cebrail) o gecede, Rablerinin izniyle her türlü iş için inerler. O gece tan yerinin ağarmasına kadar bir esenliktir.",
+        "referans": "Kadir Suresi, 97/1-5."
+    },
+    {
+        "id": 3,
+        "arapca": "يَا أَيُّهَا الَّذِينَ آمَنُوا كُتِبَ عَلَيْكُمُ الصِّيَامُ كَمَا كُتِبَ عَلَى الَّذِينَ مِن قَبْلِكُمْ لَعَلَّكُمْ تَتَّقُونَ",
+        "turkce": "Ey iman edenler! Allah'a karşı gelmekten sakınmanız için oruç, sizden öncekilere farz kılındığı gibi size de farz kılındı.",
+        "referans": "Bakara Suresi, 2/183."
+    },
+    {
+        "id": 4,
         "arapca": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ",
         "turkce": "Allah'tan başka ilâh yoktur. O, Hay'dır, Kayyum'dur.",
         "referans": "Bakara Suresi 2:255 (Ayetu'l-Kürsî)"
     },
     {
-        "id": 2,
+        "id": 5,
         "arapca": "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
         "turkce": "Şüphesiz güçlükle birlikte bir kolaylık vardır.",
         "referans": "İnşirah Suresi 94:6"
     },
     {
-        "id": 3,
+        "id": 6,
         "arapca": "وَمَا خَلَقْتُ الْجِنَّ وَالْإِنسَ إِلَّا لِيَعْبُدُونِ",
         "turkce": "Ben cinleri ve insanları, ancak bana kulluk etsinler diye yarattım.",
         "referans": "Zariyat Suresi 51:56"
     },
     {
-        "id": 4,
+        "id": 7,
         "arapca": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
         "turkce": "Rabbimiz! Bize dünyada iyilik ver, ahirette de iyilik ver. Bizi ateş azabından koru.",
         "referans": "Bakara Suresi 2:201"
     },
     {
-        "id": 5,
+        "id": 8,
         "arapca": "وَإِذَا سَأَلَكَ عِبَادِي عَنِّي فَإِنِّي قَرِيبٌ",
         "turkce": "Kullarım sana beni sorduğunda, şüphesiz ben yakınım.",
         "referans": "Bakara Suresi 2:186"
     },
     {
-        "id": 6,
+        "id": 9,
         "arapca": "يَا أَيُّهَا الَّذِينَ آمَنُوا اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ",
         "turkce": "Ey iman edenler! Sabır ve namazla yardım isteyin.",
         "referans": "Bakara Suresi 2:153"
     },
     {
-        "id": 7,
+        "id": 10,
         "arapca": "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",
         "turkce": "Şüphesiz Allah, sabredenlerle beraberdir.",
         "referans": "Bakara Suresi 2:153"
     },
     {
-        "id": 8,
+        "id": 11,
         "arapca": "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ",
         "turkce": "Beni zikredin ki, ben de sizi zikredeyim. Bana şükredin; nankörlük etmeyin.",
         "referans": "Bakara Suresi 2:152"
     },
     {
-        "id": 9,
+        "id": 12,
         "arapca": "وَلَنَبْلُوَنَّكُم بِشَيْءٍ مِّنَ الْخَوْفِ وَالْجُوعِ",
         "turkce": "Andolsun, sizi biraz korku, açlık, mal, can ve ürünlerden eksiltme ile imtihan edeceğiz.",
         "referans": "Bakara Suresi 2:155"
     },
     {
-        "id": 10,
+        "id": 13,
         "arapca": "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ",
         "turkce": "Namazlara, özellikle orta namaza devam edin.",
         "referans": "Bakara Suresi 2:238"
     },
     {
-        "id": 11,
+        "id": 14,
         "arapca": "قُلْ هُوَ اللَّهُ أَحَدٌ. اللَّهُ الصَّمَدُ",
         "turkce": "De ki: O, Allah'tır, bir tektir. Allah Samed'dir (her şey ona muhtaçtır).",
         "referans": "İhlas Suresi 112:1-2"
     },
     {
-        "id": 12,
+        "id": 15,
         "arapca": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ. الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
         "turkce": "Rahman ve Rahim olan Allah'ın adıyla. Hamd, âlemlerin Rabbi Allah'a mahsustur.",
         "referans": "Fatiha Suresi 1:1-2"
     },
     {
-        "id": 13,
+        "id": 16,
         "arapca": "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا",
         "turkce": "Şüphesiz namaz, müminlere vakitli olarak farz kılınmıştır.",
         "referans": "Nisa Suresi 4:103"
     },
     {
-        "id": 14,
+        "id": 17,
         "arapca": "وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ",
         "turkce": "Namazı dosdoğru kılın, zekâtı verin.",
         "referans": "Bakara Suresi 2:43"
     },
     {
-        "id": 15,
+        "id": 18,
         "arapca": "اتْلُ مَا أُوحِيَ إِلَيْكَ مِنَ الْكِتَابِ وَأَقِمِ الصَّلَاةَ",
         "turkce": "Sana vahyedilen Kitab'ı oku ve namazı kıl.",
         "referans": "Ankebut Suresi 29:45"
     },
     {
-        "id": 16,
+        "id": 19,
         "arapca": "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ",
         "turkce": "Kim Allah'a tevekkül ederse O, ona yeter.",
         "referans": "Talak Suresi 65:3"
     },
     {
-        "id": 17,
+        "id": 20,
         "arapca": "إِنَّ اللَّهَ يُحِبُّ التَّوَّابِينَ وَيُحِبُّ الْمُتَطَهِّرِينَ",
         "turkce": "Şüphesiz Allah, tövbe edenleri ve temizlenenleri sever.",
         "referans": "Bakara Suresi 2:222"
     },
     {
-        "id": 18,
+        "id": 21,
         "arapca": "وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ",
         "turkce": "Nerede olursanız olun, O sizinle beraberdir.",
         "referans": "Hadid Suresi 57:4"
     },
     {
-        "id": 19,
+        "id": 22,
         "arapca": "إِنَّ اللَّهَ غَفُورٌ رَّحِيمٌ",
         "turkce": "Şüphesiz Allah, çok bağışlayan, çok merhamet edendir.",
         "referans": "Bakara Suresi 2:173"
     },
     {
-        "id": 20,
+        "id": 23,
         "arapca": "وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ",
         "turkce": "Sabret; şüphesiz Allah, iyilik edenlerin ecrini zayi etmez.",
         "referans": "Hud Suresi 11:115"
@@ -124,123 +142,81 @@ window.AYETLER_DATA = [
 window.HADISLER_DATA = [
     {
         "id": 1,
-        "metin": "Namaz dinin direğidir. Onu doğru kılan dinini doğru yapmış olur.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Beyhakî"
+        "arapca": "إِذَا دَخَلَ شَهْرُ رَمَضَانَ فُتِّحَتْ أَبْوَابُ السَّمَاءِ، وَغُلِّقَتْ أَبْوَابُ جَهَنَّمَ، وَسُلْسِلَتِ الشَّيَاطِينُ",
+        "turkce": "Ramazan Ayı gelince, cennet kapıları açılır, cehennem kapıları kapanır ve şeytanlar zincire vurulurlar.",
+        "referans": "Buhârî, Savm, 5 (II, 227)."
     },
     {
         "id": 2,
-        "metin": "Her biriniz için iki melek görevlendirilmiştir; biri sağında, biri solundadır. Sağındaki hayırları, solundaki kötülükleri yazar.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Müslim"
+        "arapca": "إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى",
+        "turkce": "Ameller niyetlere göre değerlendirilir. Herkese niyet ettiği şey vardır.",
+        "referans": "Buhârî, Bed'ü'l-Vahy, 1 (I, 2); Müslim, İmare, 155 (II, 1516)."
     },
     {
         "id": 3,
-        "metin": "Müslüman, dilinden ve elinden Müslümanların zarar görmediği kimsedir.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Buhârî, Müslim"
+        "arapca": "مَنْ صَامَ رَمَضَانَ إِيمَانًا وَاحْتِسَابًا غُفِرَ لَهُ مَا تَقَدَّمَ مِنْ ذَنْبِهِ",
+        "turkce": "Niyet ederek ve ecrini Allah'tan bekleyerek Ramazan orucunu tutan kişinin geçmiş günahları affolunur.",
+        "referans": "Buhârî, Savm, 6 (II, 228)."
     },
     {
         "id": 4,
-        "metin": "Kim bir güçlüğü giderirse, Allah da ona dünyada ve ahirette bir güçlüğü giderir.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Müslim"
+        "arapca": "مَنْ قَامَ رَمَضَانَ إِيمَانًا وَاحْتِسَابًا غُفِرَ لَهُ مَا تَقَدَّمَ مِنْ ذَنْبِهِ",
+        "turkce": "Kim Ramazan ayının faziletine inanarak ve karşılığını Allah'tan bekleyerek, Ramazanı ibadetle ihya ederse, geçmiş günahları bağışlanır.",
+        "referans": "Buharî, İman, 37 (I, 14); Müslim, Salâtü'l-Müsafirîn, 13 (II, 523)."
     },
     {
         "id": 5,
-        "metin": "Bir işi bitirdiğinde başka işe giriş ve yalnız Rabbine yönel.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "İnşirah 7-8"
+        "arapca": "الْتَمِسُوهَا فِي الْعَشْرِ الأَوَاخِرِ مِنْ رَمَضَانَ لَيْلَةَ الْقَدْرِ فِي تَاسِعَةٍ تَبْقَى، فِي سَابِعَةٍ تَبْقَى، فِي خَامِسَةٍ تَبْقَى",
+        "turkce": "Siz Kadir gecesini Ramazanın son on günü içerisindeki tek rakamlı gecelerde arayınız.",
+        "referans": "Buharî, Leyletü'l-Kadr, 2 (II, 253); Müslim, Sıyam, 40 (I, 828)."
     },
     {
         "id": 6,
-        "metin": "Komşusu açken tok yatan bizden değildir.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Buhârî"
+        "arapca": "فَمَنْ كَانَ مُتَحَرِّيَهَا فَلْيَتَحَرَّهَا فِي السَّبْعِ الأَوَاخِرِ",
+        "turkce": "Kim kadir gecesini ararsa onu (Ramazanın) son yedi günü içerisinde arasın.",
+        "referans": "Buharî, Leyletü'l-Kadr, 2 (II, 253); Müslim, Sıyam, 40 (I, 822-823)."
     },
     {
         "id": 7,
-        "metin": "En hayırlı sadaka, kişinin zengin durumda iken verdiği sadakadır.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Buhârî, Müslim"
+        "arapca": "لَا يَشْبَعُ الرَّجُلُ دُونَ جَارِهِ",
+        "turkce": "Komşusu aç iken, müminin tok dolaşması yakışık almaz.",
+        "referans": "Ahmed b. Hanbel, I, 55."
     },
     {
         "id": 8,
-        "metin": "Kolaylaştırınız, güçleştirmeyiniz; müjdeleyiniz, nefret ettirmeyiniz.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Buhârî, Müslim"
+        "arapca": "وَأَيُّمَا أَهْلُ عَرْصَةٍ أَصْبَحَ فِيهِمُ امْرُؤٌ جَائِعٌ فَقَدْ بَرِئَتْ مِنْهُمْ ذِمَّةُ اللَّهِ تَعَالَى",
+        "turkce": "Bir mahallede bir kişi aç kalırsa, o mahalle halkı Allah'ın korumasından çıkar.",
+        "referans": "Ahmed b. Hanbel, II, 33."
     },
     {
         "id": 9,
-        "metin": "Mümin, (başkalarına) ünsiyet eden ve (başkalarının) kendisine ünsiyet ettiği kimsedir.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Ahmed b. Hanbel"
+        "arapca": "كُلُّ عَمَلِ ابْنِ آدَمَ لَهُ إِلَّا الصِّيَامَ، فَإِنَّهُ لِي، وَأَنَا أَجْزِي بِهِ",
+        "turkce": "Oruç doğrudan doğruya benim için yapılmış bir ibadettir. Onun (sayısız) karşılığını da doğrudan doğruya ben vereceğim.",
+        "referans": "Buharî, Savm, 2 (II, 226); Müslim, Sıyam, 163 (I, 807)."
     },
     {
         "id": 10,
-        "metin": "İnsanlara teşekkür etmeyen, Allah'a şükretmemiş olur.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Ebû Dâvud, Tirmizî"
+        "arapca": "رُبَّ صَائِمٍ لَيْسَ لَهُ مِنْ صِيَامِهِ إِلَّا الْجُوعُ، وَرُبَّ قَائِمٍ لَيْسَ لَهُ مِنْ قِيَامِهِ إِلَّا السَّهَرُ",
+        "turkce": "Nice oruç tutanlar vardır ki oruçtan onlara kalan sadece açlık ve susuzluktur.",
+        "referans": "İbn Mâce, Savm, 21 (I, 539)."
     },
     {
         "id": 11,
-        "metin": "Cennete girecekler arasında en çok Allah korkusu taşıyan kişi sayılırsın.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Tirmizî"
+        "arapca": "الصِّيَامُ جُنَّةٌ، فَلَا يَرْفُثْ وَلَا يَجْهَلْ، وَإِنِ امْرُؤٌ قَاتَلَهُ أَوْ شَاتَمَهُ فَلْيَقُلْ: إِنِّي صَائِمٌ مَرَّتَيْنِ",
+        "turkce": "Oruç bir kalkandır. O halde oruçlu kötü söz söylemesin, kendisiyle kavga etmek isteyene 'ben oruçluyum' desin...",
+        "referans": "Buharî, Savm, 2 (II, 226); Müslim, Sıyam, 163 (I, 807)."
     },
     {
         "id": 12,
-        "metin": "Güçlü kişi güreşte galip gelen değil, öfkelendiği zaman nefsine hâkim olandır.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Buhârî, Müslim"
+        "arapca": "مَنْ لَمْ يَدَعْ قَوْلَ الزُّورِ وَالْعَمَلَ بِهِ فَلَيْسَ لِلَّهِ حَاجَةٌ فِي أَنْ يَدَعَ طَعَامَهُ وَشَرَابَهُ",
+        "turkce": "Kim yalan söylemeyi ve yalanla iş görmeyi bırakmazsa Allah, onun yemesini-içmesini bırakmasına hiç değer vermez.",
+        "referans": "Buhârî, Savm, 8 (II, 228); Ebû Davud, Savm, 25 (II, 767)."
     },
     {
         "id": 13,
-        "metin": "Her kim Allah'a ve ahiret gününe inanıyorsa ya hayır söylesin ya da sussun.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Buhârî, Müslim"
-    },
-    {
-        "id": 14,
-        "metin": "Temizlik imanın yarısıdır.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Müslim"
-    },
-    {
-        "id": 15,
-        "metin": "Sabah ve akşam Allah'ı zikretmek, cihattan daha hayırlıdır.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Ebû Dâvud"
-    },
-    {
-        "id": 16,
-        "metin": "Hayır ve iyiliği emredin, kötülüğü yasaklayın; yoksa Allah size duâ etmenize rağmen duânızı kabul etmez.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Tirmizî"
-    },
-    {
-        "id": 17,
-        "metin": "Dünya melundur, içindekiler de melundur; ancak Allah'ın zikri, buna vesile olan şeyler ve âlim ile talebe müstesna.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Tirmizî"
-    },
-    {
-        "id": 18,
-        "metin": "Hiç kimse elinin emeğiyle kazandığından daha hayırlı bir şey yememiştir.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Buhârî"
-    },
-    {
-        "id": 19,
-        "metin": "Mü'min, bir delikten iki defa sokulmaz (aynı yerden iki kez ısırılmaz).",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Buhârî, Müslim"
-    },
-    {
-        "id": 20,
-        "metin": "Kişi sevdiğiyle beraberdir.",
-        "kaynak": "Hz. Muhammed (s.a.v.)",
-        "referans": "Buhârî, Müslim"
+        "arapca": "صُومُوا تَصِحُّوا",
+        "turkce": "Oruç tutunuz ki, sıhhat bulasınız.",
+        "referans": "Münzirî, II, 83; Heysemî, Mecmaüz-Zevaid, III, 179."
     }
 ];
 window.ESMAULHUSNA_DATA = [
