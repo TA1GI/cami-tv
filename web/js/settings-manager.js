@@ -42,6 +42,7 @@ const SettingsManager = (() => {
 
     // Carousel süresi (saniye)
     carouselSure: 15,
+    carouselYaziBoyu: 100,  // yüzde: 85-250 arası
 
     // Ezan ekranı
     sabahImsagaGore: false, // Sabah ezanını imsaka göre hesaba kat

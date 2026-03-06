@@ -1,5 +1,12 @@
 # Değişiklik Günlüğü
 
+## v1.0.8 (2026-03-06)
+### Ayarlar & Kullanıcı Deneyimi İyileştirmesi
+- **Sağ Panel Yazı Boyutu:** Ayet, hadis, esma, dua ve cami bilgileri için bağımsız yazı boyutu ayarı eklendi (%85-%250 arası slider, imsakiye hariç).
+- **Ayarlar Sıralaması:** İçerik Gösterimi bölümü mantıksal sıraya göre yeniden düzenlendi.
+- **İçerik Geçiş Süresi:** "Carousel Süresi" ifadesi daha anlaşılır hale getirildi.
+- **Ezan Okunuyor Süresi:** 10 dakikadan 1 dakikaya indirildi.
+
 ## v1.0.7 (2026-03-06)
 ### Yazı Tipi & İçerik İyileştirmesi
 - **Şeyh Hamdullah Mushaf Fontu:** Arapça metinler artık geleneksel hat sanatına uygun, çok daha okunaklı Mushaf fontuyla gösteriliyor.

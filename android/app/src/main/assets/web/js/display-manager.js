@@ -102,6 +102,11 @@ const DisplayManager = (() => {
         root.style.setProperty('--font-scale', scale);
         root.setAttribute('data-font-size', settings.yaziBoyu || 'normal');
 
+        // Sağ panel yazı boyutu (imsakiye hariç carousel içerikleri)
+        const carouselPct = parseInt(settings.carouselYaziBoyu) || 100;
+        const carouselScale = carouselPct / 100;
+        root.style.setProperty('--carousel-font-scale', carouselScale);
+
         // Ticker bant göster/gizle
         const tickerEls = document.querySelectorAll('.ticker-wrap, #ls-ticker, #pt-ticker');
         tickerEls.forEach(el => el.classList.toggle('hidden', !settings.gosterTickerBant));
@@ -322,7 +327,7 @@ const DisplayManager = (() => {
           <div class="slide-header">
             <span class="slide-type-badge">✨ Esmaül Hüsna</span>${counter}
           </div>
-          <div class="slide-esma-arabic arabic-text" style="font-size:clamp(3rem,6vw,5rem);">${slide.data.arapca}</div>
+          <div class="slide-esma-arabic arabic-text" style="font-size:calc(var(--carousel-font-scale) * clamp(3rem,6vw,5rem));">${slide.data.arapca}</div>
           <div class="slide-esma-turkish">${slide.data.turkce}</div>
           <div class="slide-esma-meaning text-muted">${slide.data.anlam}</div>
         `;
@@ -332,10 +337,10 @@ const DisplayManager = (() => {
           <div class="slide-header">
             <span class="slide-type-badge">🤲 Dua</span>${counter}
           </div>
-          <div class="slide-arabic arabic-text" style="font-size:clamp(1.2rem,4vmin,1.6rem);flex:1;display:flex;align-items:center;justify-content:center;">
+          <div class="slide-arabic arabic-text" style="font-size:calc(var(--carousel-font-scale) * clamp(1.2rem,4vmin,1.6rem));flex:1;display:flex;align-items:center;justify-content:center;">
             <div class="marquee-content">${slide.data.arapca}</div>
           </div>
-          <div class="slide-translation text-muted" style="font-size:0.8rem;font-style:italic;">
+          <div class="slide-translation text-muted" style="font-size:calc(var(--carousel-font-scale) * 0.8rem);font-style:italic;">
             <div class="marquee-content">${slide.data.turkce}</div>
           </div>
           <div class="slide-reference text-muted">${slide.data.baslik}</div>
@@ -362,7 +367,7 @@ const DisplayManager = (() => {
             <span class="slide-type-badge" style="background:rgba(52,211,153,0.1);color:#34d399;border-color:rgba(52,211,153,0.3);">🏛️ Cami Bilgileri</span>${counter}
           </div>
           <div class="slide-translation" style="flex:1; display:flex; padding:24px; text-align:center;">
-             <div class="marquee-content" style="font-size:clamp(1.1rem, 2.5vmin, 1.5rem); line-height:1.6; color:var(--text-secondary); white-space:pre-wrap;">${slide.data.metin.replace(/\\n/g, '<br/>')}</div>
+             <div class="marquee-content" style="font-size:calc(var(--carousel-font-scale) * clamp(1.1rem, 2.5vmin, 1.5rem)); line-height:1.6; color:var(--text-secondary); white-space:pre-wrap;">${slide.data.metin.replace(/\\n/g, '<br/>')}</div>
           </div>
         `;
 

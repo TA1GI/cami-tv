@@ -212,25 +212,23 @@
                     </div>
 
                     <div class="setting-row">
-                        <span class="setting-icon">🌅</span>
-                        <div class="setting-info">
-                            <div class="setting-label" data-i18n="sabah_goster">Sabah Vaktini Göster</div>
-                            <div class="setting-desc" data-i18n="sabah_goster_aciklama">İmsak'tan sonraki Sabah vaktini
-                                listelerde gösterir</div>
-                        </div>
-                        <div class="setting-control">
-                            <label class="toggle-switch"><input type="checkbox" id="s-goster-sabah"><span
-                                    class="toggle-slider"></span></label>
-                        </div>
-                    </div>
-
-                    <div class="setting-row">
                         <span class="setting-icon">🤲</span>
                         <div class="setting-info">
                             <div class="setting-label" data-i18n="dua_goster">Dua Göster</div>
                         </div>
                         <div class="setting-control">
                             <label class="toggle-switch"><input type="checkbox" id="s-goster-dua"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">📅</span>
+                        <div class="setting-info">
+                            <div class="setting-label" data-i18n="haftalik_imsakiye">Haftalık İmsakiye</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-imsakiye"><span
                                     class="toggle-slider"></span></label>
                         </div>
                     </div>
@@ -255,12 +253,45 @@
                     </div>
 
                     <div class="setting-row">
-                        <span class="setting-icon">📅</span>
+                        <span class="setting-icon">⏱️</span>
                         <div class="setting-info">
-                            <div class="setting-label" data-i18n="haftalik_imsakiye">Haftalık İmsakiye</div>
+                            <div class="setting-label" data-i18n="carousel_suresi">İçerik Geçiş Süresi</div>
+                            <div class="setting-desc" data-i18n="slide_suresi_aciklama">Sağ panelde ayet, hadis vb.
+                                içeriklerin geçiş süresi
+                            </div>
                         </div>
                         <div class="setting-control">
-                            <label class="toggle-switch"><input type="checkbox" id="s-goster-imsakiye"><span
+                            <div class="range-group">
+                                <input type="range" id="s-carousel-sure" min="5" max="60" step="5">
+                                <span class="range-value" id="s-carousel-sure-val">15s</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">🔤</span>
+                        <div class="setting-info">
+                            <div class="setting-label" data-i18n="sag_panel_yazi_boyutu">Sağ Panel Yazı Boyutu</div>
+                            <div class="setting-desc" data-i18n="sag_panel_yazi_aciklama">Ayet, hadis vb. içeriklerin
+                                yazı büyüklüğü (İmsakiye hariç)</div>
+                        </div>
+                        <div class="setting-control">
+                            <div class="range-group">
+                                <input type="range" id="s-carousel-yazi-boyu" min="85" max="250" step="5">
+                                <span class="range-value" id="s-carousel-yazi-val">%100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <span class="setting-icon">🌅</span>
+                        <div class="setting-info">
+                            <div class="setting-label" data-i18n="sabah_goster">Sabah Vaktini Göster</div>
+                            <div class="setting-desc" data-i18n="sabah_goster_aciklama">İmsak'tan sonraki Sabah vaktini
+                                listelerde gösterir</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-sabah"><span
                                     class="toggle-slider"></span></label>
                         </div>
                     </div>
@@ -284,21 +315,6 @@
                         <div class="setting-control">
                             <label class="toggle-switch"><input type="checkbox" id="s-goster-hicri"><span
                                     class="toggle-slider"></span></label>
-                        </div>
-                    </div>
-
-                    <div class="setting-row">
-                        <span class="setting-icon">⏱️</span>
-                        <div class="setting-info">
-                            <div class="setting-label" data-i18n="carousel_suresi">Carousel Süresi</div>
-                            <div class="setting-desc" data-i18n="slide_suresi_aciklama">Her slide'ın gösterilme süresi
-                            </div>
-                        </div>
-                        <div class="setting-control">
-                            <div class="range-group">
-                                <input type="range" id="s-carousel-sure" min="5" max="60" step="5">
-                                <span class="range-value" id="s-carousel-sure-val">15s</span>
-                            </div>
                         </div>
                     </div>
 

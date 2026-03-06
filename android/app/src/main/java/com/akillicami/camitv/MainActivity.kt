@@ -238,7 +238,7 @@ class MainActivity : Activity() {
     // ─── OTA Güncelleme Kontrolü ───────────────────────
 
     private val RELEASES_API = "https://api.github.com/repos/TA1GI/cami-tv/releases/latest"
-    private val CURRENT_VERSION = "1.0.7"
+    private val CURRENT_VERSION = "1.0.8"
     private val updateHandler = Handler(Looper.getMainLooper())
     private val updateRunnable = object : Runnable {
         override fun run() {

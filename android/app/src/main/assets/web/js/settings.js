@@ -82,6 +82,22 @@ function initSettingsPage() {
     setVal('s-tema', settings.tema);
     setVal('s-ekran-yonu', settings.ekranYonu);
     setVal('s-yazi-boyu', settings.yaziBoyu);
+
+    // Sağ panel yazı boyutu slider
+    const carouselYaziSlider = document.getElementById('s-carousel-yazi-boyu');
+    const carouselYaziVal = document.getElementById('s-carousel-yazi-val');
+    // Eski string değerleri sayıya dönüştür (geriye uyumluluk)
+    let cyb = settings.carouselYaziBoyu;
+    if (typeof cyb === 'string') {
+        const legacyMap = { small: 85, normal: 100, large: 120, xlarge: 145 };
+        cyb = legacyMap[cyb] || 100;
+    }
+    carouselYaziSlider.value = cyb;
+    carouselYaziVal.textContent = '%' + cyb;
+    carouselYaziSlider.addEventListener('input', () => {
+        carouselYaziVal.textContent = '%' + carouselYaziSlider.value;
+        markDirty();
+    });
     if (document.getElementById('s-dil')) {
         setVal('s-dil', settings.dil || 'tr');
         document.getElementById('s-dil').addEventListener('change', (e) => {
@@ -391,6 +407,7 @@ function initSettingsPage() {
         s.tema = getVal('s-tema');
         s.ekranYonu = getVal('s-ekran-yonu');
         s.yaziBoyu = getVal('s-yazi-boyu');
+        s.carouselYaziBoyu = parseInt(carouselYaziSlider.value) || 100;
         if (document.getElementById('s-dil')) {
             s.dil = getVal('s-dil');
         }

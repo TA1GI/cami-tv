@@ -72,6 +72,7 @@
 
   /* Yazı boyutu ölçeği */
   --font-scale: 1;
+  --carousel-font-scale: 1;
   --topbar-h: 64px;
   --ticker-h: 44px;
 }

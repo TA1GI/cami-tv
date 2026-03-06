@@ -273,7 +273,7 @@ const PrayerEngine = (() => {
             }
 
             // Tam vakit: ezan vakti
-            if (nowSec >= vakitSec && nowSec < vakitSec + 600) { // 10 dk ezan ekranı kalır
+            if (nowSec >= vakitSec && nowSec < vakitSec + 60) { // 1 dk ezan ekranı kalır
                 return {
                     key,
                     label: getVakitLabel(key),
