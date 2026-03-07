@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr" data-theme="">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cami TV İçerik Düzenleyici">
+    <title>Cami TV — İçerik Düzenleyici</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/content-editor.css">
+</head>
+
+<body>
+    <div class="ce-page">
+
+        <!-- ═══════ HEADER ═══════ -->
+        <header class="ce-header">
+            <a href="settings.html" class="ce-back-btn">← Ayarlara Dön</a>
+            <h1 class="ce-title">📖 İçerik Düzenleyici</h1>
+        </header>
+
+        <!-- ═══════ TABS ═══════ -->
+        <nav class="ce-tabs">
+            <button class="ce-tab active" data-tab="ayetler">📖 Ayetler</button>
+            <button class="ce-tab" data-tab="hadisler">📜 Hadisler</button>
+            <button class="ce-tab" data-tab="dualar">🤲 Dualar</button>
+            <button class="ce-tab" data-tab="esmaulhusna">📿 Esma</button>
+        </nav>
+
+        <!-- ═══════ TOOLBAR ═══════ -->
+        <div class="ce-toolbar">
+            <div class="ce-toolbar-left">
+                <input type="text" id="ce-search" class="ce-search" placeholder="🔍 Ara...">
+                <select id="ce-filter" class="ce-select">
+                    <option value="all">Tümü</option>
+                    <option value="active">Aktif Olanlar</option>
+                    <option value="inactive">Pasif Olanlar</option>
+                    <option value="custom">Kendi Eklediklerim</option>
+                    <option value="original">Sunucudan Gelenler</option>
+                </select>
+            </div>
+            <div class="ce-toolbar-right">
+                <label class="ce-checkbox-label">
+                    <input type="checkbox" id="ce-select-all"> Tümünü Seç
+                </label>
+                <button id="ce-bulk-toggle" class="ce-btn ce-btn-outline" disabled>Seçilenleri Pasif Yap</button>
+                <button id="ce-bulk-delete" class="ce-btn ce-btn-danger-sm" disabled>Seçilenleri Sil</button>
+            </div>
+        </div>
+
+        <!-- ═══════ CONTENT LIST ═══════ -->
+        <div class="ce-list-container">
+            <div id="ce-list" class="ce-list">
+                <!-- JS tarafından doldurulur -->
+            </div>
+            <div id="ce-empty" class="ce-empty hidden">İçerik bulunamadı.</div>
+        </div>
+
+        <!-- ═══════ ADD NEW ═══════ -->
+        <div class="ce-add-panel">
+            <h3 class="ce-add-title" id="ce-add-title">＋ Yeni Ekle</h3>
+            <div id="ce-add-form" class="ce-add-form">
+                <!-- JS tarafından aktif sekmeye göre doldurulur -->
+            </div>
+            <button id="ce-add-btn" class="ce-btn ce-btn-primary">Ekle</button>
+        </div>
+
+        <!-- ═══════ EDIT MODAL ═══════ -->
+        <div id="ce-modal" class="ce-modal hidden">
+            <div class="ce-modal-overlay"></div>
+            <div class="ce-modal-content">
+                <div class="ce-modal-header">
+                    <h3>✏️ Düzenle</h3>
+                    <button id="ce-modal-close" class="ce-modal-close">✕</button>
+                </div>
+                <div id="ce-modal-body" class="ce-modal-body">
+                    <!-- JS tarafından doldurulur -->
+                </div>
+                <div class="ce-modal-footer">
+                    <button id="ce-modal-save" class="ce-btn ce-btn-primary">Kaydet</button>
+                    <button id="ce-modal-cancel" class="ce-btn ce-btn-outline">İptal</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ SAVE BAR ═══════ -->
+        <div id="ce-save-bar" class="ce-save-bar">
+            <span class="ce-save-status" id="ce-save-status"></span>
+            <button id="ce-save-btn" class="ce-btn ce-btn-primary">💾 Değişiklikleri Kaydet</button>
+        </div>
+
+    </div>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/settings-manager.js"></script>
+    <script src="js/data-manager.js"></script>
+    <script src="js/content-editor.js"></script>
+</body>
+
+</html>

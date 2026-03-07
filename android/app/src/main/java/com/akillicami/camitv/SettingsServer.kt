@@ -2,6 +2,7 @@ package com.akillicami.camitv
 
 import android.content.Context
 import android.os.Handler
+import android.util.Base64
 import android.os.Looper
 import android.webkit.WebView
 import fi.iki.elonen.NanoHTTPD
@@ -33,7 +34,26 @@ class SettingsServer(
                 // WebView'a "LocalStorage güncelle ve Verileri İndirmek İçin Yeniden Başlat" komutu yolla
                 // WebView file:/// protokolu URL query desteklemeyebileceği için güvenilir olan localStorage flag metodunu kullanıyoruz.
                 Handler(Looper.getMainLooper()).post {
-                    val script = "localStorage.setItem('cami_tv_settings', '$postData'); localStorage.setItem('force_download_flag', '1'); location.href='index.html';"
+                    val b64 = Base64.encodeToString(postData.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
+                    val script = "localStorage.setItem('cami_tv_settings', new TextDecoder().decode(Uint8Array.from(atob('$b64'), c=>c.charCodeAt(0)))); localStorage.setItem('force_download_flag', '1'); location.href='index.html';"
+                    webView.evaluateJavascript(script, null)
+                }
+
+                return newFixedLengthResponse(Response.Status.OK, "application/json", "{\"status\":\"ok\"}")
+            } catch (e: Exception) {
+                return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "Error: ${e.message}")
+            }
+        }
+
+        // ─── API: Tüm Ayarları ve TV'yi Sıfırla ──────────────────
+        if (method == Method.POST && uri == "/api/reset") {
+            try {
+                // SharedPreferences temizle
+                prefs.edit().clear().apply()
+
+                // WebView tarafında local storage sil ve yenile
+                Handler(Looper.getMainLooper()).post {
+                    val script = "localStorage.clear(); const req = indexedDB.deleteDatabase('cami_tv_db'); req.onsuccess = () => { location.href='index.html'; }; req.onerror = () => { location.href='index.html'; };"
                     webView.evaluateJavascript(script, null)
                 }
 
@@ -54,12 +74,13 @@ class SettingsServer(
                 var htmlContent = htmlStream.bufferedReader().readText()
 
                 // Kayıtlı ayarları SharedPreferences'dan çek (yoksa boş JSON)
-                val currentSettings = prefs.getString("settings", "{}")
+                val currentSettings = prefs.getString("settings", "{}") ?: "{}"
+                val b64Settings = Base64.encodeToString(currentSettings.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
 
                 // HTML'in <head> etiketinin hemen altına telefonun localStorage'ına TV ayarlarını kopyalayan betik enjekte et
                 val scriptInject = """
                     <script>
-                        localStorage.setItem('cami_tv_settings', '$currentSettings');
+                        localStorage.setItem('cami_tv_settings', new TextDecoder().decode(Uint8Array.from(atob('$b64Settings'), c=>c.charCodeAt(0))));
                     </script>
                 """.trimIndent()
 

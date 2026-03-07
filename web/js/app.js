@@ -212,6 +212,11 @@ const App = (() => {
                 DisplayManager.hideEzanOverlay();
             }
         }
+
+        // Cuma Yardımı overlay
+        if (DisplayManager.updateCumaYardimi) {
+            DisplayManager.updateCumaYardimi(_settings, _todayPT);
+        }
     }
 
     // ──────────────────────────────────────────────────────

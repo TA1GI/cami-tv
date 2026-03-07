@@ -20,7 +20,8 @@ const DisplayManager = (() => {
     // Layout belirleme — ORIENTATION
     // ──────────────────────────────────────────────────────
     let _orientation = 'auto'; // auto | landscape | portrait
-    let _current = null;   // 'landscape' | 'portrait'
+    let _currentOrientation = null;
+    let _settings = null;
 
     function setOrientation(mode) {
         _orientation = mode;
@@ -41,8 +42,8 @@ const DisplayManager = (() => {
             use = window.innerWidth >= window.innerHeight ? 'landscape' : 'portrait';
         }
 
-        if (use === _current) return; // değişmedi
-        _current = use;
+        if (use === _currentOrientation) return; // değişmedi
+        _currentOrientation = use;
 
         ls.classList.toggle('active', use === 'landscape');
         pt.classList.toggle('active', use === 'portrait');
@@ -95,6 +96,7 @@ const DisplayManager = (() => {
     // AYARLAR UYGULA — yazı boyutu, ticker bant
     // ──────────────────────────────────────────────────────
     function applySettings(settings) {
+        _settings = settings;
         // Yazı boyutu: --font-scale CSS değişkenini JS ile doğrudan yaz
         const scaleMap = { small: 0.85, normal: 1, large: 1.2, xlarge: 1.45 };
         const scale = scaleMap[settings.yaziBoyu] || 1;
@@ -102,10 +104,8 @@ const DisplayManager = (() => {
         root.style.setProperty('--font-scale', scale);
         root.setAttribute('data-font-size', settings.yaziBoyu || 'normal');
 
-        // Sağ panel yazı boyutu (imsakiye hariç carousel içerikleri)
-        const carouselPct = parseInt(settings.carouselYaziBoyu) || 100;
-        const carouselScale = carouselPct / 100;
-        root.style.setProperty('--carousel-font-scale', carouselScale);
+        // Varsayılan carousel font scale (fallback)
+        root.style.setProperty('--carousel-font-scale', 1);
 
         // Ticker bant göster/gizle
         const tickerEls = document.querySelectorAll('.ticker-wrap, #ls-ticker, #pt-ticker');
@@ -254,6 +254,11 @@ const DisplayManager = (() => {
     // Carousel SLIDE Render
     // ──────────────────────────────────────────────────────
     function renderSlide(slide, idx, total) {
+        // Per-content yazı boyutunu al
+        const ia = _settings?.icerikAyarlari || {};
+        const cfg = ia[slide.type];
+        const fontScale = (cfg?.yaziBoyu || 100) / 100;
+
         // Landscape carousel
         const lsCarousel = document.getElementById('ls-carousel-content');
         // Portrait carousel
@@ -263,10 +268,12 @@ const DisplayManager = (() => {
 
         if (lsCarousel) {
             lsCarousel.innerHTML = html;
+            lsCarousel.style.setProperty('--carousel-font-scale', fontScale);
             lsCarousel.className = 'carousel-slide active animate-carousel-in';
         }
         if (ptCarousel) {
             ptCarousel.innerHTML = html;
+            ptCarousel.style.setProperty('--carousel-font-scale', fontScale);
             ptCarousel.className = 'carousel-slide active animate-carousel-in';
         }
 
@@ -284,14 +291,47 @@ const DisplayManager = (() => {
             document.querySelectorAll('.marquee-content').forEach(el => {
                 const parent = el.parentElement;
                 if (!parent) return;
+
+                // Varsa önceki animasyonu iptal et
+                if (el._marqueeAnim) {
+                    el._marqueeAnim.cancel();
+                    el._marqueeAnim = null;
+                }
+
+                el.style.transform = 'translateY(0)'; // Sıfırla
+
                 // scrollHeight ebeveyn yüksekliğinden büyükse kaydırmayı başlat
                 if (el.scrollHeight > parent.clientHeight + 5) {
-                    el.classList.add('marquee-active');
-                    // Taşan miktara göre hızı ayarlayabiliriz (isteğe bağlı)
-                    const duration = Math.max(10, Math.floor(el.scrollHeight / 15));
-                    el.style.animationDuration = `${duration}s`;
-                } else {
-                    el.classList.remove('marquee-active');
+                    const computedStyle = window.getComputedStyle(el);
+                    const fontSize = parseFloat(computedStyle.fontSize) || 24;
+                    // Hızı yavaşlatıldı: fontSize * 1.0 (eskiden 1.8'di)
+                    const pixelsPerSecond = fontSize * 1.0;
+
+                    // Sadece taşan kısmı (ve biraz boşluk) kaydıracağız.
+                    const overflowAmount = el.scrollHeight - parent.clientHeight + 40;
+
+                    // Yalnızca kayma süresi
+                    const slideDurationMs = (overflowAmount / pixelsPerSecond) * 1000;
+
+                    // En sonda bekleyeceği süre (örn. 2 saniye)
+                    const endDelayMs = 2000;
+                    const totalDurationMs = slideDurationMs + endDelayMs;
+
+                    // Keyframe offset hesabı: animasyonun yüzde kaçında en alta ulaşacak
+                    const slideEndOffset = slideDurationMs / totalDurationMs;
+
+                    el._marqueeAnim = el.animate([
+                        { transform: 'translateY(0)', offset: 0 },
+                        { transform: `translateY(-${overflowAmount}px)`, offset: slideEndOffset },
+                        // Sona geldiğinde endDelay süresi kadar orada bekle
+                        { transform: `translateY(-${overflowAmount}px)`, offset: 1 }
+                    ], {
+                        duration: totalDurationMs,
+                        delay: 3000,
+                        iterations: Infinity,
+                        direction: 'normal', // Terse dönme kapatıldı (sıfırdan tekrar başlar)
+                        easing: 'linear'
+                    });
                 }
             });
         }, 50);
@@ -550,6 +590,108 @@ const DisplayManager = (() => {
     }
 
     // ──────────────────────────────────────────────────────
+    // CUMA YARDIMI — Friday donation overlay logic
+    // ──────────────────────────────────────────────────────
+    let _cumaYardimInterval = null;
+    let _cumaLangInterval = null;
+    let _cumaLangIndex = 0;
+
+    function updateCumaYardimi(settings, prayerTimes) {
+        const overlay = document.getElementById('cuma-yardim-overlay');
+        if (!overlay) return;
+
+        // Feature disabled?
+        if (!settings.gosterCumaYardimi) {
+            _hideCumaYardimi();
+            return;
+        }
+
+        const now = new Date();
+        // Is it Friday? (0=Sun,1=Mon,...,5=Fri,6=Sat)
+        if (now.getDay() !== 5) {
+            _hideCumaYardimi();
+            return;
+        }
+
+        // Get Cuma prayer time from prayerTimes (ogle = Friday prayer)
+        const cumaStr = prayerTimes && (prayerTimes.cuma || prayerTimes.ogle);
+        if (!cumaStr) {
+            _hideCumaYardimi();
+            return;
+        }
+
+        const [cumaSaat, cumaDk] = cumaStr.split(':').map(Number);
+        const cumaDate = new Date(now);
+        cumaDate.setHours(cumaSaat, cumaDk, 0, 0);
+
+        const diffMs = now - cumaDate;
+        const diffMin = diffMs / 60000;
+        const onceDk = -(settings.cumaYardimBaslangicDk ?? 15);
+        const sonraDk = settings.cumaYardimBitisDk ?? 45;
+
+        if (diffMin >= onceDk && diffMin <= sonraDk) {
+            _showCumaYardimi(settings);
+        } else {
+            _hideCumaYardimi();
+        }
+    }
+
+    function _showCumaYardimi(settings) {
+        const overlay = document.getElementById('cuma-yardim-overlay');
+        if (!overlay || !overlay.classList.contains('hidden')) return; // already showing
+
+        const metinler = settings.cumaYardimMetinler || {};
+        const langs = [
+            { key: 'tr', label: 'TR', text: metinler.tr },
+            { key: 'ar', label: 'AR', text: metinler.ar },
+            { key: 'en', label: 'EN', text: metinler.en },
+        ].filter(l => l.text && l.text.trim() !== '');
+
+        if (langs.length === 0) return; // No text configured
+
+        // Set mode (data attribute controls CSS)
+        overlay.setAttribute('data-mode', settings.cumaYardimGorunum || 'tam-ekran');
+        overlay.classList.remove('hidden');
+
+        const textEl = document.getElementById('cuma-yardim-text');
+        const badgeEl = document.getElementById('cuma-yardim-lang-badge');
+
+        _cumaLangIndex = 0;
+        function showLang(idx) {
+            const lang = langs[idx % langs.length];
+            if (textEl) {
+                textEl.textContent = lang.text;
+                textEl.style.direction = lang.key === 'ar' ? 'rtl' : 'ltr';
+                // Re-trigger animation
+                textEl.style.animation = 'none';
+                textEl.offsetHeight; // reflow
+                textEl.style.animation = '';
+            }
+            if (badgeEl) badgeEl.textContent = lang.label;
+        }
+
+        showLang(0);
+
+        // Rotate through languages every 8 seconds
+        if (langs.length > 1) {
+            _cumaLangInterval = setInterval(() => {
+                _cumaLangIndex++;
+                showLang(_cumaLangIndex);
+            }, 8000);
+        }
+    }
+
+    function _hideCumaYardimi() {
+        const overlay = document.getElementById('cuma-yardim-overlay');
+        if (overlay && !overlay.classList.contains('hidden')) {
+            overlay.classList.add('hidden');
+            clearInterval(_cumaLangInterval);
+            _cumaLangInterval = null;
+            _cumaLangIndex = 0;
+        }
+    }
+
+    // ──────────────────────────────────────────────────────
     // Public API
     // ──────────────────────────────────────────────────────
     return {
@@ -566,7 +708,8 @@ const DisplayManager = (() => {
         updateTicker,
         applyTheme,
         applySettings,
-        getOrientation: () => _current,
+        updateCumaYardimi,
+        getOrientation: () => _currentOrientation,
     };
 
 })();

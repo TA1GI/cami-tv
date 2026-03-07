@@ -32,7 +32,7 @@ const SettingsManager = (() => {
     gosterEsma: true,
     gosterDua: true,
     gosterCamiBilgi: false,
-    camiBilgiMetin: '',
+    camiBilgiMetin: [], // Artık dizi
     gosterImsakiye: true,
     gosterHavaDurumu: false,  // internet gerektirir
     gosterKible: true,
@@ -40,9 +40,28 @@ const SettingsManager = (() => {
     gosterHicriTarih: true,
     gosterCemaat: false,
 
-    // Carousel süresi (saniye)
-    carouselSure: 15,
-    carouselYaziBoyu: 100,  // yüzde: 85-250 arası
+    // Cuma Yardımı
+    gosterCumaYardimi: false,
+    cumaYardimBaslangicDk: 15,
+    cumaYardimBitisDk: 45,
+    cumaYardimGorunum: 'tam-ekran', // tam-ekran | sol-panel | orta-panel | sag-panel
+    cumaYardimMetinler: { tr: '', ar: '', en: '' },
+
+    // İçerik Düzenleyici (telefon → TV senkron)
+    customContent: {
+      custom: { ayetler: [], hadisler: [], dualar: [], esmaulhusna: [] },
+      disabled: { ayetler: [], hadisler: [], dualar: [], esmaulhusna: [] },
+    },
+
+    // İçerik bazlı ayarlar (her biri için süre ve yazı boyutu)
+    icerikAyarlari: {
+      ayet: { sure: 15, yaziBoyu: 100 },
+      hadis: { sure: 15, yaziBoyu: 100 },
+      esma: { sure: 15, yaziBoyu: 100 },
+      dua: { sure: 15, yaziBoyu: 100 },
+      camibilgi: { sure: 20, yaziBoyu: 100 },
+      imsakiye: { sure: 15, yaziBoyu: 100 },
+    },
 
     // Ezan ekranı
     sabahImsagaGore: false, // Sabah ezanını imsaka göre hesaba kat
@@ -100,6 +119,13 @@ const SettingsManager = (() => {
       let result = structuredClone(DEFAULTS);
       if (raw) {
         result = deepMerge(result, JSON.parse(raw));
+
+        // Geri uyumluluk: Eski camiBilgiMetin string ise diziye çevir
+        if (typeof result.camiBilgiMetin === 'string') {
+          result.camiBilgiMetin = result.camiBilgiMetin.trim() ? [result.camiBilgiMetin] : [];
+        } else if (!Array.isArray(result.camiBilgiMetin)) {
+          result.camiBilgiMetin = [];
+        }
       }
 
       // Ayarları Android SharedPreferences katmanına yedekle (Telefondan ilk girişte görünebilmesi için)

@@ -155,6 +155,42 @@ body {
     gap: 8px;
 }
 
+/* ─── İÇERİK ALT AYARLARI (per-content sub-settings) ─────── */
+.content-sub-settings {
+    padding: 10px 16px 10px 56px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+}
+
+.sub-setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: calc(var(--font-scale) * 0.82rem);
+    color: var(--text-secondary);
+}
+
+.sub-setting-row>span {
+    flex-shrink: 0;
+    font-weight: 500;
+}
+
+.sub-setting-row .range-group {
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.sub-setting-row .range-group input[type="range"] {
+    width: 120px;
+}
+
+.sub-setting-row textarea {
+    width: 100%;
+    margin-bottom: 6px;
+}
+
 /* ─── TOGGLE SWITCH ───────────────────────────────────────── */
 .toggle-switch {
     position: relative;
@@ -484,6 +520,30 @@ body {
     opacity: 0.85;
 }
 
+.btn-add-slide {
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    color: var(--accent);
+    font-family: var(--font-ui);
+    font-size: calc(var(--font-scale) * 0.9rem);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-add-slide:hover {
+    background: rgba(var(--accent-rgb), 0.2);
+    transform: translateY(-1px);
+}
+
 /* ─── TEHLİKELİ BÖLGE ────────────────────────────────────── */
 .danger-zone .section-card {
     border-color: rgba(248, 113, 113, 0.2);
@@ -613,6 +673,7 @@ body {
         width: 100%;
     }
 }
+
 /* Cemaat vakitleri offset satiri */
 .cemaat-row {
     display: flex;
@@ -638,6 +699,7 @@ body {
     text-align: center;
     outline: none;
 }
+
 .setting-number:focus {
     border-color: var(--accent);
 }

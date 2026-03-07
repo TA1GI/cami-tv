@@ -83,21 +83,6 @@ function initSettingsPage() {
     setVal('s-ekran-yonu', settings.ekranYonu);
     setVal('s-yazi-boyu', settings.yaziBoyu);
 
-    // Sağ panel yazı boyutu slider
-    const carouselYaziSlider = document.getElementById('s-carousel-yazi-boyu');
-    const carouselYaziVal = document.getElementById('s-carousel-yazi-val');
-    // Eski string değerleri sayıya dönüştür (geriye uyumluluk)
-    let cyb = settings.carouselYaziBoyu;
-    if (typeof cyb === 'string') {
-        const legacyMap = { small: 85, normal: 100, large: 120, xlarge: 145 };
-        cyb = legacyMap[cyb] || 100;
-    }
-    carouselYaziSlider.value = cyb;
-    carouselYaziVal.textContent = '%' + cyb;
-    carouselYaziSlider.addEventListener('input', () => {
-        carouselYaziVal.textContent = '%' + carouselYaziSlider.value;
-        markDirty();
-    });
     if (document.getElementById('s-dil')) {
         setVal('s-dil', settings.dil || 'tr');
         document.getElementById('s-dil').addEventListener('change', (e) => {
@@ -106,51 +91,172 @@ function initSettingsPage() {
         });
     }
 
-    setCheck('s-goster-ayet', settings.gosterAyet);
-    setCheck('s-goster-hadis', settings.gosterHadis);
-    setCheck('s-goster-sabah', settings.gosterSabah);
-    setCheck('s-goster-esma', settings.gosterEsma);
-    setCheck('s-goster-dua', settings.gosterDua);
-    setCheck('s-goster-camibilgi', settings.gosterCamiBilgi);
-    setCheck('s-goster-imsakiye', settings.gosterImsakiye);
-    setCheck('s-goster-ticker', settings.gosterTickerBant);
-    setCheck('s-goster-hicri', settings.gosterHicriTarih);
+    // ──────────────────────────────────────────────────────
+    // İÇERİK TOGGLE + ALT AYARLAR (per-content)
+    // ──────────────────────────────────────────────────────
+    const CONTENT_TYPES = [
+        { key: 'ayet', toggleId: 's-goster-ayet', settingKey: 'gosterAyet' },
+        { key: 'hadis', toggleId: 's-goster-hadis', settingKey: 'gosterHadis' },
+        { key: 'esma', toggleId: 's-goster-esma', settingKey: 'gosterEsma' },
+        { key: 'dua', toggleId: 's-goster-dua', settingKey: 'gosterDua' },
+        { key: 'imsakiye', toggleId: 's-goster-imsakiye', settingKey: 'gosterImsakiye' },
+        { key: 'camibilgi', toggleId: 's-goster-camibilgi', settingKey: 'gosterCamiBilgi' },
+    ];
 
-    // Cami Bilgi Textarea Toggle Logic
-    const camiBilgiToggle = document.getElementById('s-goster-camibilgi');
-    const camiBilgiContainer = document.getElementById('s-camibilgi-container');
-    const camiBilgiMetin = document.getElementById('s-camibilgi-metin');
+    const ia = settings.icerikAyarlari || {};
 
-    if (camiBilgiMetin) {
-        camiBilgiMetin.value = settings.camiBilgiMetin || '';
-    }
+    CONTENT_TYPES.forEach(ct => {
+        const toggle = document.getElementById(ct.toggleId);
+        const subPanel = document.getElementById('sub-' + ct.key);
+        const sureSlider = document.getElementById('s-sure-' + ct.key);
+        const sureVal = document.getElementById('s-sure-' + ct.key + '-val');
+        const yaziSlider = document.getElementById('s-yazi-' + ct.key);
+        const yaziVal = document.getElementById('s-yazi-' + ct.key + '-val');
 
-    function updateCamiBilgiPanel() {
-        if (camiBilgiContainer) {
-            camiBilgiContainer.style.display = camiBilgiToggle?.checked ? 'flex' : 'none';
+        // Toggle durumunu yükle
+        if (toggle) setCheck(ct.toggleId, settings[ct.settingKey]);
+
+        // Alt panel ayarlarını yükle
+        const cfg = ia[ct.key] || {};
+        const sure = cfg.sure ?? 15;
+        const yazi = cfg.yaziBoyu ?? 100;
+
+        if (sureSlider) {
+            sureSlider.value = sure;
+            sureVal.textContent = sure + 's';
+            sureSlider.addEventListener('input', () => {
+                sureVal.textContent = sureSlider.value + 's';
+                markDirty();
+            });
         }
-    }
-    updateCamiBilgiPanel();
+        if (yaziSlider) {
+            yaziSlider.value = yazi;
+            yaziVal.textContent = '%' + yazi;
+            yaziSlider.addEventListener('input', () => {
+                yaziVal.textContent = '%' + yaziSlider.value;
+                markDirty();
+            });
+        }
 
-    if (camiBilgiToggle) {
-        camiBilgiToggle.addEventListener('change', () => {
-            updateCamiBilgiPanel();
+        // Alt paneli toggle durumuna göre göster/gizle
+        function updateSubPanel() {
+            if (subPanel) subPanel.style.display = toggle?.checked ? 'block' : 'none';
+        }
+        updateSubPanel();
+
+        if (toggle) {
+            toggle.addEventListener('change', () => {
+                updateSubPanel();
+                markDirty();
+            });
+        }
+    });
+
+    // ──────────────────────────────────────────────────────
+    // Cami Bilgi Listesi (Dinamik Çoklu Metin)
+    // ──────────────────────────────────────────────────────
+    const camiBilgiListEl = document.getElementById('s-camibilgi-list');
+    const btnAddCamiBilgi = document.getElementById('btn-add-camibilgi');
+    let currentCamiBilgi = Array.isArray(settings.camiBilgiMetin) ? [...settings.camiBilgiMetin] : [];
+
+    function renderCamiBilgiList() {
+        if (!camiBilgiListEl) return;
+        camiBilgiListEl.innerHTML = '';
+
+        if (currentCamiBilgi.length === 0) {
+            // Eğer boşsa, en az 1 tane boş kutu gösterelim
+            currentCamiBilgi.push('');
+        }
+
+        currentCamiBilgi.forEach((metin, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'camibilgi-item';
+
+            const textarea = document.createElement('textarea');
+            textarea.className = 'form-input camibilgi-input';
+            textarea.rows = 3;
+            textarea.placeholder = I18n.get('camibilgi_placeholder') || 'Caminizin adı, adresi, vakıf bilgileri vb.';
+            textarea.value = metin;
+            textarea.style.cssText = 'width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); padding: 10px; font-family: inherit; resize: vertical;';
+
+            textarea.addEventListener('input', (e) => {
+                currentCamiBilgi[index] = e.target.value;
+                markDirty();
+            });
+
+            const btnDel = document.createElement('button');
+            btnDel.className = 'btn-danger-small';
+            btnDel.innerHTML = '🗑️';
+            btnDel.title = 'Sil';
+            btnDel.onclick = () => {
+                // Son kutuyu siliyorsa içini boşalt, tamamen yok etme
+                if (currentCamiBilgi.length === 1) {
+                    currentCamiBilgi[0] = '';
+                } else {
+                    currentCamiBilgi.splice(index, 1);
+                }
+                renderCamiBilgiList();
+                markDirty();
+            };
+
+            const headerWrapper = document.createElement('div');
+            headerWrapper.style.display = 'flex';
+            headerWrapper.style.justifyContent = 'space-between';
+            headerWrapper.style.alignItems = 'center';
+            headerWrapper.style.marginBottom = '5px';
+
+            const titleLabel = document.createElement('label');
+            titleLabel.style.fontSize = '0.8rem';
+            titleLabel.style.color = 'var(--accent)';
+            titleLabel.innerText = `Slayt ${index + 1}`;
+
+            headerWrapper.appendChild(titleLabel);
+            headerWrapper.appendChild(btnDel);
+
+            itemDiv.appendChild(headerWrapper);
+            itemDiv.appendChild(textarea);
+            camiBilgiListEl.appendChild(itemDiv);
+        });
+    }
+
+    if (btnAddCamiBilgi) {
+        btnAddCamiBilgi.addEventListener('click', () => {
+            currentCamiBilgi.push('');
+            renderCamiBilgiList();
             markDirty();
         });
     }
-    if (camiBilgiMetin) {
-        camiBilgiMetin.addEventListener('input', markDirty);
-    }
 
-    // Carousel süre
-    const carouselSlider = document.getElementById('s-carousel-sure');
-    const carouselVal = document.getElementById('s-carousel-sure-val');
-    carouselSlider.value = settings.carouselSure;
-    carouselVal.textContent = settings.carouselSure + 's';
-    carouselSlider.addEventListener('input', () => {
-        carouselVal.textContent = carouselSlider.value + 's';
-        markDirty();
-    });
+    // İlk render
+    renderCamiBilgiList();
+
+    setCheck('s-goster-sabah', settings.gosterSabah);
+    setCheck('s-goster-ticker', settings.gosterTickerBant);
+    setCheck('s-goster-hicri', settings.gosterHicriTarih);
+
+    // ── Cuma Yardımı ──────────────────────────────────────
+    setCheck('s-goster-cuma-yardimi', settings.gosterCumaYardimi);
+    const cumaYardimSubPanel = document.getElementById('sub-cuma-yardimi');
+    const cumaYardimToggle = document.getElementById('s-goster-cuma-yardimi');
+    function updateCumaYardimPanel() {
+        if (cumaYardimSubPanel) cumaYardimSubPanel.style.display = cumaYardimToggle?.checked ? 'block' : 'none';
+    }
+    updateCumaYardimPanel();
+    if (cumaYardimToggle) cumaYardimToggle.addEventListener('change', () => { updateCumaYardimPanel(); markDirty(); });
+
+    const baslangicEl = document.getElementById('s-cuma-yardim-baslangic');
+    const bitisEl = document.getElementById('s-cuma-yardim-bitis');
+    if (baslangicEl) { baslangicEl.value = settings.cumaYardimBaslangicDk ?? 15; baslangicEl.addEventListener('input', markDirty); }
+    if (bitisEl) { bitisEl.value = settings.cumaYardimBitisDk ?? 45; bitisEl.addEventListener('input', markDirty); }
+    setVal('s-cuma-yardim-gorunum', settings.cumaYardimGorunum || 'tam-ekran');
+
+    const cumaMetinler = settings.cumaYardimMetinler || {};
+    const cumaMetinTr = document.getElementById('s-cuma-metin-tr');
+    const cumaMetinAr = document.getElementById('s-cuma-metin-ar');
+    const cumaMetinEn = document.getElementById('s-cuma-metin-en');
+    if (cumaMetinTr) { cumaMetinTr.value = cumaMetinler.tr || ''; cumaMetinTr.addEventListener('input', markDirty); }
+    if (cumaMetinAr) { cumaMetinAr.value = cumaMetinler.ar || ''; cumaMetinAr.addEventListener('input', markDirty); }
+    if (cumaMetinEn) { cumaMetinEn.value = cumaMetinler.en || ''; cumaMetinEn.addEventListener('input', markDirty); }
 
     // Ezan
     setCheck('s-sabah-imsaga-gore', settings.sabahImsagaGore);
@@ -292,10 +398,20 @@ function initSettingsPage() {
     // Tümünü sıfırla
     document.getElementById('s-sil-tumu')?.addEventListener('click', () => {
         if (confirm('Tüm ayarlar, indirilen vakitler ve önbellek silinecek. Emin misiniz?')) {
-            localStorage.removeItem('cami_tv_settings');
-            const req = indexedDB.deleteDatabase('cami_tv_db');
-            req.onsuccess = () => { window.location.href = 'index.html'; };
-            req.onerror = () => { window.location.href = 'index.html'; };
+            if (location.protocol === 'http:') {
+                // Telefondan TV'ye sıfırlama komutu gönder
+                fetch('/api/reset', { method: 'POST' })
+                    .then(() => {
+                        localStorage.removeItem('cami_tv_settings');
+                        window.location.href = 'index.html';
+                    })
+                    .catch(err => alert('Sıfırlama hatası (TV ulaşılamıyor olabilir).'));
+            } else {
+                localStorage.removeItem('cami_tv_settings');
+                const req = indexedDB.deleteDatabase('cami_tv_db');
+                req.onsuccess = () => { window.location.href = 'index.html'; };
+                req.onerror = () => { window.location.href = 'index.html'; };
+            }
         }
     });
 
@@ -407,23 +523,35 @@ function initSettingsPage() {
         s.tema = getVal('s-tema');
         s.ekranYonu = getVal('s-ekran-yonu');
         s.yaziBoyu = getVal('s-yazi-boyu');
-        s.carouselYaziBoyu = parseInt(carouselYaziSlider.value) || 100;
         if (document.getElementById('s-dil')) {
             s.dil = getVal('s-dil');
         }
 
-        // İçerik
-        s.gosterAyet = getCheck('s-goster-ayet');
-        s.gosterHadis = getCheck('s-goster-hadis');
+        // İçerik toggle'ları ve per-content ayarları
+        CONTENT_TYPES.forEach(ct => {
+            s[ct.settingKey] = getCheck(ct.toggleId);
+            if (!s.icerikAyarlari) s.icerikAyarlari = {};
+            if (!s.icerikAyarlari[ct.key]) s.icerikAyarlari[ct.key] = {};
+            const sureEl = document.getElementById('s-sure-' + ct.key);
+            const yaziEl = document.getElementById('s-yazi-' + ct.key);
+            s.icerikAyarlari[ct.key].sure = parseInt(sureEl?.value) || 15;
+            s.icerikAyarlari[ct.key].yaziBoyu = parseInt(yaziEl?.value) || 100;
+        });
+        s.camiBilgiMetin = currentCamiBilgi.map(m => m.trim()).filter(m => m !== '');
         s.gosterSabah = getCheck('s-goster-sabah');
-        s.gosterEsma = getCheck('s-goster-esma');
-        s.gosterDua = getCheck('s-goster-dua');
-        s.gosterCamiBilgi = getCheck('s-goster-camibilgi', false);
-        s.camiBilgiMetin = document.getElementById('s-camibilgi-metin') ? document.getElementById('s-camibilgi-metin').value.trim() : '';
-        s.gosterImsakiye = getCheck('s-goster-imsakiye');
         s.gosterTickerBant = getCheck('s-goster-ticker');
         s.gosterHicriTarih = getCheck('s-goster-hicri');
-        s.carouselSure = parseInt(carouselSlider.value) || 15;
+
+        // Cuma Yardımı
+        s.gosterCumaYardimi = getCheck('s-goster-cuma-yardimi');
+        s.cumaYardimBaslangicDk = parseInt(document.getElementById('s-cuma-yardim-baslangic')?.value) || 15;
+        s.cumaYardimBitisDk = parseInt(document.getElementById('s-cuma-yardim-bitis')?.value) || 45;
+        s.cumaYardimGorunum = getVal('s-cuma-yardim-gorunum') || 'tam-ekran';
+        s.cumaYardimMetinler = {
+            tr: document.getElementById('s-cuma-metin-tr')?.value.trim() || '',
+            ar: document.getElementById('s-cuma-metin-ar')?.value.trim() || '',
+            en: document.getElementById('s-cuma-metin-en')?.value.trim() || '',
+        };
 
         // Ezan & Cemaat
         s.sabahImsagaGore = getCheck('s-sabah-imsaga-gore');

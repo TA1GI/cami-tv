@@ -1,5 +1,40 @@
 # Değişiklik Günlüğü
 
+## v1.0.9 (2026-03-07)
+### Cuma Yardımı Overlay Sistemi
+- **Cuma Vakti Otomatik Overlay:** Cuma namazı öncesi ve sonrası otomatik devreye giren yardım/bağış duyuru ekranı eklendi.
+- **4 Görünüm Modu:** Tam ekran, Sadece Sol Panel, Sadece Orta Panel, Sadece Sağ Panel seçenekleriyle esnek gösterim.
+- **Çok Dilli Metin Rotasyonu:** Türkçe, Arapça ve İngilizce metinler 8 saniye aralıkla otomatik döndürülüyor.
+- **Zamanlama Ayarları:** Başlangıç (varsayılan 15dk önce) ve bitiş (varsayılan 45dk sonra) dakikaları ayarlanabilir.
+- **Ayarlar Entegrasyonu:** Toggle ile açılıp kapanan alt panel; tüm ayarlar telefon → TV senkronize.
+
+### İçerik Düzenleyici (Yeni Sayfa)
+- **Yeni Sayfa:** `content-editor.html` — Ayet, Hadis, Dua ve Esmâ-ül Hüsnâ içeriklerini yönetmek için 4 sekmeli arayüz.
+- **İçerik CRUD:** Yeni içerik ekleme, var olanı düzenleme (modal), silme ve aktif/pasif yapma.
+- **Sekmeye Özel Form:** Her içerik türünün JSON yapısına uygun alanlar (Arapça metin RTL, Türkçe meal, referans, başlık, anlam).
+- **Arama & Filtreleme:** Metin araması, Tümü / Aktif / Pasif / Kendi Eklediğim / Sunucudan Gelen filtreleri.
+- **Toplu Yönetim:** Tümünü Seç, Seçilenleri Pasif Yap, Seçilenleri Sil.
+- **Telefon → TV Senkron:** SettingsManager + `/api/save` pipeline üzerinden değişiklikler anında TV'ye gönderiliyor.
+- **Carousel Entegrasyonu:** `carousel-manager.js`'e `_mergeContent()` fonksiyonu eklendi; özel içerikler orijinal verilerle birleştiriliyor, pasif yapılanlar otomatik çıkarılıyor.
+
+### Ayarlar Sayfası İyileştirmeleri
+- **İçerik Düzenleyici Butonu:** İçerik Gösterimi bölümüne "✏️ İçerik Düzenleyici" bağlantısı eklendi.
+- **Yeni Cami Bilgisi Butonu:** Tasarıma uyumlu modern görünüm verildi.
+- **Metin Alanı Boyutu:** Cami bilgisi metin alanı genişletildi.
+
+### Değiştirilen Dosyalar
+- `settings-manager.js` — `customContent` ve `cumaYardımı` ayar alanları
+- `settings.js` — Cuma Yardımı init/save mantığı
+- `settings.html` — Cuma Yardımı paneli + İçerik Düzenleyici linki
+- `carousel-manager.js` — `_mergeContent()` ile özel içerik birleştirme
+- `display-manager.js` — `updateCumaYardimi()` overlay mantığı
+- `app.js` — `tick()` içinde Cuma Yardımı hook
+- `index.html` — Cuma overlay HTML elementi
+- `landscape.css` — Cuma overlay stilleri (4 mod)
+- `settings.css` — Buton ve metin alanı iyileştirmeleri
+- `i18n.js` — Cuma Yardımı çeviri anahtarları
+- **YENİ:** `content-editor.html`, `css/content-editor.css`, `js/content-editor.js`
+
 ## v1.0.8 (2026-03-06)
 ### Ayarlar & Kullanıcı Deneyimi İyileştirmesi
 - **Sağ Panel Yazı Boyutu:** Ayet, hadis, esma, dua ve cami bilgileri için bağımsız yazı boyutu ayarı eklendi (%85-%250 arası slider, imsakiye hariç).

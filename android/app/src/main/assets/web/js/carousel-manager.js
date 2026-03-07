@@ -33,10 +33,42 @@ const CarouselManager = (() => {
             DataManager.loadContent('esmaulhusna'),
             DataManager.loadContent('dualar'),
         ]);
-        _contents = { ayetler, hadisler, esmaulhusna: esmaul, dualar };
+
+        // Özel içerikleri birleştir ve pasif olanları çıkar
+        _contents = {
+            ayetler: _mergeContent('ayetler', ayetler),
+            hadisler: _mergeContent('hadisler', hadisler),
+            esmaulhusna: _mergeContent('esmaulhusna', esmaul),
+            dualar: _mergeContent('dualar', dualar),
+        };
 
         buildQueue();
         start();
+    }
+
+    // Özel içerikleri orijinallerle birleştir, pasif olanları çıkar
+    function _mergeContent(type, originalArr) {
+        let merged = [...(originalArr || [])];
+        try {
+            const cc = _settings.customContent;
+            if (cc) {
+                const custom = cc.custom?.[type] || [];
+                const disabled = cc.disabled?.[type] || [];
+
+                // Özel içerikleri ekle
+                merged = [...merged, ...custom];
+
+                // Pasif olanları çıkar
+                merged = merged.filter((item, idx) => {
+                    const isCustom = idx >= (originalArr || []).length;
+                    const uid = (isCustom ? 'c_' : 'o_') + item.id;
+                    return !disabled.includes(uid);
+                });
+            }
+        } catch (e) {
+            // parse hatası — orijinal verileri kullan
+        }
+        return merged;
     }
 
     // ──────────────────────────────────────────────────────
@@ -61,7 +93,16 @@ const CarouselManager = (() => {
         }
 
         if (_settings.gosterCamiBilgi && _settings.camiBilgiMetin) {
-            _queue.push({ type: 'camibilgi', data: { metin: _settings.camiBilgiMetin } });
+            // Artık bir dizi olabilir
+            const metinler = Array.isArray(_settings.camiBilgiMetin)
+                ? _settings.camiBilgiMetin
+                : [_settings.camiBilgiMetin]; // Eski versiyon desteği
+
+            metinler.forEach(m => {
+                if (m && m.trim() !== '') {
+                    _queue.push({ type: 'camibilgi', data: { metin: m.trim() } });
+                }
+            });
         }
 
         if (_settings.gosterHadis && _contents.hadisler?.length) {
@@ -94,19 +135,28 @@ const CarouselManager = (() => {
     }
 
     // ──────────────────────────────────────────────────────
+    // Mevcut slide'ın süresini al (per-content)
+    // ──────────────────────────────────────────────────────
+    function getSlideDuration(slideType) {
+        const ia = _settings.icerikAyarlari || {};
+        const cfg = ia[slideType];
+        return (cfg?.sure || _settings.carouselSure || 15) * 1000;
+    }
+
+    // ──────────────────────────────────────────────────────
     // Döngüyü başlat
     // ──────────────────────────────────────────────────────
     function start() {
-        if (_timer) clearInterval(_timer);
+        if (_timer) clearTimeout(_timer);
         showCurrent();
 
-        const pureDk = (_settings.carouselSure || 15) * 1000;
-        _timer = setInterval(next, pureDk);
-        startProgress(pureDk);
+        const durationMs = getSlideDuration(_queue[_currentIdx]?.type);
+        _timer = setTimeout(next, durationMs);
+        startProgress(durationMs);
     }
 
     function stop() {
-        if (_timer) clearInterval(_timer);
+        if (_timer) clearTimeout(_timer);
         if (_progressTimer) cancelAnimationFrame(_progressTimer);
         _timer = null;
         _progressTimer = null;
@@ -125,8 +175,10 @@ const CarouselManager = (() => {
         }
 
         showCurrent();
-        const pureDk = (_settings.carouselSure || 15) * 1000;
-        startProgress(pureDk);
+        const durationMs = getSlideDuration(_queue[_currentIdx]?.type);
+        if (_timer) clearTimeout(_timer);
+        _timer = setTimeout(next, durationMs);
+        startProgress(durationMs);
     }
 
     function prev() {

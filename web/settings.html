@@ -178,6 +178,15 @@
                 <h2 class="section-title" data-i18n="icerik_gosterimi">📖 İçerik Gösterimi</h2>
                 <div class="section-card">
 
+                    <!-- İçerik Düzenleyici Bağlantısı -->
+                    <div style="padding: 12px 16px; border-bottom: 1px solid var(--border);">
+                        <a href="content-editor.html" class="btn-add-slide"
+                            style="text-decoration: none; color: var(--accent);">
+                            ✏️ İçerik Düzenleyici — Ayet, Hadis, Dua, Esma Yönet
+                        </a>
+                    </div>
+
+                    <!-- ── AYET ────────────────────── -->
                     <div class="setting-row">
                         <span class="setting-icon">📖</span>
                         <div class="setting-info">
@@ -188,7 +197,24 @@
                                     class="toggle-slider"></span></label>
                         </div>
                     </div>
+                    <div class="content-sub-settings" id="sub-ayet" style="display:none;">
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_suresi">⏱️ Geçiş Süresi</span>
+                            <div class="range-group">
+                                <input type="range" id="s-sure-ayet" min="5" max="60" step="5">
+                                <span class="range-value" id="s-sure-ayet-val">15s</span>
+                            </div>
+                        </div>
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_yazi_boyutu">🔤 Yazı Boyutu</span>
+                            <div class="range-group">
+                                <input type="range" id="s-yazi-ayet" min="85" max="250" step="5">
+                                <span class="range-value" id="s-yazi-ayet-val">%100</span>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- ── HADİS ────────────────────── -->
                     <div class="setting-row">
                         <span class="setting-icon">📜</span>
                         <div class="setting-info">
@@ -199,7 +225,24 @@
                                     class="toggle-slider"></span></label>
                         </div>
                     </div>
+                    <div class="content-sub-settings" id="sub-hadis" style="display:none;">
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_suresi">⏱️ Geçiş Süresi</span>
+                            <div class="range-group">
+                                <input type="range" id="s-sure-hadis" min="5" max="60" step="5">
+                                <span class="range-value" id="s-sure-hadis-val">15s</span>
+                            </div>
+                        </div>
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_yazi_boyutu">🔤 Yazı Boyutu</span>
+                            <div class="range-group">
+                                <input type="range" id="s-yazi-hadis" min="85" max="250" step="5">
+                                <span class="range-value" id="s-yazi-hadis-val">%100</span>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- ── ESMA ────────────────────── -->
                     <div class="setting-row">
                         <span class="setting-icon">✨</span>
                         <div class="setting-info">
@@ -210,7 +253,24 @@
                                     class="toggle-slider"></span></label>
                         </div>
                     </div>
+                    <div class="content-sub-settings" id="sub-esma" style="display:none;">
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_suresi">⏱️ Geçiş Süresi</span>
+                            <div class="range-group">
+                                <input type="range" id="s-sure-esma" min="5" max="60" step="5">
+                                <span class="range-value" id="s-sure-esma-val">15s</span>
+                            </div>
+                        </div>
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_yazi_boyutu">🔤 Yazı Boyutu</span>
+                            <div class="range-group">
+                                <input type="range" id="s-yazi-esma" min="85" max="250" step="5">
+                                <span class="range-value" id="s-yazi-esma-val">%100</span>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- ── DUA ────────────────────── -->
                     <div class="setting-row">
                         <span class="setting-icon">🤲</span>
                         <div class="setting-info">
@@ -221,7 +281,24 @@
                                     class="toggle-slider"></span></label>
                         </div>
                     </div>
+                    <div class="content-sub-settings" id="sub-dua" style="display:none;">
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_suresi">⏱️ Geçiş Süresi</span>
+                            <div class="range-group">
+                                <input type="range" id="s-sure-dua" min="5" max="60" step="5">
+                                <span class="range-value" id="s-sure-dua-val">15s</span>
+                            </div>
+                        </div>
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_yazi_boyutu">🔤 Yazı Boyutu</span>
+                            <div class="range-group">
+                                <input type="range" id="s-yazi-dua" min="85" max="250" step="5">
+                                <span class="range-value" id="s-yazi-dua-val">%100</span>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- ── İMSAKİYE ────────────────────── -->
                     <div class="setting-row">
                         <span class="setting-icon">📅</span>
                         <div class="setting-info">
@@ -232,53 +309,59 @@
                                     class="toggle-slider"></span></label>
                         </div>
                     </div>
+                    <div class="content-sub-settings" id="sub-imsakiye" style="display:none;">
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_suresi">⏱️ Geçiş Süresi</span>
+                            <div class="range-group">
+                                <input type="range" id="s-sure-imsakiye" min="5" max="60" step="5">
+                                <span class="range-value" id="s-sure-imsakiye-val">15s</span>
+                            </div>
+                        </div>
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_yazi_boyutu">🔤 Yazı Boyutu</span>
+                            <div class="range-group">
+                                <input type="range" id="s-yazi-imsakiye" min="85" max="250" step="5">
+                                <span class="range-value" id="s-yazi-imsakiye-val">%100</span>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- ── CAMİ BİLGİLERİ ────────────────────── -->
                     <div class="setting-row">
                         <span class="setting-icon">ℹ️</span>
                         <div class="setting-info">
                             <div class="setting-label" data-i18n="goster_camibilgi">Cami Bilgileri Göster</div>
-                            <div class="setting-desc" data-i18n="goster_camibilgi_aciklama">Özel cami tanıtım veya ilan
-                                metni yayınla</div>
+                            <div class="setting-desc" data-i18n="goster_camibilgi_aciklama">Özel cami tanıtım, ilan
+                                metni, vakıf bilgileri vb. yayınla</div>
                         </div>
                         <div class="setting-control">
                             <label class="toggle-switch"><input type="checkbox" id="s-goster-camibilgi"><span
                                     class="toggle-slider"></span></label>
                         </div>
                     </div>
-                    <div class="setting-row" id="s-camibilgi-container"
-                        style="display:none; flex-direction:column; align-items:stretch; padding-top:10px;">
-                        <textarea id="s-camibilgi-metin" class="form-input" rows="4" style="resize:vertical;"
-                            data-i18n-placeholder="camibilgi_placeholder"
-                            placeholder="Caminizin adı, adresi, vakıf bilgileri vb. (Boş bırakırsanız gösterilmez)"></textarea>
-                    </div>
-
-                    <div class="setting-row">
-                        <span class="setting-icon">⏱️</span>
-                        <div class="setting-info">
-                            <div class="setting-label" data-i18n="carousel_suresi">İçerik Geçiş Süresi</div>
-                            <div class="setting-desc" data-i18n="slide_suresi_aciklama">Sağ panelde ayet, hadis vb.
-                                içeriklerin geçiş süresi
+                    <div class="content-sub-settings" id="sub-camibilgi">
+                        <div class="sub-setting-row" style="flex-direction: column; align-items: stretch;">
+                            <div id="s-camibilgi-list" class="camibilgi-list"
+                                style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- Dinamik olarak settings.js tarafından doldurulacak -->
+                            </div>
+                            <div style="display: flex; justify-content: center; margin-top: 15px;">
+                                <button id="btn-add-camibilgi" class="btn-add-slide" data-i18n="cami_bilgi_ekle">+ Yeni
+                                    Cami Bilgisi Ekle</button>
                             </div>
                         </div>
-                        <div class="setting-control">
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_suresi">⏱️ Geçiş Süresi</span>
                             <div class="range-group">
-                                <input type="range" id="s-carousel-sure" min="5" max="60" step="5">
-                                <span class="range-value" id="s-carousel-sure-val">15s</span>
+                                <input type="range" id="s-sure-camibilgi" min="5" max="60" step="1">
+                                <span class="range-value" id="s-sure-camibilgi-val">20sn</span>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="setting-row">
-                        <span class="setting-icon">🔤</span>
-                        <div class="setting-info">
-                            <div class="setting-label" data-i18n="sag_panel_yazi_boyutu">Sağ Panel Yazı Boyutu</div>
-                            <div class="setting-desc" data-i18n="sag_panel_yazi_aciklama">Ayet, hadis vb. içeriklerin
-                                yazı büyüklüğü (İmsakiye hariç)</div>
-                        </div>
-                        <div class="setting-control">
+                        <div class="sub-setting-row">
+                            <span data-i18n="icerik_yazi_boyutu">🔤 Yazı Boyutu</span>
                             <div class="range-group">
-                                <input type="range" id="s-carousel-yazi-boyu" min="85" max="250" step="5">
-                                <span class="range-value" id="s-carousel-yazi-val">%100</span>
+                                <input type="range" id="s-yazi-camibilgi" min="85" max="250" step="5">
+                                <span class="range-value" id="s-yazi-camibilgi-val">%100</span>
                             </div>
                         </div>
                     </div>
@@ -315,6 +398,64 @@
                         <div class="setting-control">
                             <label class="toggle-switch"><input type="checkbox" id="s-goster-hicri"><span
                                     class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <!-- ── CUMA YARDIMI ────────────────────── -->
+                    <div class="setting-row">
+                        <span class="setting-icon">🤲</span>
+                        <div class="setting-info">
+                            <div class="setting-label" data-i18n="cuma_yardim">Cuma Yardımı Aktif</div>
+                            <div class="setting-desc" data-i18n="cuma_yardim_aciklama">Tam ekran veya bölümlü Cuma
+                                yardım/ilanı gösterimi</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-cuma-yardimi"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                    <div class="content-sub-settings" id="sub-cuma-yardimi">
+                        <div class="sub-setting-row">
+                            <span data-i18n="cuma_kac_dk_once">Cumadan Kaç Dk Önce Başlasın</span>
+                            <div class="range-group">
+                                <input type="number" id="s-cuma-yardim-baslangic" min="0" max="180"
+                                    style="width:60px; text-align:center;">
+                            </div>
+                        </div>
+                        <div class="sub-setting-row">
+                            <span data-i18n="cuma_kac_dk_sonra">Cumadan Kaç Dk Sonra Bitsin</span>
+                            <div class="range-group">
+                                <input type="number" id="s-cuma-yardim-bitis" min="0" max="180"
+                                    style="width:60px; text-align:center;">
+                            </div>
+                        </div>
+                        <div class="sub-setting-row">
+                            <span data-i18n="cuma_gorunum_modu">Görünüm Modu</span>
+                            <div class="range-group">
+                                <select id="s-cuma-yardim-gorunum" class="setting-select">
+                                    <option value="tam-ekran" data-i18n="cuma_gor_tam">Tam Ekran</option>
+                                    <option value="sol-panel" data-i18n="cuma_gor_sol">Sadece Sol Panel</option>
+                                    <option value="orta-panel" data-i18n="cuma_gor_orta">Sadece Orta Panel</option>
+                                    <option value="sag-panel" data-i18n="cuma_gor_sag">Sadece Sağ Panel</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="sub-setting-row"
+                            style="flex-direction: column; align-items: stretch; margin-top: 5px;">
+                            <span data-i18n="cuma_metin_tr" style="color: var(--accent); margin-bottom: 5px;">Yardım
+                                Metni (Türkçe)</span>
+                            <textarea id="s-cuma-metin-tr" rows="3" class="form-input"
+                                style="width: 100%; resize: vertical; margin-bottom: 10px;"></textarea>
+
+                            <span data-i18n="cuma_metin_ar" style="color: var(--accent); margin-bottom: 5px;">Yardım
+                                Metni (Arapça)</span>
+                            <textarea id="s-cuma-metin-ar" rows="3" class="form-input"
+                                style="width: 100%; resize: vertical; margin-bottom: 10px;" dir="rtl"></textarea>
+
+                            <span data-i18n="cuma_metin_en" style="color: var(--accent); margin-bottom: 5px;">Yardım
+                                Metni (İngilizce)</span>
+                            <textarea id="s-cuma-metin-en" rows="3" class="form-input"
+                                style="width: 100%; resize: vertical; margin-bottom: 10px;"></textarea>
                         </div>
                     </div>
 

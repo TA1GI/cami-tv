@@ -857,3 +857,123 @@
     margin-top: 24px;
     direction: rtl;
 }
+
+/* ─── CUMA YARDIMI OVERLAY ────────────────────────────── */
+.cuma-overlay {
+    position: absolute;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(10, 20, 15, 0.97) 0%, rgba(5, 30, 20, 0.97) 100%);
+    border: 1px solid var(--border-accent);
+    animation: cumaFadeIn 0.8s ease;
+    overflow: hidden;
+}
+
+/* When not hidden, position depends on data-mode */
+.cuma-overlay:not(.hidden)[data-mode="tam-ekran"] {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: none;
+}
+
+.cuma-overlay:not(.hidden)[data-mode="sol-panel"] {
+    top: var(--topbar-h);
+    left: 0;
+    width: var(--left-w);
+    bottom: 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.cuma-overlay:not(.hidden)[data-mode="orta-panel"] {
+    top: var(--topbar-h);
+    left: var(--left-w);
+    width: var(--center-w);
+    bottom: 0;
+}
+
+.cuma-overlay:not(.hidden)[data-mode="sag-panel"] {
+    top: var(--topbar-h);
+    right: 0;
+    width: var(--right-w);
+    bottom: 0;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.cuma-overlay.hidden {
+    display: none;
+}
+
+.cuma-overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 40px;
+    text-align: center;
+    max-width: 85%;
+}
+
+.cuma-overlay-icon {
+    font-size: clamp(3rem, 6vw, 5rem);
+    animation: cumaIconPulse 3s ease-in-out infinite;
+}
+
+.cuma-overlay-text {
+    font-family: var(--font-arabic);
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    color: var(--text-primary);
+    line-height: 1.8;
+    animation: cumaTextFade 0.6s ease;
+}
+
+.cuma-lang-badge {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+    border-radius: 20px;
+    opacity: 0.8;
+}
+
+@keyframes cumaFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes cumaIconPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.07);
+    }
+}
+
+@keyframes cumaTextFade {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
