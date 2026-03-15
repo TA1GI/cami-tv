@@ -179,23 +179,91 @@ const DataManager = (() => {
     // ──────────────────────────────────────────────────────
     // Bugünün vakitlerini bul
     // Veri yapısı: [{miladiTarih, imsak, gunes, ogle, ikindi, aksam, yatsi, ...}]
+    //
+    // 3 katmanlı arama:
+    //   1. Tam tarih eşleşmesi (normal durum)
+    //   2. localStorage'daki son bilinen doğru tarih (RTC'siz TV fallback)
+    //   3. Verideki en yakın tarih (son çare)
+    //
+    // Normal TV'lerde katman 1 her zaman çalışır, diğerleri hiç tetiklenmez.
+    // RTC'siz TV'lerde (reboot sonrası saat sıfırlanınca) katman 2 devreye girer
+    // ve en son doğru çalıştığı günün vakitlerini gösterir.
     // ──────────────────────────────────────────────────────
+
+    // Türkçe ay/gün adları (modül genelinde kullanılır)
+    const _aylar = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+    const _gunler = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+
+    // Tarih string'ini Date objesine çevirme yardımcısı
+    const _aylarMap = {};
+    _aylar.forEach((a, i) => _aylarMap[a] = i);
+
+    function _parseMiladiDate(str) {
+        if (!str) return null;
+        // Format: "14 Mart 2026 Cumartesi"
+        const parts = str.split(' ');
+        if (parts.length < 3) return null;
+        const d = parseInt(parts[0]);
+        const m = _aylarMap[parts[1]];
+        const y = parseInt(parts[2]);
+        if (isNaN(d) || m === undefined || isNaN(y)) return null;
+        return new Date(y, m, d);
+    }
+
     function getTodayPrayerTimes() {
-        if (!_prayerData) return null;
+        if (!_prayerData || _prayerData.length === 0) return null;
 
         const now = new Date();
         const day = String(now.getDate()).padStart(2, '0');
         const month = now.getMonth() + 1;
         const year = now.getFullYear();
+        const todayStr = `${day} ${_aylar[month - 1]} ${year} ${_gunler[now.getDay()]}`;
 
-        // Türkçe ay adları (ana projeyle uyumlu format)
-        const aylar = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-            'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-        const gunler = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+        // ── Katman 1: Tam eşleşme ──────────────────────
+        const exact = _prayerData.find(d => d.miladiTarih === todayStr);
+        if (exact) {
+            // Doğru tarihi kaydet (RTC'siz TV'ler için sigorta)
+            try { localStorage.setItem('lastKnownPrayerDate', todayStr); } catch (e) { /* ignore */ }
+            return exact;
+        }
 
-        const todayStr = `${day} ${aylar[month - 1]} ${year} ${gunler[now.getDay()]}`;
+        // ── Katman 2: Son bilinen doğru tarih ──────────
+        // Sistem saati yanlış olabilir — daha önce kaydedilmiş doğru tarihi dene
+        console.warn('[DataManager] Bugünün vakti bulunamadı (' + todayStr + '). Son bilinen tarih kontrol ediliyor...');
 
-        return _prayerData.find(d => d.miladiTarih === todayStr) || null;
+        try {
+            const lastKnown = localStorage.getItem('lastKnownPrayerDate');
+            if (lastKnown) {
+                const saved = _prayerData.find(d => d.miladiTarih === lastKnown);
+                if (saved) {
+                    console.warn('[DataManager] Son bilinen tarih kullanılıyor → ' + saved.miladiTarih);
+                    return saved;
+                }
+            }
+        } catch (e) { /* localStorage erişilemezse devam et */ }
+
+        // ── Katman 3: En yakın tarih (son çare) ────────
+        console.warn('[DataManager] Son bilinen tarih de bulunamadı. En yakın tarih aranıyor...');
+
+        const nowMs = now.getTime();
+        let closest = null;
+        let closestDiff = Infinity;
+
+        for (const entry of _prayerData) {
+            const entryDate = _parseMiladiDate(entry.miladiTarih);
+            if (!entryDate) continue;
+            const diff = Math.abs(entryDate.getTime() - nowMs);
+            if (diff < closestDiff) {
+                closestDiff = diff;
+                closest = entry;
+            }
+        }
+
+        if (closest) {
+            console.warn('[DataManager] Fallback: En yakın tarih kullanılıyor → ' + closest.miladiTarih);
+        }
+        return closest;
     }
 
     // ──────────────────────────────────────────────────────

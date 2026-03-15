@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -60,6 +61,12 @@ class MainActivity : Activity() {
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
             View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         )
+
+        // ─── Overlay izni kontrolü (Android 14+ boot auto-start için) ───
+        // Android 14+ arka plandan Activity başlatmayı (BAL) engelliyor.
+        // SYSTEM_ALERT_WINDOW izni bu kısıtlamayı aşar.
+        // Normal TV'lerde zaten verilmiş olabilir, olmasa bile bir kez istemek yeterli.
+        checkOverlayPermission()
 
         // ─── WebView Kurulum ───────────────────────────────
         webView = WebView(this)
@@ -180,9 +187,33 @@ class MainActivity : Activity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        // ─── KeepAwake Servisini Başlat ─────────────────────
+        startKeepAwakeService()
     }
 
     private var backPressedTime: Long = 0
+
+    // ─── Overlay izni kontrolü (evrensel) ─────────────────────
+    // Android 14+ arka plandan Activity başlatmayı (BAL) engelliyor.
+    // SYSTEM_ALERT_WINDOW izni bunu aşar. İlk kurulumda bir kez istemek yeterli.
+    private fun checkOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!android.provider.Settings.canDrawOverlays(this)) {
+                // Kullanıcıyı sistem izin ekranına yönlendir
+                try {
+                    val intent = Intent(
+                        android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:$packageName")
+                    )
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    // Bazı TV'lerde bu ekran olmayabilir — sessizce devam et
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
 
     // ─── Çıkış ve Navigasyon İçin Geri Tuşu ────────────────
     override fun onBackPressed() {
@@ -199,14 +230,43 @@ class MainActivity : Activity() {
             return
         }
 
-        // Ana ekrandaysa çift basım ile çıkış yap
+        // Ana ekrandaysa çift basım ile arka plana at
+        // moveTaskToBack: uygulamayı arka plana atar, normal TV'lerde stopped olmaz.
+        // Hikeen TV'lerde force-stop olabilir — bunun için ADB kurulum scripti gerekir.
         if (backPressedTime + 2000 > System.currentTimeMillis()) {
-            super.onBackPressed()
-            finishAffinity()
+            moveTaskToBack(true)
         } else {
-            android.widget.Toast.makeText(this, "Uygulamadan çıkmak için tekrar basın", android.widget.Toast.LENGTH_SHORT).show()
+            showWebViewToast("Uygulamadan çıkmak için tekrar basın")
         }
         backPressedTime = System.currentTimeMillis()
+    }
+
+    /**
+     * WebView içinde platform-bağımsız toast mesajı gösterir.
+     * Native Android Toast, Hikeen gibi özel TV firmware'larda çalışmayabiliyor.
+     */
+    private fun showWebViewToast(message: String) {
+        val js = """
+        (function() {
+            var existing = document.getElementById('android-toast');
+            if (existing) existing.remove();
+            var toast = document.createElement('div');
+            toast.id = 'android-toast';
+            toast.textContent = '${message.replace("'", "\\'")}';
+            toast.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);' +
+                'background:rgba(0,0,0,0.85);color:#fff;padding:12px 28px;border-radius:8px;' +
+                'font-size:1rem;z-index:99999;pointer-events:none;opacity:0;' +
+                'transition:opacity 0.3s ease;font-family:sans-serif;text-align:center;' +
+                'max-width:80%;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+            document.body.appendChild(toast);
+            requestAnimationFrame(function() { toast.style.opacity = '1'; });
+            setTimeout(function() {
+                toast.style.opacity = '0';
+                setTimeout(function() { toast.remove(); }, 300);
+            }, 2000);
+        })();
+        """.trimIndent()
+        webView.evaluateJavascript(js, null)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -238,7 +298,7 @@ class MainActivity : Activity() {
     // ─── OTA Güncelleme Kontrolü ───────────────────────
 
     private val RELEASES_API = "https://api.github.com/repos/TA1GI/cami-tv/releases/latest"
-    private val CURRENT_VERSION = "1.0.9"
+    private val CURRENT_VERSION = "1.0.10"
     private val updateHandler = Handler(Looper.getMainLooper())
     private val updateRunnable = object : Runnable {
         override fun run() {
@@ -269,6 +329,17 @@ class MainActivity : Activity() {
         webView.destroy()
         updateHandler.removeCallbacks(updateRunnable)
         settingsServer?.stop()
+        // KeepAwake servisini durdur
+        stopService(Intent(this, KeepAwakeService::class.java))
+    }
+
+    private fun startKeepAwakeService() {
+        val serviceIntent = Intent(this, KeepAwakeService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
     }
 
     fun checkForUpdate() {

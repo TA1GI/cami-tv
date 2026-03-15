@@ -289,12 +289,13 @@ function initSettingsPage() {
     const autoBootBtn = document.getElementById('s-auto-boot');
     if (autoBootBtn) {
         if (window.AndroidBridge && typeof AndroidBridge.getAutoBoot === 'function') {
+            // TV WebView'ından açılmış — native değeri oku
             autoBootBtn.checked = AndroidBridge.getAutoBoot();
-            autoBootBtn.addEventListener('change', markDirty);
         } else {
-            autoBootBtn.disabled = true;
-            autoBootBtn.parentElement.parentElement.parentElement.style.opacity = '0.4';
+            // Telefondan açılmış — settings JSON'dan oku (varsayılan: true)
+            autoBootBtn.checked = settings.autoBoot !== undefined ? settings.autoBoot : true;
         }
+        autoBootBtn.addEventListener('change', markDirty);
     }
 
     // ──────────────────────────────────────────────────────
@@ -566,9 +567,10 @@ function initSettingsPage() {
             yatsi: parseInt(document.getElementById('co-yatsi')?.value) || 0,
         };
 
-        // Auto Boot (Android/TV)
+        // Auto Boot (Android/TV) — her zaman settings JSON'a kaydet
+        s.autoBoot = getCheck('s-auto-boot');
         if (window.AndroidBridge && typeof AndroidBridge.setAutoBoot === 'function') {
-            AndroidBridge.setAutoBoot(getCheck('s-auto-boot'));
+            AndroidBridge.setAutoBoot(s.autoBoot);
         }
 
         // Güç yönetimi

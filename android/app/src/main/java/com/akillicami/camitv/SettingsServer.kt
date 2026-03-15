@@ -6,6 +6,7 @@ import android.util.Base64
 import android.os.Looper
 import android.webkit.WebView
 import fi.iki.elonen.NanoHTTPD
+import org.json.JSONObject
 import java.io.InputStream
 import java.net.URLConnection
 
@@ -30,6 +31,15 @@ class SettingsServer(
 
                 // Ayarları SharedPreferences içine yedekle
                 prefs.edit().putString("settings", postData).apply()
+
+                // autoBoot değerini CamiTvPrefs'e senkronize et (BootReceiver bunu okur)
+                try {
+                    val json = JSONObject(postData)
+                    if (json.has("autoBoot")) {
+                        val bootPrefs = context.getSharedPreferences("CamiTvPrefs", Context.MODE_PRIVATE)
+                        bootPrefs.edit().putBoolean("auto_boot", json.getBoolean("autoBoot")).apply()
+                    }
+                } catch (_: Exception) { /* JSON parse hatası — yoksay */ }
 
                 // WebView'a "LocalStorage güncelle ve Verileri İndirmek İçin Yeniden Başlat" komutu yolla
                 // WebView file:/// protokolu URL query desteklemeyebileceği için güvenilir olan localStorage flag metodunu kullanıyoruz.

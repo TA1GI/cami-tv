@@ -1,5 +1,17 @@
 # Değişiklik Günlüğü
 
+## v1.0.10 (2026-03-16)
+- **Kumanda Kısayolu:** Kumandadan '0' tuşuna 3 kez üst üste basıldığında doğrudan Ayarlar sayfasının açılması sağlandı.
+- **Geri Tuşu Geliştirmesi:** Uygulamadan çıkarken çıkan "Tekrar basın" uyarısı platform bağımsız (WebView tabanlı) yeni bir Toast mesajı yapısına geçirildi.
+- **Açılışta Otomatik Başlatma (Boot) Çözümleri:**
+  - Android 14+ cihazlardaki Background Activity Launch (BAL) kısıtlamaları, Full-Screen Intent Notification kullanılarak bypass edildi.
+  - Uygulamadan çıkıldığında `stopped=true` durumuna düşmesini önlemek için uygulamayı kapatmak yerine arka plana atan (`moveTaskToBack`) yeni bir mantığa geçildi.
+  - Hikeen TV Kurulum Scripti: Hotel modunda uyanamayan sorunlu TV'ler için `tools/hikeen_tv_setup.bat` dosyası eklendi.
+- **Çevrimdışı (Offline) Saat:** Cihaz internetsiz açıldığında, donanımsal saati olmasa bile geri sayıma devam edebilmesi için son bilinen tarihe geri dönebilen çok katmanlı (localStorage + `tv_scan_rtc.txt`) fallback yapısı kuruldu.
+- **Zaman Dilimi ve Uyku Engelleme:**
+  - Akıllı TV'lerin yanlış zaman diliminde uyanması ihtimaline karşı sistem saati `Europe/Istanbul` olarak düzeltildi.
+  - Cami TV açıkken TV'nin sistem tarafından zorla uyku moduna geçirilmesini engellemek için arka planda sürekli çalışan `KeepAwakeService` eklendi.
+
 ## v1.0.9 (2026-03-07)
 ### Cuma Yardımı Overlay Sistemi
 - **Cuma Vakti Otomatik Overlay:** Cuma namazı öncesi ve sonrası otomatik devreye giren yardım/bağış duyuru ekranı eklendi.

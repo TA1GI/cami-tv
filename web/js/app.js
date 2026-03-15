@@ -24,7 +24,12 @@ const App = (() => {
         showLoading(true);
 
         // 2) IndexedDB başlat
-        await DataManager.initDB();
+        try {
+            await DataManager.initDB();
+        } catch (dbErr) {
+            console.error('[App] IndexedDB başlatılamadı:', dbErr);
+            // DB başarısız olsa bile kurulum ekranına gidebilsin
+        }
 
         // 3) Ayarları yükle
         _settings = SettingsManager.load();
@@ -70,16 +75,21 @@ const App = (() => {
         // 8) Ana uygulamayı başlat
         await startMainApp();
 
-        // 9) Arka planda yıl güncelleme kontrolü
-        setTimeout(async () => {
-            const ilce = _settings.ilce;
-            const ilceId = _settings.ilceId;
-            const updated = await DataManager.checkYearUpdate(ilce, ilceId);
-            if (updated) {
-                // Veri güncellendiyse sayfayı yenile
-                location.reload();
-            }
-        }, 5000);
+        // 9) Arka planda yıl güncelleme kontrolü (sadece online iken)
+        if (navigator.onLine) {
+            setTimeout(async () => {
+                try {
+                    const ilce = _settings.ilce;
+                    const ilceId = _settings.ilceId;
+                    const updated = await DataManager.checkYearUpdate(ilce, ilceId);
+                    if (updated) {
+                        location.reload();
+                    }
+                } catch (e) {
+                    console.warn('[App] Yıl güncelleme hatası (önemsiz):', e);
+                }
+            }, 5000);
+        }
     }
 
     // ──────────────────────────────────────────────────────
@@ -127,10 +137,14 @@ const App = (() => {
         PowerManager.init(_settings, _todayPT);
 
         // Carousel başlat
-        let weekPrayer = applySabahLogicList(DataManager.getWeekPrayerTimes(), _settings);
-        await CarouselManager.init(_settings, weekPrayer, (slide, idx, total) => {
-            DisplayManager.renderSlide(slide, idx, total);
-        });
+        try {
+            let weekPrayer = applySabahLogicList(DataManager.getWeekPrayerTimes(), _settings);
+            await CarouselManager.init(_settings, weekPrayer, (slide, idx, total) => {
+                DisplayManager.renderSlide(slide, idx, total);
+            });
+        } catch (carouselErr) {
+            console.warn('[App] Carousel başlatma hatası (devam ediyor):', carouselErr);
+        }
 
         // İlk render
         tick();
@@ -263,6 +277,9 @@ const App = (() => {
     // ──────────────────────────────────────────────────────
     // KLAVYE / UZAKTAN KUMANDA NAVİGASYON
     // ──────────────────────────────────────────────────────
+    let _settingsKeyCount = 0;
+    let _settingsKeyTimer = null;
+
     function initKeyboardNav() {
         document.addEventListener('keydown', (e) => {
             // Herhangi bir tuşa basınca ekranı uyandır
@@ -296,11 +313,29 @@ const App = (() => {
                     break;
                 case 'Enter':
                 case 'Return':
-                    // Ayarlar ekranına git (Ctrl/Shift ile)
+                    // Ayarlar ekranına git (Ctrl/Shift ile — PC kısayolu)
                     if (e.ctrlKey || e.shiftKey) {
                         window.location.href = 'settings.html';
                     }
                     break;
+            }
+
+            // ── "0" tuşuna 3 kez hızlıca basarak ayarlara git ──
+            // Tüm TV kumandalarında 0-9 sayı tuşları var
+            if (e.key === '0' && !isFormScreen) {
+                _settingsKeyCount++;
+                if (_settingsKeyTimer) clearTimeout(_settingsKeyTimer);
+
+                if (_settingsKeyCount >= 3) {
+                    _settingsKeyCount = 0;
+                    window.location.href = 'settings.html';
+                    return;
+                }
+
+                // 1.5 saniye içinde 3 kez basılmazsa sıfırla
+                _settingsKeyTimer = setTimeout(() => {
+                    _settingsKeyCount = 0;
+                }, 1500);
             }
         });
 
