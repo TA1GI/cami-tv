@@ -1,5 +1,30 @@
 # Değişiklik Günlüğü
 
+## v1.0.11 (2026-03-19)
+### Bayram Namazı Vakti Özelliği
+- **Bayram Namazı Bilgi Kutusu:** Bayrama 2 gün kala ekranda otomatik olarak bayram namazı saati ve tarihi gösteren altın renkli bilgi kutusu eklendi.
+- **Dinamik Başlık:** Kalan güne göre "Bayram Namazı (2 gün)", "Yarın Bayram Namazı" veya "Bugün Bayram Namazı" şeklinde otomatik güncellenen başlık.
+- **Ramazan ile Uyum:** Ramazan banner'ı (Sahur/İftar geri sayımı) ile aynı anda görüntülenebilir, çakışma yok.
+- **Yıl Bağımsız:** Kod tarih tabanlı çalışır; GitHub'daki `bayram_namazi.json` güncellendiği sürece her yıl otomatik çalışır.
+
+### Responsive Tasarım İyileştirmeleri
+- **CSS Container Queries:** Geri sayım dairesi içindeki yazı ve rakamlar artık `cqi` birimiyle dairenin boyutuna göre otomatik ölçeklenir. Ekran büyüklüğü fark etmeksizin metin her zaman daireye sığar.
+- **Düşük Çözünürlük Desteği:** Mi Box (960×540) ve benzeri düşük çözünürlüklü cihazlar için 2 kademeli `@media (max-height)` responsive kuralları eklendi:
+  - **≤700px:** Orta panel sıkıştırılır, bayram kutusu tek satıra geçer.
+  - **≤550px:** Tüm kutular (sahur, bayram, ezan) agresif şekilde kompakt hale gelir.
+- Büyük ekranlardaki (1080p+) mevcut tasarıma hiç dokunulmadı.
+
+### `getBayramWakti()` Düzeltmesi
+- **Veri Yapısı Düzeltmesi:** `data-manager.js`'deki `getBayramWakti()` fonksiyonu, `bayram_namazi.json`'ın gerçek veri yapısına (ilçe ID ile anahtarlı obje) uygun hale getirildi.
+- **Tarih Parse:** Türkçe tarih formatı ("20 Mart 2026 Cuma") doğru parse ediliyor.
+
+### Değiştirilen Dosyalar
+- `data-manager.js` — `getBayramWakti()` fonksiyonu yeniden yazıldı
+- `display-manager.js` — `updateBayramBanner()` fonksiyonu eklendi
+- `app.js` — `tick()` içinde bayram banner hook eklendi
+- `index.html` — `#ls-bayram-info` HTML elementi eklendi
+- `landscape.css` — Bayram kutusu stilleri, Container Queries ve responsive `@media` blokları eklendi
+
 ## v1.0.10 (2026-03-16)
 - **Kumanda Kısayolu:** Kumandadan '0' tuşuna 3 kez üst üste basıldığında doğrudan Ayarlar sayfasının açılması sağlandı.
 - **Geri Tuşu Geliştirmesi:** Uygulamadan çıkarken çıkan "Tekrar basın" uyarısı platform bağımsız (WebView tabanlı) yeni bir Toast mesajı yapısına geçirildi.

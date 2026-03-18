@@ -212,6 +212,10 @@ const App = (() => {
             DisplayManager.updateRamadanBanner(null);
         }
 
+        // Bayram namazı bilgi kutusu (bayrama 2 gün kala görünür)
+        const bayramInfo = DataManager.getBayramWakti(_settings.ilceId);
+        DisplayManager.updateBayramBanner(bayramInfo);
+
         // Ezan ekranı
         const ezanInfo = PrayerEngine.shouldShowEzan(_todayPT, _settings.ezanOnceDk);
         if (ezanInfo) {

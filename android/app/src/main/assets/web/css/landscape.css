@@ -312,6 +312,8 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 1;
+    container-type: inline-size;
+    container-name: countdown-circle;
 }
 
 .progress-ring {
@@ -361,11 +363,11 @@
 
 /* Vakit adı büyük */
 .countdown-target-name {
-    font-size: calc(var(--font-scale) * clamp(1.1rem, 3.2vmin, 1.8rem));
+    font-size: calc(var(--font-scale) * clamp(0.7rem, 5.5cqi, 1.8rem));
     font-weight: 800;
     color: var(--text-secondary);
     text-align: center;
-    margin-bottom: clamp(2px, 0.5vmin, 4px);
+    margin-bottom: clamp(2px, 0.5cqi, 4px);
     letter-spacing: 0.02em;
     text-transform: uppercase;
     white-space: nowrap;
@@ -374,7 +376,7 @@
 
 /* Büyük geri sayım */
 .countdown-time {
-    font-size: calc(var(--font-scale) * clamp(1.8rem, 6vmin, 4.2rem));
+    font-size: calc(var(--font-scale) * clamp(1.2rem, 16cqi, 4.2rem));
     font-weight: 900;
     color: var(--countdown-color);
     text-shadow: var(--countdown-shadow);
@@ -392,7 +394,7 @@
 
 /* "kaldı" yazısı */
 .countdown-label {
-    font-size: calc(var(--font-scale) * clamp(0.8rem, 2vmin, 1.1rem));
+    font-size: calc(var(--font-scale) * clamp(0.5rem, 3.5cqi, 1.1rem));
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
@@ -489,6 +491,63 @@
     transition: all var(--transition-fast);
     display: none;
     /* Haftalık imsakiye varsa görünür */
+}
+
+/* Bayram namazı bilgi kutusu */
+.bayram-info-box {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 24px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(255, 215, 0, 0.15));
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    margin-top: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.bayram-info-box.visible {
+    display: flex !important;
+}
+
+.byr-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.byr-icon {
+    font-size: calc(var(--font-scale) * 1.2rem);
+}
+
+.byr-title {
+    font-size: calc(var(--font-scale) * clamp(0.75rem, 1.6vmin, 1rem));
+    font-weight: 700;
+    color: #d4af37;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.byr-detail {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.byr-saat {
+    font-size: calc(var(--font-scale) * clamp(1.4rem, 3.5vmin, 2.2rem));
+    font-weight: 900;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.byr-tarih {
+    font-size: calc(var(--font-scale) * clamp(0.65rem, 1.4vmin, 0.85rem));
+    color: var(--text-muted);
+    white-space: nowrap;
 }
 
 /* ─── SAĞ SÜTUN: Carousel ────────────────────────────────── */
@@ -975,5 +1034,176 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE: Düşük yükseklikli ekranlar (720p, Mi Box vb.)
+   Mevcut stillere dokunmaz, sadece override yapar.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Kademe 1: ≤700px yükseklik (1280x720 ve benzeri) ──── */
+@media (max-height: 700px) {
+    #ls-center {
+        padding: 12px 16px;
+        gap: 0.6rem;
+    }
+
+    .circular-progress-wrapper {
+        max-width: clamp(160px, 36vmin, 280px);
+    }
+
+    .ramadan-info-box {
+        padding: 6px 16px;
+        margin-top: 2px;
+    }
+
+    .rm-header {
+        margin-bottom: 2px;
+    }
+
+    .rm-icon {
+        font-size: calc(var(--font-scale) * 1rem);
+    }
+
+    .rm-title {
+        font-size: calc(var(--font-scale) * clamp(0.7rem, 1.5vmin, 0.9rem));
+    }
+
+    .rm-value {
+        font-size: calc(var(--font-scale) * clamp(1.2rem, 3vmin, 1.8rem));
+    }
+
+    .bayram-info-box {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        padding: 5px 14px;
+        margin-top: 2px;
+    }
+
+    .byr-header {
+        margin-bottom: 0;
+        gap: 5px;
+    }
+
+    .byr-icon {
+        font-size: calc(var(--font-scale) * 0.9rem);
+    }
+
+    .byr-title {
+        font-size: calc(var(--font-scale) * clamp(0.6rem, 1.2vmin, 0.8rem));
+    }
+
+    .byr-saat {
+        font-size: calc(var(--font-scale) * clamp(1rem, 2.2vmin, 1.4rem));
+    }
+
+    .byr-tarih {
+        font-size: calc(var(--font-scale) * clamp(0.55rem, 1vmin, 0.7rem));
+    }
+
+    #ezan-notification {
+        padding: 8px 16px;
+        gap: 10px;
+        top: 10px;
+    }
+
+    .ezan-text {
+        font-size: calc(var(--font-scale) * 1.2rem);
+    }
+
+    #ls-cemaat {
+        padding: 6px 14px;
+        gap: 8px;
+        margin-top: 4px;
+    }
+}
+
+/* ── Kademe 2: ≤550px yükseklik (Mi Box 960x540 vb.) ───── */
+@media (max-height: 550px) {
+    #ls-center {
+        padding: 6px 12px;
+        gap: 0.3rem;
+    }
+
+    .circular-progress-wrapper {
+        max-width: clamp(120px, 30vmin, 200px);
+    }
+
+    .ramadan-info-box {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        padding: 4px 12px;
+        margin-top: 0;
+    }
+
+    .rm-header {
+        margin-bottom: 0;
+    }
+
+    .rm-icon {
+        font-size: calc(var(--font-scale) * 0.85rem);
+    }
+
+    .rm-title {
+        font-size: calc(var(--font-scale) * 0.65rem);
+    }
+
+    .rm-value {
+        font-size: calc(var(--font-scale) * clamp(0.9rem, 2.2vmin, 1.3rem));
+    }
+
+    .bayram-info-box {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        padding: 3px 10px;
+        margin-top: 0;
+    }
+
+    .byr-header {
+        margin-bottom: 0;
+        gap: 4px;
+    }
+
+    .byr-icon {
+        font-size: calc(var(--font-scale) * 0.75rem);
+    }
+
+    .byr-title {
+        font-size: calc(var(--font-scale) * 0.6rem);
+    }
+
+    .byr-saat {
+        font-size: calc(var(--font-scale) * clamp(0.85rem, 1.8vmin, 1.1rem));
+    }
+
+    .byr-tarih {
+        font-size: calc(var(--font-scale) * 0.55rem);
+    }
+
+    #ezan-notification {
+        padding: 5px 12px;
+        gap: 8px;
+        top: 4px;
+    }
+
+    .ezan-ring {
+        width: 14px;
+        height: 14px;
+    }
+
+    .ezan-text {
+        font-size: calc(var(--font-scale) * 0.9rem);
+    }
+
+    /* Sol panel: vakitler daha sıkışık */
+    .prayer-row {
+        padding: clamp(4px, 0.8vmin, 8px) clamp(4px, 1vmin, 10px);
     }
 }

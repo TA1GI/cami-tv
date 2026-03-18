@@ -309,16 +309,39 @@ const DataManager = (() => {
 
     // ──────────────────────────────────────────────────────
     // Bayram namazı vakti — günün il/ilçesine göre
+    // oncesiGun: bayramdan kaç gün önce gösterilmeye başlasın (varsayılan 2)
+    // JSON yapısı: { "ilceId": { "ramazan": "07:23", "tarih": "20 Mart 2026 Cuma" }, ... }
+    // Dönüş: { saat, tarih, kalanGun } veya null
     // ──────────────────────────────────────────────────────
-    function getBayramWakti(ilceId) {
+    function getBayramWakti(ilceId, oncesiGun = 2) {
         if (!_bayramData) return null;
-        const today = new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-        // Bayram JSON yapısı: [{ilce_id, tarih, saat}]  (ta1gi.github.io formatı)
-        if (Array.isArray(_bayramData)) {
-            return _bayramData.find(b => b.ilce_id === ilceId && b.tarih === today) || null;
-        }
-        return null;
+        const idStr = String(ilceId);
+        const entry = _bayramData[idStr];
+        if (!entry) return null;
+
+        // "ramazan" alanı bayram namazı saatini tutuyor
+        const saat = entry.ramazan;
+        const tarihStr = entry.tarih; // "20 Mart 2026 Cuma"
+        if (!saat || !tarihStr) return null;
+
+        // Tarih string'ini parse et
+        const bayramDate = _parseMiladiDate(tarihStr);
+        if (!bayramDate) return null;
+
+        // Bugünün başlangıcı (saat 00:00)
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const bayramStart = new Date(bayramDate.getFullYear(), bayramDate.getMonth(), bayramDate.getDate());
+
+        // Fark hesabı (gün)
+        const diffMs = bayramStart - todayStart;
+        const kalanGun = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+        // Bayram geçtiyse veya henüz erken ise null
+        if (kalanGun < 0 || kalanGun > oncesiGun) return null;
+
+        return { saat, tarih: tarihStr, kalanGun };
     }
 
     // ──────────────────────────────────────────────────────

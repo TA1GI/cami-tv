@@ -561,6 +561,41 @@ const DisplayManager = (() => {
     }
 
     // ──────────────────────────────────────────────────────
+    // BAYRAM banner güncelleme
+    // ──────────────────────────────────────────────────────
+    function updateBayramBanner(bayramInfo) {
+        const lsBanner = document.getElementById('ls-bayram-info');
+        if (!lsBanner) return;
+
+        if (!bayramInfo) {
+            lsBanner.classList.remove('visible');
+            lsBanner.classList.add('hidden');
+            return;
+        }
+
+        lsBanner.classList.remove('hidden');
+        lsBanner.classList.add('visible');
+
+        const titleEl = lsBanner.querySelector('.byr-title');
+        const saatEl = lsBanner.querySelector('.byr-saat');
+        const tarihEl = lsBanner.querySelector('.byr-tarih');
+
+        // Başlık: kaç gün kaldığına göre değişir
+        let title = 'Bayram Namazı';
+        if (bayramInfo.kalanGun === 0) {
+            title = 'Bugün Bayram Namazı';
+        } else if (bayramInfo.kalanGun === 1) {
+            title = 'Yarın Bayram Namazı';
+        } else {
+            title = `Bayram Namazı (${bayramInfo.kalanGun} gün)`;
+        }
+
+        if (titleEl) titleEl.textContent = title;
+        if (saatEl) saatEl.textContent = bayramInfo.saat;
+        if (tarihEl) tarihEl.textContent = bayramInfo.tarih;
+    }
+
+    // ──────────────────────────────────────────────────────
     // TICKER güncelle
     // ──────────────────────────────────────────────────────
     function updateTicker(items) {
@@ -705,6 +740,7 @@ const DisplayManager = (() => {
         showEzanOverlay,
         hideEzanOverlay,
         updateRamadanBanner,
+        updateBayramBanner,
         updateTicker,
         applyTheme,
         applySettings,
