@@ -219,8 +219,9 @@ const App = (() => {
         // Ezan ekranı
         const ezanInfo = PrayerEngine.shouldShowEzan(_todayPT, _settings.ezanOnceDk);
         if (ezanInfo) {
-            if (_lastEzanKey !== ezanInfo.key) {
-                _lastEzanKey = ezanInfo.key;
+            const ezanState = ezanInfo.key + (ezanInfo.isEzanTime ? '_ezan' : '_yaklasti');
+            if (_lastEzanKey !== ezanState) {
+                _lastEzanKey = ezanState;
                 DisplayManager.showEzanOverlay(ezanInfo);
                 PowerManager.turnOn(); // Ezan sırasında ekranı açık tut
             }

@@ -1,5 +1,14 @@
 # Değişiklik Günlüğü
 
+## v1.0.12 (2026-03-19)
+### Dinamik "Akıcı (Fluid)" Arayüz Mimarisi
+- **Kusursuz Oransal Ölçeklenme:** Tüm bilgi kutuları (İftar/Sahur, Ezan, Bayram) artık geri sayım dairesiyle aynı matematiksel mantıkta (`aspect-ratio` + `container-type: inline-size`) çalışıyor. 
+- **Esnek (Flex) Sıkışma Sistemi:** Ekran yüksekliği azaldığında veya yeni bir bildirim eklendiğinde, hiçbir öğe diğerinin üstüne çıkmıyor. Dev geri sayım dairesi "şok emici" (`flex: 8`) olarak görev yapıyor; diğer kutular (`flex: 2` ve `3`) ile tam bir uyum içinde ekranı paylaşıyorlar.
+- **Dinamik Metin Boyutlandırma:** Daralma esnasında kutuların genişlikleri orantılı olarak küçülüyor; içlerindeki metinler (`cqi` birimi sayesinde) otomatik ve milimetrik olarak küçülüyor.
+- **Statik Media Sorgularının İptali:** Düşük çözünürlükler için yazılan katı (`@media max-height`) kurallar silindi. Yeni Flexbox sistemi 1080p'den 540p'ye kadar tüm çözünürlüklerde arayüzü organik olarak ölçekliyor.
+- **Ezan Bildirimi Çakışması Giderildi:** Axen TV gibi cihazlarda ezan okunduğunda bildirimin geri sayım dairesiyle üst üste binmesi %100 engellendi.
+- **Ezan State Geçişi Hatası Düzeltildi:** Vakit "Yaklaştı" durumundan "Okunuyor" durumuna geçerken anahtarın (`key`) aynı kalması nedeniyle ekrandaki yazının güncellenmemesi (`app.js`) sorunu giderildi; artık `_lastEzanKey` kontrolüne `isEzanTime` drumu da dahil edildi.
+
 ## v1.0.11 (2026-03-19)
 ### Bayram Namazı Vakti Özelliği
 - **Bayram Namazı Bilgi Kutusu:** Bayrama 2 gün kala ekranda otomatik olarak bayram namazı saati ve tarihi gösteren altın renkli bilgi kutusu eklendi.

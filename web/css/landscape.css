@@ -252,21 +252,28 @@
 #ezan-notification {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 12px 24px;
+    gap: clamp(8px, 3cqi, 16px);
+    padding: clamp(6px, 2cqi, 12px) clamp(16px, 3vw, 24px);
     border-radius: 50px;
     background: var(--vakit-aktif-bg);
     border: 2px solid var(--vakit-aktif-border);
     box-shadow: 0 0 30px rgba(var(--vakit-aktif-text-rgb), 0.4);
-    position: absolute;
-    top: 20px;
+    position: relative;
     z-index: 20;
+    /* Shock absorber flex properties */
+    flex: 2 1 0;
+    min-height: 0;
+    max-height: 10vh;
+    aspect-ratio: 5 / 1;
+    container-type: inline-size;
+    container-name: ezan-box;
+    transition: all 0.5s ease-in-out;
     animation: ezan-pulse 2s infinite alternate;
 }
 
 .ezan-ring {
-    width: 20px;
-    height: 20px;
+    width: clamp(12px, 6cqi, 20px);
+    height: clamp(12px, 6cqi, 20px);
     border-radius: 50%;
     background: var(--vakit-aktif-text);
     box-shadow: 0 0 15px var(--vakit-aktif-text);
@@ -274,7 +281,7 @@
 }
 
 .ezan-text {
-    font-size: calc(var(--font-scale) * 1.8rem);
+    font-size: calc(var(--font-scale) * clamp(1rem, 8cqi, 1.8rem));
     font-weight: 900;
     color: var(--vakit-aktif-text);
     text-transform: uppercase;
@@ -305,15 +312,19 @@
 /* Dairesel Progress Bar Container */
 .circular-progress-wrapper {
     position: relative;
-    width: 100%;
-    max-width: clamp(200px, 45vmin, 400px);
+    max-width: 50vmin;
+    max-height: 50vmin;
     aspect-ratio: 1 / 1;
+    /* Let flex-box shrink it smoothly. Dominant element gets 8 shares. */
+    flex: 8 1 0;
+    min-height: 0;
+    min-width: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 1;
     container-type: inline-size;
     container-name: countdown-circle;
+    transition: all 0.5s ease-in-out;
 }
 
 .progress-ring {
@@ -434,13 +445,22 @@
     display: none;
     flex-direction: column;
     align-items: center;
-    padding: 16px 32px;
+    justify-content: center;
+    padding: clamp(4px, 2.2cqi, 16px) clamp(16px, 3vw, 32px);
     border-radius: var(--radius-lg);
     background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.2));
     border: 1px solid rgba(46, 204, 113, 0.3);
-    margin-top: 10px;
+    margin-top: clamp(2px, 2vh, 10px);
     position: relative;
     z-index: 1;
+    /* Flex boundaries and dynamic container properties */
+    flex: 3 1 0; /* 3 shares of space */
+    min-height: 0;
+    max-height: 14vh;
+    aspect-ratio: 4.5 / 1;
+    container-type: inline-size;
+    container-name: ramadan-box;
+    transition: all 0.5s ease-in-out;
 }
 
 .ramadan-info-box.visible {
@@ -451,15 +471,15 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 6px;
+    margin-bottom: clamp(2px, 1.1cqi, 6px);
 }
 
 .rm-icon {
-    font-size: calc(var(--font-scale) * 1.4rem);
+    font-size: calc(var(--font-scale) * clamp(0.8rem, 5.5cqi, 1.4rem));
 }
 
 .rm-title {
-    font-size: calc(var(--font-scale) * clamp(0.9rem, 2vmin, 1.3rem));
+    font-size: calc(var(--font-scale) * clamp(0.7rem, 4.4cqi, 1.3rem));
     font-weight: 700;
     color: #2ecc71;
     text-transform: uppercase;
@@ -468,7 +488,8 @@
 }
 
 .rm-value {
-    font-size: calc(var(--font-scale) * clamp(1.8rem, 4.5vmin, 2.8rem));
+    font-size: calc(var(--font-scale) * clamp(1.2rem, 8.8cqi, 2.8rem));
+    line-height: 1.1;
     font-weight: 900;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
@@ -493,18 +514,26 @@
     /* Haftalık imsakiye varsa görünür */
 }
 
-/* Bayram namazı bilgi kutusu */
 .bayram-info-box {
     display: none;
     flex-direction: column;
     align-items: center;
-    padding: 12px 24px;
+    justify-content: center;
+    padding: clamp(4px, 2.2cqi, 12px) clamp(16px, 3vw, 24px);
     border-radius: var(--radius-lg);
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(255, 215, 0, 0.15));
     border: 1px solid rgba(212, 175, 55, 0.35);
-    margin-top: 8px;
+    margin-top: clamp(2px, 1.5vh, 8px);
     position: relative;
     z-index: 1;
+    /* Flex boundaries and dynamic container properties */
+    flex: 3 1 0; /* 3 shares of space */
+    min-height: 0;
+    max-height: 13vh;
+    aspect-ratio: 4.5 / 1;
+    container-type: inline-size;
+    container-name: bayram-box;
+    transition: all 0.5s ease-in-out;
 }
 
 .bayram-info-box.visible {
@@ -514,16 +543,16 @@
 .byr-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: clamp(4px, 1.1cqi, 8px);
+    margin-bottom: clamp(2px, 1.1cqi, 4px);
 }
 
 .byr-icon {
-    font-size: calc(var(--font-scale) * 1.2rem);
+    font-size: calc(var(--font-scale) * clamp(0.7rem, 4.4cqi, 1.2rem));
 }
 
 .byr-title {
-    font-size: calc(var(--font-scale) * clamp(0.75rem, 1.6vmin, 1rem));
+    font-size: calc(var(--font-scale) * clamp(0.6rem, 4cqi, 1rem));
     font-weight: 700;
     color: #d4af37;
     text-transform: uppercase;
@@ -538,14 +567,15 @@
 }
 
 .byr-saat {
-    font-size: calc(var(--font-scale) * clamp(1.4rem, 3.5vmin, 2.2rem));
+    font-size: calc(var(--font-scale) * clamp(1.2rem, 7.7cqi, 2.2rem));
     font-weight: 900;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
+    line-height: 1.1;
 }
 
 .byr-tarih {
-    font-size: calc(var(--font-scale) * clamp(0.65rem, 1.4vmin, 0.85rem));
+    font-size: calc(var(--font-scale) * clamp(0.6rem, 3.3cqi, 0.85rem));
     color: var(--text-muted);
     white-space: nowrap;
 }
@@ -1037,173 +1067,3 @@
     }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   RESPONSIVE: Düşük yükseklikli ekranlar (720p, Mi Box vb.)
-   Mevcut stillere dokunmaz, sadece override yapar.
-   ═══════════════════════════════════════════════════════════ */
-
-/* ── Kademe 1: ≤700px yükseklik (1280x720 ve benzeri) ──── */
-@media (max-height: 700px) {
-    #ls-center {
-        padding: 12px 16px;
-        gap: 0.6rem;
-    }
-
-    .circular-progress-wrapper {
-        max-width: clamp(160px, 36vmin, 280px);
-    }
-
-    .ramadan-info-box {
-        padding: 6px 16px;
-        margin-top: 2px;
-    }
-
-    .rm-header {
-        margin-bottom: 2px;
-    }
-
-    .rm-icon {
-        font-size: calc(var(--font-scale) * 1rem);
-    }
-
-    .rm-title {
-        font-size: calc(var(--font-scale) * clamp(0.7rem, 1.5vmin, 0.9rem));
-    }
-
-    .rm-value {
-        font-size: calc(var(--font-scale) * clamp(1.2rem, 3vmin, 1.8rem));
-    }
-
-    .bayram-info-box {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 6px;
-        padding: 5px 14px;
-        margin-top: 2px;
-    }
-
-    .byr-header {
-        margin-bottom: 0;
-        gap: 5px;
-    }
-
-    .byr-icon {
-        font-size: calc(var(--font-scale) * 0.9rem);
-    }
-
-    .byr-title {
-        font-size: calc(var(--font-scale) * clamp(0.6rem, 1.2vmin, 0.8rem));
-    }
-
-    .byr-saat {
-        font-size: calc(var(--font-scale) * clamp(1rem, 2.2vmin, 1.4rem));
-    }
-
-    .byr-tarih {
-        font-size: calc(var(--font-scale) * clamp(0.55rem, 1vmin, 0.7rem));
-    }
-
-    #ezan-notification {
-        padding: 8px 16px;
-        gap: 10px;
-        top: 10px;
-    }
-
-    .ezan-text {
-        font-size: calc(var(--font-scale) * 1.2rem);
-    }
-
-    #ls-cemaat {
-        padding: 6px 14px;
-        gap: 8px;
-        margin-top: 4px;
-    }
-}
-
-/* ── Kademe 2: ≤550px yükseklik (Mi Box 960x540 vb.) ───── */
-@media (max-height: 550px) {
-    #ls-center {
-        padding: 6px 12px;
-        gap: 0.3rem;
-    }
-
-    .circular-progress-wrapper {
-        max-width: clamp(120px, 30vmin, 200px);
-    }
-
-    .ramadan-info-box {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 6px;
-        padding: 4px 12px;
-        margin-top: 0;
-    }
-
-    .rm-header {
-        margin-bottom: 0;
-    }
-
-    .rm-icon {
-        font-size: calc(var(--font-scale) * 0.85rem);
-    }
-
-    .rm-title {
-        font-size: calc(var(--font-scale) * 0.65rem);
-    }
-
-    .rm-value {
-        font-size: calc(var(--font-scale) * clamp(0.9rem, 2.2vmin, 1.3rem));
-    }
-
-    .bayram-info-box {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 4px;
-        padding: 3px 10px;
-        margin-top: 0;
-    }
-
-    .byr-header {
-        margin-bottom: 0;
-        gap: 4px;
-    }
-
-    .byr-icon {
-        font-size: calc(var(--font-scale) * 0.75rem);
-    }
-
-    .byr-title {
-        font-size: calc(var(--font-scale) * 0.6rem);
-    }
-
-    .byr-saat {
-        font-size: calc(var(--font-scale) * clamp(0.85rem, 1.8vmin, 1.1rem));
-    }
-
-    .byr-tarih {
-        font-size: calc(var(--font-scale) * 0.55rem);
-    }
-
-    #ezan-notification {
-        padding: 5px 12px;
-        gap: 8px;
-        top: 4px;
-    }
-
-    .ezan-ring {
-        width: 14px;
-        height: 14px;
-    }
-
-    .ezan-text {
-        font-size: calc(var(--font-scale) * 0.9rem);
-    }
-
-    /* Sol panel: vakitler daha sıkışık */
-    .prayer-row {
-        padding: clamp(4px, 0.8vmin, 8px) clamp(4px, 1vmin, 10px);
-    }
-}
