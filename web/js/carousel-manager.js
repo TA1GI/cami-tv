@@ -77,14 +77,53 @@ const CarouselManager = (() => {
     function buildQueue() {
         _queue = [];
         _duyurular = SettingsManager.getAktifDuyurular();
+        const tipPriority = { cenaze: 0, acil: 1, normal: 2 };
+        const sortByPriority = (list) => [...list].sort((a, b) => {
+            const aPr = tipPriority[a.tip] ?? 99;
+            const bPr = tipPriority[b.tip] ?? 99;
+            if (aPr !== bPr) return aPr - bPr;
+            return (a.id || 0) - (b.id || 0);
+        });
 
-        // 1) Cenaze duyuruları — önce göster
+        // En az bir "tam-ekran + sürekli" varsa ana döngü tamamen bu duyurulara odaklanır.
+        const surekliTamEkran = sortByPriority(_duyurular.filter(d => {
+            const gorunum = d.gorunum || (d.tip === 'cenaze' ? 'tam-ekran' : 'carousel');
+            const mod = d.tamEkranModu || 'surekli';
+            return gorunum === 'tam-ekran' && mod === 'surekli';
+        }));
+
+        if (surekliTamEkran.length > 0) {
+            surekliTamEkran.forEach(d => {
+                _queue.push({ type: 'tam-ekran-duyuru', data: d });
+            });
+
+            _currentIdx = _currentIdx % _queue.length;
+            return;
+        }
+
+        // 1) Cenaze duyuruları — önce göster (varsayılan gorunum: tam-ekran)
         const cenaze = _duyurular.filter(d => d.tip === 'cenaze');
-        cenaze.forEach(d => _queue.push({ type: 'cenaze', data: d }));
+        cenaze.forEach(d => {
+            const gorunum = d.gorunum || 'tam-ekran'; // cenaze varsayılan tam-ekran
+            if (gorunum === 'sadece-ticker') return;
+            if (gorunum === 'tam-ekran' && (d.tamEkranModu || 'surekli') === 'sirali') {
+                _queue.push({ type: 'tam-ekran-duyuru', data: d });
+            } else {
+                _queue.push({ type: 'duyuru', data: d });
+            }
+        });
 
-        // 2) Acil duyurular
+        // 2) Acil duyurular — gorunum'a göre
         const acil = _duyurular.filter(d => d.tip === 'acil');
-        acil.forEach(d => _queue.push({ type: 'duyuru', data: d }));
+        acil.forEach(d => {
+            const gorunum = d.gorunum || 'carousel';
+            if (gorunum === 'sadece-ticker') return;
+            if (gorunum === 'tam-ekran' && (d.tamEkranModu || 'surekli') === 'sirali') {
+                _queue.push({ type: 'tam-ekran-duyuru', data: d });
+            } else {
+                _queue.push({ type: 'duyuru', data: d });
+            }
+        });
 
         // 3) İçerik döngüsü (kullanıcı kapatmadıysa)
         if (_settings.gosterAyet && _contents.ayetler?.length) {
@@ -124,9 +163,17 @@ const CarouselManager = (() => {
             _queue.push({ type: 'imsakiye', data: _weekPrayer });
         }
 
-        // 4) Normal duyurular — sona
+        // 4) Normal duyurular — gorunum'a göre
         const normal = _duyurular.filter(d => d.tip === 'normal');
-        normal.forEach(d => _queue.push({ type: 'duyuru', data: d }));
+        normal.forEach(d => {
+            const gorunum = d.gorunum || 'carousel';
+            if (gorunum === 'sadece-ticker') return;
+            if (gorunum === 'tam-ekran' && (d.tamEkranModu || 'surekli') === 'sirali') {
+                _queue.push({ type: 'tam-ekran-duyuru', data: d });
+            } else {
+                _queue.push({ type: 'duyuru', data: d });
+            }
+        });
 
         // İçerik yoksa boş slide
         if (_queue.length === 0) {

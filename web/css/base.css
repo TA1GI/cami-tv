@@ -251,6 +251,191 @@ html {
 }
 
 /* ────────────────────────────────────────────────────────────
+   TEMA: TURKUVAZ (Turquoise)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="turquoise"] {
+  --accent: #2dd4bf;
+  --accent-dark: #0d9488;
+  --accent-glow: rgba(45, 212, 191, 0.2);
+  --accent-dim: rgba(45, 212, 191, 0.08);
+  --bg-primary: #042f2e;
+  --bg-secondary: #0d3d3b;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(45, 212, 191, 0.3);
+  --text-primary: #f0fdfa;
+  --text-secondary: #5eead4;
+  --text-muted: rgba(240, 253, 250, 0.45);
+  --text-arabic: #fef3c7;
+  --countdown-color: #2dd4bf;
+  --countdown-shadow: 0 0 30px rgba(45, 212, 191, 0.4);
+  --vakit-aktif-bg: rgba(45, 212, 191, 0.15);
+  --vakit-aktif-border: rgba(45, 212, 191, 0.5);
+  --vakit-aktif-text: #2dd4bf;
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: OKYANUS (Ocean)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="ocean"] {
+  --accent: #22d3ee;
+  --accent-dark: #0891b2;
+  --accent-glow: rgba(34, 211, 238, 0.2);
+  --accent-dim: rgba(34, 211, 238, 0.08);
+  --bg-primary: #083344;
+  --bg-secondary: #0e4558;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(34, 211, 238, 0.3);
+  --text-primary: #ecfeff;
+  --text-secondary: #67e8f9;
+  --text-muted: rgba(236, 254, 255, 0.45);
+  --text-arabic: #fef9c3;
+  --countdown-color: #22d3ee;
+  --countdown-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+  --vakit-aktif-bg: rgba(34, 211, 238, 0.15);
+  --vakit-aktif-border: rgba(34, 211, 238, 0.5);
+  --vakit-aktif-text: #22d3ee;
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: GÖKYÜZÜ — Açık Mavi (Sky Light)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="sky"] {
+  --accent: #0ea5e9;
+  --accent-dark: #0369a1;
+  --accent-glow: rgba(14, 165, 233, 0.15);
+  --accent-dim: rgba(14, 165, 233, 0.06);
+  --bg-primary: #f0f9ff;
+  --bg-secondary: #e0f2fe;
+  --bg-card: rgba(0, 0, 0, 0.03);
+  --bg-card-hover: rgba(0, 0, 0, 0.06);
+  --bg-glass: rgba(0, 0, 0, 0.02);
+  --bg-overlay: rgba(0, 0, 0, 0.4);
+  --border: rgba(0, 0, 0, 0.1);
+  --border-accent: rgba(14, 165, 233, 0.4);
+  --text-primary: #0c4a6e;
+  --text-secondary: #0369a1;
+  --text-muted: rgba(12, 74, 110, 0.5);
+  --text-arabic: #92400e;
+  --countdown-color: #0284c7;
+  --countdown-shadow: 0 0 20px rgba(14, 165, 233, 0.25);
+  --vakit-aktif-bg: rgba(14, 165, 233, 0.12);
+  --vakit-aktif-border: rgba(14, 165, 233, 0.5);
+  --vakit-aktif-text: #0284c7;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.15);
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: BUZ MAVİSİ (Ice Blue)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="ice"] {
+  --accent: #38bdf8;
+  --accent-dark: #0284c7;
+  --accent-glow: rgba(56, 189, 248, 0.2);
+  --accent-dim: rgba(56, 189, 248, 0.08);
+  --bg-primary: #0c4a6e;
+  --bg-secondary: #075985;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --bg-card-hover: rgba(255, 255, 255, 0.08);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(56, 189, 248, 0.3);
+  --text-primary: #f0f9ff;
+  --text-secondary: #7dd3fc;
+  --text-muted: rgba(240, 249, 255, 0.45);
+  --text-arabic: #fef3c7;
+  --countdown-color: #38bdf8;
+  --countdown-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
+  --vakit-aktif-bg: rgba(56, 189, 248, 0.15);
+  --vakit-aktif-border: rgba(56, 189, 248, 0.5);
+  --vakit-aktif-text: #38bdf8;
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: GÜL (Rose)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="rose"] {
+  --accent: #fb7185;
+  --accent-dark: #be123c;
+  --accent-glow: rgba(251, 113, 133, 0.2);
+  --accent-dim: rgba(251, 113, 133, 0.08);
+  --bg-primary: #1a0a10;
+  --bg-secondary: #2a1018;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(251, 113, 133, 0.3);
+  --text-primary: #fff1f2;
+  --text-secondary: #fda4af;
+  --text-muted: rgba(255, 241, 242, 0.45);
+  --text-arabic: #fef3c7;
+  --countdown-color: #fb7185;
+  --countdown-shadow: 0 0 30px rgba(251, 113, 133, 0.4);
+  --vakit-aktif-bg: rgba(251, 113, 133, 0.15);
+  --vakit-aktif-border: rgba(251, 113, 133, 0.5);
+  --vakit-aktif-text: #fb7185;
+}
+
+/* ────────────────────────────────────────────────────────────
+   TEMA: ZEYTİN (Olive)
+   ──────────────────────────────────────────────────────────── */
+:root[data-theme="olive"] {
+  --accent: #a3e635;
+  --accent-dark: #4d7c0f;
+  --accent-glow: rgba(163, 230, 53, 0.2);
+  --accent-dim: rgba(163, 230, 53, 0.08);
+  --bg-primary: #1a2e05;
+  --bg-secondary: #253d0a;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(163, 230, 53, 0.3);
+  --text-primary: #f7fee7;
+  --text-secondary: #bef264;
+  --text-muted: rgba(247, 254, 231, 0.45);
+  --text-arabic: #fef3c7;
+  --countdown-color: #a3e635;
+  --countdown-shadow: 0 0 30px rgba(163, 230, 53, 0.4);
+  --vakit-aktif-bg: rgba(163, 230, 53, 0.15);
+  --vakit-aktif-border: rgba(163, 230, 53, 0.5);
+  --vakit-aktif-text: #a3e635;
+}
+
+/* ────────────────────────────────────────────────────────────
+   ARKAPLAN RESİM OVERLAY
+   ──────────────────────────────────────────────────────────── */
+#background-image {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: var(--bg-image-opacity, 0.15);
+  filter: blur(var(--bg-image-blur, 0px));
+  display: none; /* JS tarafından gösterilir */
+}
+
+#background-image.active {
+  display: block;
+}
+
+/* ────────────────────────────────────────────────────────────
    GENEL SIFIRLAMALAR
    ──────────────────────────────────────────────────────────── */
 *,
@@ -910,4 +1095,94 @@ body:hover #settings-trigger {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+/* ────────────────────────────────────────────────────────────
+   HAVA DURUMU PILL
+   ──────────────────────────────────────────────────────────── */
+.pt-weather-pill {
+  font-size: calc(var(--font-scale) * 0.8rem);
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  font-weight: 600;
+}
+
+/* ────────────────────────────────────────────────────────────
+   DUYURU DİL BADGE'LERİ
+   ──────────────────────────────────────────────────────────── */
+.duyuru-lang-badges {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.duyuru-lang-badge {
+  font-size: calc(var(--font-scale) * 0.6rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.duyuru-lang-badge.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--border-accent);
+}
+
+/* ────────────────────────────────────────────────────────────
+   GÜN SEÇİM CHİP'LERİ (Ayarlar sayfası)
+   ──────────────────────────────────────────────────────────── */
+.day-chip {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.day-chip input[type="checkbox"] {
+  display: none;
+}
+
+.day-chip span {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full, 20px);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  background: var(--bg-card, rgba(255,255,255,0.04));
+  color: var(--text-muted, #888);
+  transition: all 0.2s ease;
+}
+
+.day-chip input[type="checkbox"]:checked + span {
+  background: var(--accent-dim, rgba(34,197,94,0.15));
+  color: var(--accent, #22c55e);
+  border-color: var(--border-accent, rgba(34,197,94,0.4));
+}
+
+/* ────────────────────────────────────────────────────────────
+   BUTONLAR (Ek stiller)
+   ──────────────────────────────────────────────────────────── */
+.btn-danger-small {
+  background: rgba(248, 113, 113, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: var(--radius-sm, 8px);
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.btn-danger-small:hover {
+  background: rgba(248, 113, 113, 0.2);
+  border-color: rgba(248, 113, 113, 0.5);
 }

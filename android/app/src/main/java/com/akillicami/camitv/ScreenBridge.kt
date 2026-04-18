@@ -23,7 +23,7 @@ class ScreenBridge(private val activity: Activity) {
     fun isAvailable(): Boolean = true
 
     @JavascriptInterface
-    fun getVersion(): String = "1.0"
+    fun getVersion(): String = "1.0.13"
 
     // ─── Otomatik Başlatma (Boot) ──────────────────────────
 

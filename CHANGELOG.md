@@ -1,5 +1,13 @@
 # Değişiklik Günlüğü
 
+## v1.0.13 (2026-04-18)
+### Yeni Tema, Duyuru ve Arayüz Geliştirmeleri
+- **Yeni Tema Paketi:** `base.css` içine Turkuvaz, Okyanus, Gökyüzü, Buz Mavisi, Gül ve Zeytin temaları eklendi.
+- **Gelişmiş Arka Plan Kontrolü:** Ayarlara resim yükleme, opaklık ve blur yönetimi eklendi; yüklenen görseller canvas ile optimize edilerek performans korunuyor.
+- **Modern Duyuru Motoru:** Duyurular için TR/AR/EN çok dilli metin, zaman/tarih/gün bazlı planlama, düzenleme (edit) ve gelişmiş görünüm seçenekleri getirildi.
+- **Tam Ekran Gösterim Modları:** `tamEkranModu` ile `surekli` ve `sirali` akışı ayrıldı; sürekli modda carousel sadece tam ekran duyurular arasında dönüyor.
+- **Hava Durumu Entegrasyonu:** `weather-manager.js` ile Open-Meteo geocoding + sıcaklık akışı eklendi; çevrimdışı senaryolarda hata toleranslı çalışma sağlandı.
+
 ## v1.0.12 (2026-03-19)
 ### Dinamik "Akıcı (Fluid)" Arayüz Mimarisi
 - **Kusursuz Oransal Ölçeklenme:** Tüm bilgi kutuları (İftar/Sahur, Ezan, Bayram) artık geri sayım dairesiyle aynı matematiksel mantıkta (`aspect-ratio` + `container-type: inline-size`) çalışıyor. 
