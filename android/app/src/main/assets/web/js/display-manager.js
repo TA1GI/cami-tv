@@ -110,6 +110,29 @@ const DisplayManager = (() => {
         // Ticker bant göster/gizle
         const tickerEls = document.querySelectorAll('.ticker-wrap, #ls-ticker, #pt-ticker');
         tickerEls.forEach(el => el.classList.toggle('hidden', !settings.gosterTickerBant));
+
+        // Arkaplan resim uygula
+        applyBackgroundImage(settings);
+    }
+
+    // ──────────────────────────────────────────────────────
+    // ARKAPLAN RESİM UYGULA
+    // ──────────────────────────────────────────────────────
+    function applyBackgroundImage(settings) {
+        const bgEl = document.getElementById('background-image');
+        if (!bgEl) return;
+
+        if (settings.arkaplanResim && settings.arkaplanResim.length > 0) {
+            bgEl.style.backgroundImage = `url(${settings.arkaplanResim})`;
+            bgEl.style.setProperty('--bg-image-opacity', (settings.arkaplanOpaklık || 15) / 100);
+            bgEl.style.opacity = (settings.arkaplanOpaklık || 15) / 100;
+            bgEl.style.setProperty('--bg-image-blur', (settings.arkaplanBulaniklik || 0) + 'px');
+            bgEl.style.filter = `blur(${settings.arkaplanBulaniklik || 0}px)`;
+            bgEl.classList.add('active');
+        } else {
+            bgEl.style.backgroundImage = '';
+            bgEl.classList.remove('active');
+        }
     }
 
     let _lastPrayerKey = null;
@@ -277,11 +300,15 @@ const DisplayManager = (() => {
             ptCarousel.className = 'carousel-slide active animate-carousel-in';
         }
 
-        // Cenaze duyurusu: tam ekranı devral
+        // Tam ekran duyuru overlay (cenaze dahil tüm tam-ekran duyurular)
         const lsCenaze = document.getElementById('ls-cenaze-overlay');
-        if (lsCenaze && slide.type === 'cenaze') {
+        if (lsCenaze && slide.type === 'tam-ekran-duyuru') {
             lsCenaze.classList.add('active');
-            renderCenaze(lsCenaze, slide.data);
+            if (slide.data.tip === 'cenaze') {
+                renderCenaze(lsCenaze, slide.data);
+            } else {
+                renderTamEkranDuyuru(lsCenaze, slide.data);
+            }
         } else if (lsCenaze) {
             lsCenaze.classList.remove('active');
         }
@@ -335,6 +362,46 @@ const DisplayManager = (() => {
                 }
             });
         }, 50);
+
+        // Çok dilli duyuru metin döngüsü
+        if (slide.type === 'duyuru') {
+            setTimeout(() => {
+                const badgesEl = document.querySelector('.duyuru-lang-badges');
+                if (!badgesEl) return;
+
+                try {
+                    const langs = JSON.parse(badgesEl.dataset.langs || '[]');
+                    if (langs.length <= 1) return;
+
+                    let currentIdx = 0;
+                    const textEl = document.getElementById('duyuru-text-display');
+                    if (!textEl) return;
+
+                    const rotateInterval = setInterval(() => {
+                        currentIdx = (currentIdx + 1) % langs.length;
+                        const lang = langs[currentIdx];
+
+                        // Fade out
+                        textEl.style.opacity = '0';
+                        textEl.style.transition = 'opacity 0.4s ease';
+
+                        setTimeout(() => {
+                            textEl.textContent = lang.text;
+                            textEl.dir = lang.key === 'ar' ? 'rtl' : 'ltr';
+                            textEl.style.opacity = '1';
+
+                            // Badge aktif göstergesi
+                            badgesEl.querySelectorAll('.duyuru-lang-badge').forEach((b, i) => {
+                                b.classList.toggle('active', i === currentIdx);
+                            });
+                        }, 400);
+                    }, 6000);
+
+                    // Slide değiştiğinde interval'i durdur
+                    textEl._langRotateTimer = rotateInterval;
+                } catch (e) { /* parse hatası */ }
+            }, 100);
+        }
     }
 
     function buildSlideHTML(slide, idx, total) {
@@ -389,17 +456,50 @@ const DisplayManager = (() => {
             case 'imsakiye':
                 return buildImsakiyeSlide(slide.data, counter);
 
-            case 'duyuru':
+            case 'duyuru': {
+                // Çok dilli duyuru desteği
+                const metinTr = slide.data.metin || '';
+                const metinAr = slide.data.metinAr || '';
+                const metinEn = slide.data.metinEn || '';
+                const langs = [
+                    { key: 'tr', label: 'TR', text: metinTr },
+                    { key: 'ar', label: 'عر', text: metinAr },
+                    { key: 'en', label: 'EN', text: metinEn },
+                ].filter(l => l.text && l.text.trim() !== '');
+
+                // Birden fazla dil varsa dil döngüsü desteği
+                const langBadges = langs.length > 1
+                    ? `<div class="duyuru-lang-badges" data-langs='${JSON.stringify(langs)}'>
+                         ${langs.map((l, i) => `<span class="duyuru-lang-badge${i === 0 ? ' active' : ''}" data-lang-idx="${i}">${l.label}</span>`).join('')}
+                       </div>`
+                    : '';
+
+                const firstLang = langs[0] || { text: metinTr, key: 'tr' };
+                const isRtl = firstLang.key === 'ar' ? ' dir="rtl"' : '';
+
+                // Tip rozeti rengi
+                let tipBadge = '📢 Duyuru';
+                let tipStyle = 'background:rgba(251,191,36,0.1);color:#fbbf24;border-color:rgba(251,191,36,0.3);';
+                if (slide.data.tip === 'acil') {
+                    tipBadge = '⚠️ Acil Duyuru';
+                    tipStyle = 'background:rgba(248,113,113,0.1);color:#f87171;border-color:rgba(248,113,113,0.3);';
+                } else if (slide.data.tip === 'cenaze') {
+                    tipBadge = '☘ Cenaze Duyurusu';
+                    tipStyle = 'background:rgba(148,163,184,0.1);color:#94a3b8;border-color:rgba(148,163,184,0.3);';
+                }
+
                 return `
           <div class="slide-header">
-            <span class="slide-type-badge" style="background:rgba(251,191,36,0.1);color:#fbbf24;border-color:rgba(251,191,36,0.3);">📢 Duyuru</span>${counter}
+            <span class="slide-type-badge" style="${tipStyle}">${tipBadge}</span>${counter}
           </div>
-          <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:24px;">
-            <div style="font-size:clamp(1rem,2.5vmin,1.4rem);color:var(--text-primary);text-align:center;line-height:1.7;">
-              ${slide.data.metin}
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:12px;">
+            <div id="duyuru-text-display" style="font-size:clamp(1rem,2.5vmin,1.4rem);color:var(--text-primary);text-align:center;line-height:1.7;"${isRtl}>
+              ${firstLang.text}
             </div>
+            ${langBadges}
           </div>
         `;
+            }
 
             case 'camibilgi':
                 return `
@@ -473,6 +573,28 @@ const DisplayManager = (() => {
       <div class="cenaze-name">${data.metin}</div>
       <div class="cenaze-dua">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</div>
       <div class="cenaze-detail" style="margin-top:8px;font-size:0.85rem;color:rgba(255,255,255,0.5);">İnnâ lillâhi ve innâ ileyhi râci'ûn</div>
+    `;
+    }
+
+    function renderTamEkranDuyuru(container, data) {
+        const tipLabel = data.tip === 'acil' ? '⚠️ ACİL DUYURU' : '📢 DUYURU';
+        const tipColor = data.tip === 'acil' ? '#ef4444' : '#fbbf24';
+
+        // Çok dilli metin desteği
+        const metinler = [data.metin];
+        if (data.metinAr) metinler.push(data.metinAr);
+        if (data.metinEn) metinler.push(data.metinEn);
+
+        const ekstraMetinler = metinler.length > 1
+            ? metinler.slice(1).map(m => `<div style="font-size:1.8rem;margin-top:16px;opacity:0.8;">${m}</div>`).join('')
+            : '';
+
+        container.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px;text-align:center;">
+        <div style="font-size:1.2rem;font-weight:700;letter-spacing:3px;color:${tipColor};margin-bottom:24px;">${tipLabel}</div>
+        <div style="font-size:2.5rem;font-weight:600;line-height:1.4;color:#fff;max-width:80%;">${data.metin}</div>
+        ${ekstraMetinler}
+      </div>
     `;
     }
 
@@ -744,6 +866,7 @@ const DisplayManager = (() => {
         updateTicker,
         applyTheme,
         applySettings,
+        applyBackgroundImage,
         updateCumaYardimi,
         getOrientation: () => _currentOrientation,
     };

@@ -20,7 +20,7 @@ const SettingsManager = (() => {
     ilceId: 0,
 
     // Görünüm
-    tema: 'default',   // default | navy | purple | light | auto
+    tema: 'default',   // default | navy | purple | light | turquoise | ocean | sky | ice | rose | olive | auto
     dil: 'tr',        // tr | ar | en
     yaziBoyu: 'normal',    // small | normal | large | xlarge
     ekranYonu: 'auto',      // auto | landscape | portrait
@@ -34,7 +34,7 @@ const SettingsManager = (() => {
     gosterCamiBilgi: false,
     camiBilgiMetin: [], // Artık dizi
     gosterImsakiye: true,
-    gosterHavaDurumu: false,  // internet gerektirir
+    gosterHavaDurumu: false,  // internet gerektirir (Open-Meteo API)
     gosterKible: true,
     gosterTickerBant: true,
     gosterHicriTarih: true,
@@ -105,8 +105,14 @@ const SettingsManager = (() => {
     esp32Sicaklik: true,   // sıcaklık/nem al (aktifse)
     esp32Cihazlar: false,  // cihaz durumları widget'ı
 
-    // Duyurular
-    duyurular: [],   // [{ id, tip, metin, tarihEkle, sureDk, aktif }]
+    // Arkaplan Resim
+    arkaplanResim: '',          // base64 data URI
+    arkaplanOpaklık: 15,        // 0-50 (yüzde)
+    arkaplanBulaniklik: 0,      // 0-20 px
+
+    // Duyurular (gelişmiş)
+    duyurular: [],
+    // Her duyuru: { id, tip, metin, metinAr, metinEn, gorunum, tamEkranModu, zamanBaslangic, zamanBitis, gunler, tekrar, tarihBaslangic, tarihBitis, tarihEkle, sureDk, aktif }
   };
 
   // ──────────────────────────────────────────────────────
@@ -125,6 +131,14 @@ const SettingsManager = (() => {
           result.camiBilgiMetin = result.camiBilgiMetin.trim() ? [result.camiBilgiMetin] : [];
         } else if (!Array.isArray(result.camiBilgiMetin)) {
           result.camiBilgiMetin = [];
+        }
+
+        // Geri uyumluluk: Duyurularda tamEkranModu alanı yoksa varsayılanı ata
+        if (Array.isArray(result.duyurular)) {
+          result.duyurular = result.duyurular.map(d => ({
+            ...d,
+            tamEkranModu: d?.tamEkranModu || 'surekli',
+          }));
         }
       }
 
@@ -181,19 +195,44 @@ const SettingsManager = (() => {
   // ──────────────────────────────────────────────────────
   // Duyuru yönetimi
   // ──────────────────────────────────────────────────────
-  function addDuyuru(metin, tip = 'normal', sureDk = 0) {
+  function addDuyuru(duyuruData) {
     const s = load();
     const yeni = {
       id: Date.now(),
-      tip,       // normal | acil | cenaze
-      metin,
+      tip: duyuruData.tip || 'normal',       // normal | acil | cenaze
+      metin: duyuruData.metin || '',
+      metinAr: duyuruData.metinAr || '',      // Arapça metin
+      metinEn: duyuruData.metinEn || '',      // İngilizce metin
+      gorunum: duyuruData.gorunum || 'carousel', // tam-ekran | carousel | sadece-ticker
+      tamEkranModu: duyuruData.tamEkranModu || 'surekli', // surekli | sirali
+      zamanBaslangic: duyuruData.zamanBaslangic || '', // HH:mm
+      zamanBitis: duyuruData.zamanBitis || '',     // HH:mm
+      gunler: duyuruData.gunler || [],        // [0-6] boş = her gün
+      tekrar: duyuruData.tekrar || 'kalici',  // tek-sefer | gunluk | haftalik | kalici
+      tarihBaslangic: duyuruData.tarihBaslangic || '', // YYYY-MM-DD
+      tarihBitis: duyuruData.tarihBitis || '',     // YYYY-MM-DD
       tarihEkle: new Date().toISOString(),
-      sureDk,    // 0 = kalıcı
+      sureDk: duyuruData.sureDk || 0,         // 0 = kalıcı
       aktif: true,
     };
     s.duyurular.push(yeni);
     save(s);
     return yeni;
+  }
+
+  function updateDuyuru(id, duyuruData) {
+    const s = load();
+    const idx = s.duyurular.findIndex(d => d.id === id);
+    if (idx !== -1) {
+      s.duyurular[idx] = {
+        ...s.duyurular[idx],
+        ...duyuruData,
+        tamEkranModu: duyuruData.tamEkranModu || s.duyurular[idx].tamEkranModu || 'surekli',
+      };
+      save(s);
+      return s.duyurular[idx];
+    }
+    return null;
   }
 
   function removeDuyuru(id) {
@@ -204,12 +243,52 @@ const SettingsManager = (() => {
 
   function getAktifDuyurular() {
     const s = load();
-    const now = Date.now();
+    const now = new Date();
+    const nowMs = now.getTime();
+    const todayDay = now.getDay(); // 0=Pazar, 5=Cuma
+    const currentH = now.getHours();
+    const currentM = now.getMinutes();
+    const currentTimeMin = currentH * 60 + currentM;
+    const todayStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+
     return s.duyurular.filter(d => {
       if (!d.aktif) return false;
-      if (d.sureDk === 0) return true; // kalıcı
-      const eklenme = new Date(d.tarihEkle).getTime();
-      return (now - eklenme) < (d.sureDk * 60 * 1000);
+
+      // Eski format desteği (sureDk bazlı)
+      if (d.sureDk && d.sureDk > 0) {
+        const eklenme = new Date(d.tarihEkle).getTime();
+        if ((nowMs - eklenme) >= (d.sureDk * 60 * 1000)) return false;
+      }
+
+      // Tarih aralığı kontrolü
+      if (d.tarihBaslangic && todayStr < d.tarihBaslangic) return false;
+      if (d.tarihBitis && todayStr > d.tarihBitis) return false;
+
+      // Gün kontrolü (boş = her gün)
+      if (d.gunler && d.gunler.length > 0) {
+        if (!d.gunler.includes(todayDay)) return false;
+      }
+
+      // Zaman aralığı kontrolü (boş = tüm gün)
+      if (d.zamanBaslangic) {
+        const [bH, bM] = d.zamanBaslangic.split(':').map(Number);
+        const baslangicMin = bH * 60 + bM;
+        if (currentTimeMin < baslangicMin) return false;
+      }
+      if (d.zamanBitis) {
+        const [sH, sM] = d.zamanBitis.split(':').map(Number);
+        const bitisMin = sH * 60 + sM;
+        if (currentTimeMin > bitisMin) return false;
+      }
+
+      // Tek seferlik kontrol (gösterilmişse pasif yap)
+      if (d.tekrar === 'tek-sefer') {
+        const eklenme = new Date(d.tarihEkle);
+        const eklenmeStr = eklenme.toISOString().split('T')[0];
+        if (todayStr > eklenmeStr) return false;
+      }
+
+      return true;
     });
   }
 
@@ -222,6 +301,7 @@ const SettingsManager = (() => {
     isSetupComplete,
     defaults: DEFAULTS,
     addDuyuru,
+    updateDuyuru,
     removeDuyuru,
     getAktifDuyurular,
     // Tek bir ayarı hızlıca güncelle

@@ -23,6 +23,11 @@
 <body>
 
     <!-- ════════════════════════════════════════════
+     ARKAPLAN RESİM OVERLAY
+  ════════════════════════════════════════════ -->
+    <div id="background-image" aria-hidden="true"></div>
+
+    <!-- ════════════════════════════════════════════
      YÜKLEME EKRANI
   ════════════════════════════════════════════ -->
     <div id="loading-screen" role="status" aria-live="polite">
@@ -155,6 +160,7 @@
             </div>
 
             <div class="topbar-right">
+                <div id="ls-weather-info" class="ls-info-pill hidden" aria-label="Hava durumu"></div>
                 <div id="ls-hijri-date" class="hijri-date" aria-label="Hicri tarih"></div>
                 <div id="ls-esp32-info" class="ls-info-pill hidden" aria-label="Ortam verileri"></div>
             </div>
@@ -307,6 +313,7 @@
                 </div>
             </div>
             <time id="pt-clock" class="pt-clock" aria-label="Saat">00:00</time>
+            <span id="pt-weather-info" class="pt-weather-pill hidden" aria-label="Hava durumu"></span>
         </header>
 
         <!-- Ramazan Banner (portrait) -->
@@ -357,6 +364,7 @@
     <script src="js/i18n.js"></script>
     <script src="js/prayer-engine.js"></script>
     <script src="js/power-manager.js"></script>
+    <script src="js/weather-manager.js"></script>
     <script src="js/carousel-manager.js"></script>
     <script src="js/display-manager.js"></script>
     <script src="js/app.js"></script>

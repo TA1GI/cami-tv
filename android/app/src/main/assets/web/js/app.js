@@ -163,6 +163,11 @@ const App = (() => {
             pollESP32();
         }
 
+        // Hava durumu (internet varsa)
+        if (_settings.gosterHavaDurumu && typeof WeatherManager !== 'undefined') {
+            WeatherManager.init(_settings);
+        }
+
         // Uzaktan kumanda ve klavye desteği
         initKeyboardNav();
 

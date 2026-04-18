@@ -119,6 +119,12 @@
                                 <option value="kufi" data-i18n="tema_kufi">Kufi (Kahve)</option>
                                 <option value="navy" data-i18n="tema_lacivert">Lacivert</option>
                                 <option value="purple" data-i18n="tema_mor">Gece Moru</option>
+                                <option value="turquoise" data-i18n="tema_turkuvaz">Turkuvaz</option>
+                                <option value="ocean" data-i18n="tema_okyanus">Okyanus</option>
+                                <option value="sky" data-i18n="tema_gokyuzu">Gökyüzü (Açık Mavi)</option>
+                                <option value="ice" data-i18n="tema_buz">Buz Mavisi</option>
+                                <option value="rose" data-i18n="tema_gul">Gül</option>
+                                <option value="olive" data-i18n="tema_zeytin">Zeytin</option>
                                 <option value="light" data-i18n="tema_acik">Açık (Beyaz)</option>
                                 <option value="auto" data-i18n="otomatik">Otomatik</option>
                             </select>
@@ -165,6 +171,52 @@
                                 <option value="en">English</option>
                                 <option value="ar">العربية (Arabic)</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- ARKAPLAN RESİM -->
+                    <div class="setting-row">
+                        <span class="setting-icon">🖼️</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Arkaplan Resim</div>
+                            <div class="setting-desc">Ekranın arkasında görünecek resim</div>
+                        </div>
+                        <div class="setting-control">
+                            <button id="btn-arkaplan-sec" class="btn-add" style="font-size:0.82rem;">Resim Seç</button>
+                            <input type="file" id="s-arkaplan-dosya" accept="image/*" style="display:none;">
+                        </div>
+                    </div>
+                    <div id="arkaplan-ayarlari" style="display:none;">
+                        <div class="sub-setting-row" style="padding:8px 16px;display:flex;align-items:center;gap:10px;">
+                            <div id="arkaplan-onizleme" style="width:80px;height:50px;border-radius:8px;border:1px solid var(--border);background-size:cover;background-position:center;flex-shrink:0;"></div>
+                            <button id="btn-arkaplan-kaldir" class="btn-danger-small" style="font-size:0.75rem;">Kaldır</button>
+                        </div>
+                        <div class="sub-setting-row" style="padding:4px 16px;">
+                            <span>☀️ Opaklık</span>
+                            <div class="range-group">
+                                <input type="range" id="s-arkaplan-opaklik" min="3" max="50" step="1">
+                                <span class="range-value" id="s-arkaplan-opaklik-val">%15</span>
+                            </div>
+                        </div>
+                        <div class="sub-setting-row" style="padding:4px 16px 12px;">
+                            <span>🌫️ Bulanıklık</span>
+                            <div class="range-group">
+                                <input type="range" id="s-arkaplan-blur" min="0" max="20" step="1">
+                                <span class="range-value" id="s-arkaplan-blur-val">0px</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HAVA DURUMU -->
+                    <div class="setting-row">
+                        <span class="setting-icon">🌡️</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Hava Durumu Göster</div>
+                            <div class="setting-desc">İnternet varsa seçilen ilçenin sıcaklığını gösterir</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-hava"><span
+                                    class="toggle-slider"></span></label>
                         </div>
                     </div>
 
@@ -475,15 +527,104 @@
                             Henüz duyuru eklenmedi.
                         </div>
                     </div>
-                    <div class="duyuru-add">
-                        <input type="text" id="s-duyuru-metin" data-i18n-placeholder="duyuru_ekle_placeholder"
-                            placeholder="Duyuru metnini yazın...">
-                        <select id="s-duyuru-tip">
-                            <option value="normal" data-i18n="tip_normal">Normal</option>
-                            <option value="acil" data-i18n="tip_acil">Acil</option>
-                            <option value="cenaze" data-i18n="tip_cenaze">Cenaze</option>
-                        </select>
-                        <button id="s-duyuru-ekle" class="btn-add" data-i18n="duyuru_ekle_btn">Ekle</button>
+
+                    <!-- GELİŞMİŞ DUYURU EKLEME FORMU -->
+                    <div class="duyuru-add-form" style="padding:12px;border-top:1px solid var(--border);">
+                        <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Yeni Duyuru Ekle</div>
+
+                        <!-- Metin (TR) -->
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:0.75rem;color:var(--text-muted);">Metin (Türkçe) *</label>
+                            <textarea id="s-duyuru-metin" rows="2" class="form-input" placeholder="Duyuru metnini yazın..." style="width:100%;resize:vertical;"></textarea>
+                        </div>
+
+                        <!-- Metin (AR) -->
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:0.75rem;color:var(--text-muted);">Metin (Arapça)</label>
+                            <textarea id="s-duyuru-metin-ar" rows="2" class="form-input" placeholder="الإعلان..." dir="rtl" style="width:100%;resize:vertical;"></textarea>
+                        </div>
+
+                        <!-- Metin (EN) -->
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:0.75rem;color:var(--text-muted);">Metin (English)</label>
+                            <textarea id="s-duyuru-metin-en" rows="2" class="form-input" placeholder="Announcement text..." style="width:100%;resize:vertical;"></textarea>
+                        </div>
+
+                        <!-- Tip + Görünüm + Tekrar -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-muted);">Tip</label>
+                                <select id="s-duyuru-tip" class="setting-select" style="width:100%;">
+                                    <option value="normal">Normal</option>
+                                    <option value="acil">Acil</option>
+                                    <option value="cenaze">Cenaze</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-muted);">Gösterim</label>
+                                <select id="s-duyuru-gorunum" class="setting-select" style="width:100%;">
+                                    <option value="carousel">Slayt</option>
+                                    <option value="tam-ekran">Tam Ekran</option>
+                                    <option value="sadece-ticker">Sadece Ticker</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-muted);">Tekrar</label>
+                                <select id="s-duyuru-tekrar" class="setting-select" style="width:100%;">
+                                    <option value="kalici">Kalıcı</option>
+                                    <option value="gunluk">Günlük</option>
+                                    <option value="haftalik">Haftalık</option>
+                                    <option value="tek-sefer">Tek Seferlik</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="s-duyuru-tam-ekran-modu-wrap" style="display:none;margin-bottom:8px;">
+                            <label style="font-size:0.75rem;color:var(--text-muted);">Gösterim Şekli</label>
+                            <select id="s-duyuru-tam-ekran-modu" class="setting-select" style="width:100%;">
+                                <option value="surekli">Sürekli (Varsayılan)</option>
+                                <option value="sirali">Sıralı (Slayt İçinde)</option>
+                            </select>
+                        </div>
+
+                        <!-- Gün Seçimi -->
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px;display:block;">Gösterilecek Günler (boş = her gün)</label>
+                            <div id="s-duyuru-gunler" style="display:flex;gap:4px;flex-wrap:wrap;">
+                                <label class="day-chip"><input type="checkbox" value="1"><span>Pzt</span></label>
+                                <label class="day-chip"><input type="checkbox" value="2"><span>Sal</span></label>
+                                <label class="day-chip"><input type="checkbox" value="3"><span>Çar</span></label>
+                                <label class="day-chip"><input type="checkbox" value="4"><span>Per</span></label>
+                                <label class="day-chip"><input type="checkbox" value="5"><span>Cum</span></label>
+                                <label class="day-chip"><input type="checkbox" value="6"><span>Cmt</span></label>
+                                <label class="day-chip"><input type="checkbox" value="0"><span>Paz</span></label>
+                            </div>
+                        </div>
+
+                        <!-- Zaman Aralığı + Tarih Aralığı -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-muted);">Başlangıç Saati</label>
+                                <input type="time" id="s-duyuru-zaman-baslangic" class="setting-time" style="width:100%;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-muted);">Bitiş Saati</label>
+                                <input type="time" id="s-duyuru-zaman-bitis" class="setting-time" style="width:100%;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-muted);">Başlangıç Tarihi</label>
+                                <input type="date" id="s-duyuru-tarih-baslangic" class="setting-time" style="width:100%;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-muted);">Bitiş Tarihi</label>
+                                <input type="date" id="s-duyuru-tarih-bitis" class="setting-time" style="width:100%;">
+                            </div>
+                        </div>
+
+                        <div style="display:flex;gap:8px;">
+                            <button id="s-duyuru-ekle" class="btn-add" style="flex:1;">📢 Duyuru Ekle</button>
+                            <button id="s-duyuru-iptal" class="btn-danger-small" style="display:none;flex:1;">İptal</button>
+                        </div>
                     </div>
                 </div>
             </section>
