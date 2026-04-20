@@ -421,7 +421,7 @@ html {
 #background-image {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 1; /* body::before deseninin (z:0) üstünde */
   pointer-events: none;
   background-size: cover;
   background-position: center;
@@ -433,6 +433,11 @@ html {
 
 #background-image.active {
   display: block;
+}
+
+/* Arkaplan resmi aktifken geometrik deseni gizle (JS tarafından class eklenir) */
+body.has-bg-image::before {
+  display: none !important;
 }
 
 /* ────────────────────────────────────────────────────────────

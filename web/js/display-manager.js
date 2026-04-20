@@ -123,15 +123,23 @@ const DisplayManager = (() => {
         if (!bgEl) return;
 
         if (settings.arkaplanResim && settings.arkaplanResim.length > 0) {
-            bgEl.style.backgroundImage = `url(${settings.arkaplanResim})`;
+            let bgUrl = settings.arkaplanResim;
+            // Android dosya yolları (ör. /data/data/.../bg_image.jpg) → file:// prefix ekle
+            if (bgUrl.startsWith('/data/') || bgUrl.startsWith('/storage/')) {
+                bgUrl = 'file://' + bgUrl;
+            }
+            bgEl.style.backgroundImage = `url(${bgUrl})`;
             bgEl.style.setProperty('--bg-image-opacity', (settings.arkaplanOpaklık || 15) / 100);
             bgEl.style.opacity = (settings.arkaplanOpaklık || 15) / 100;
             bgEl.style.setProperty('--bg-image-blur', (settings.arkaplanBulaniklik || 0) + 'px');
             bgEl.style.filter = `blur(${settings.arkaplanBulaniklik || 0}px)`;
             bgEl.classList.add('active');
+            // Geometrik deseni gizle (body::before)
+            document.body.classList.add('has-bg-image');
         } else {
             bgEl.style.backgroundImage = '';
             bgEl.classList.remove('active');
+            document.body.classList.remove('has-bg-image');
         }
     }
 

@@ -6,13 +6,15 @@ Türkiye'deki camiler için geliştirilmiş, Android TV / Fire Stick uyumlu, tam
 
 - 📿 Namaz vakitleri (Diyanet verileri)
 - 📖 Ayet, Hadis, Esmaül Hüsna, Dua carousel
-- 📅 Haftalık imsakiye (15 güne kadar)
+- 📅 İmsakiye ekranı (Aylık/15 Günlük gösterim vb.)
 - 🔔 Ezan ekranı + geri sayım
 - 🌙 Ramazan modu
-- 🎨 Çoklu tema (Yeşil, Altın, Zümrüt, Açık)
+- 🎨 Çoklu tema (Yeşil, Altın, Zümrüt, Açık vb.) ve Özel Arkaplan Resmi İmkanı
 - 📺 Landscape / Portrait ekran desteği
+- 📲 Gelişmiş Web Arayüzü ile Telefondan/Bilgisayardan Tam Kontrol
+- 📢 Gelişmiş Duyuru Sistemi (Cenaze, Acil, Normal, Cuma Yardımı)
 - 📡 GitHub'dan otomatik içerik güncelleme
-- 📲 OTA APK güncelleme (yakında)
+- 🔄 OTA APK güncelleme
 
 ## Kurulum
 

@@ -110,7 +110,15 @@ function initSettingsPage() {
     // Mevcut resmi yükle
     if (settings.arkaplanResim && settings.arkaplanResim.length > 0) {
         if (arkaplanAyarlari) arkaplanAyarlari.style.display = 'block';
-        if (arkaplanOnizleme) arkaplanOnizleme.style.backgroundImage = `url(${settings.arkaplanResim})`;
+        if (arkaplanOnizleme) {
+            let previewUrl = settings.arkaplanResim;
+            // Android dosya yolları → file:// prefix ekle (TV'de yerel erişim)
+            if (previewUrl.startsWith('/data/') || previewUrl.startsWith('/storage/')) {
+                previewUrl = 'file://' + previewUrl;
+            }
+            // HTTP relative URL (/api/bg-image?t=...) ve base64 data URI olduğu gibi çalışır
+            arkaplanOnizleme.style.backgroundImage = `url(${previewUrl})`;
+        }
     }
     if (arkaplanOpaklik) {
         arkaplanOpaklik.value = settings.arkaplanOpaklık || 15;

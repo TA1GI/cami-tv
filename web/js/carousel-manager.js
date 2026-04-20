@@ -8,7 +8,7 @@ const CarouselManager = (() => {
 
     let _settings = null;
     let _contents = {};       // { ayetler, hadisler, esmaulhusna, dualar }
-    let _weekPrayer = [];       // Haftalık vakit verisi
+    let _weekPrayer = [];       // İmsakiye verisi
     let _duyurular = [];       // Aktif duyurular
     let _queue = [];       // Oynatılacak slide sırası
     let _currentIdx = 0;

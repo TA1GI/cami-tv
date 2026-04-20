@@ -1,5 +1,11 @@
 # Değişiklik Günlüğü
 
+## v1.0.14 (2026-04-20)
+### Metin ve Arkaplan Düzeltmeleri
+- **Arkaplan Resmi Düzeltmesi:** Arayüz üzerinden yüklenen özel arkaplan resimleri, cihazlarda hafıza taşıması yaratmaması için base64 JSON yerine dosya sistemine kalıcı kaydedilerek `file://` servis altyapısına bağlandı. Ayrıca `z-index` düzeltmeleri ile arkada beliren gereksiz İslami filigran desenleri otomatik gizlendi.
+- **Metinsel Güncellemeler (İmsakiye):** "Haftalık İmsakiye" tabiri uygulamadan kaldırıldı; çünkü gösterilen tablolar artık sürelere (15 gün, 30 gün vb.) bağımlılıktan kurtarıldı. Artık menülerde salt "İmsakiye" olarak adlandırılmakta.
+- **Sürüm Güncellemesi:** Tümüyle testlenerek sürüm bağımlılıkları `1.0.14` olarak senkronize edildi.
+
 ## v1.0.13 (2026-04-18)
 ### Yeni Tema, Duyuru ve Arayüz Geliştirmeleri
 - **Yeni Tema Paketi:** `base.css` içine Turkuvaz, Okyanus, Gökyüzü, Buz Mavisi, Gül ve Zeytin temaları eklendi.
