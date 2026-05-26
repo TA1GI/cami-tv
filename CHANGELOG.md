@@ -1,5 +1,12 @@
 # Değişiklik Günlüğü
 
+## v1.0.15 (2026-05-26)
+### Kurban Bayramı Namazı Desteği
+- **Kurban Bayramı Vakti Gösterimi:** `data-manager.js`'deki `getBayramWakti()` fonksiyonu, Ramazan Bayramı'nın yanı sıra Kurban Bayramı namazı saatini de destekleyecek şekilde yeniden yazıldı. `bayram_namazi.json` içindeki `kurban` ve `kurban_tarih` alanları artık okunuyor.
+- **Akıllı Bayram Seçimi:** Fonksiyon, hem Ramazan hem Kurban Bayramı için kalan günü hesaplayarak ikisinden hangisi daha yakınsa (0-2 gün) otomatik olarak onu ekranda gösteriyor.
+- **Senkronizasyon:** `android/app/src/main/assets/web/` dizini, ana `web/` diziniyle tam senkronize edildi. Artık iki kopya arasında sürüm farkı kalmadı.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle`, `MainActivity.kt`, `ScreenBridge.kt`, `settings.html`) `1.0.15` olarak güncellendi.
+
 ## v1.0.14 (2026-04-20)
 ### Metin ve Arkaplan Düzeltmeleri
 - **Arkaplan Resmi Düzeltmesi:** Arayüz üzerinden yüklenen özel arkaplan resimleri, cihazlarda hafıza taşıması yaratmaması için base64 JSON yerine dosya sistemine kalıcı kaydedilerek `file://` servis altyapısına bağlandı. Ayrıca `z-index` düzeltmeleri ile arkada beliren gereksiz İslami filigran desenleri otomatik gizlendi.

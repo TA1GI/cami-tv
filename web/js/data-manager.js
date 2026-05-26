@@ -320,28 +320,46 @@ const DataManager = (() => {
         const entry = _bayramData[idStr];
         if (!entry) return null;
 
-        // "ramazan" alanı bayram namazı saatini tutuyor
-        const saat = entry.ramazan;
-        const tarihStr = entry.tarih; // "20 Mart 2026 Cuma"
-        if (!saat || !tarihStr) return null;
-
-        // Tarih string'ini parse et
-        const bayramDate = _parseMiladiDate(tarihStr);
-        if (!bayramDate) return null;
-
         // Bugünün başlangıcı (saat 00:00)
         const now = new Date();
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const bayramStart = new Date(bayramDate.getFullYear(), bayramDate.getMonth(), bayramDate.getDate());
 
-        // Fark hesabı (gün)
-        const diffMs = bayramStart - todayStart;
-        const kalanGun = Math.round(diffMs / (1000 * 60 * 60 * 24));
+        let closestBayram = null;
+        let minKalanGun = Infinity;
 
-        // Bayram geçtiyse veya henüz erken ise null
-        if (kalanGun < 0 || kalanGun > oncesiGun) return null;
+        // --- Ramazan Bayramı Kontrolü ---
+        if (entry.ramazan && entry.tarih) {
+            const rDate = _parseMiladiDate(entry.tarih);
+            if (rDate) {
+                const rStart = new Date(rDate.getFullYear(), rDate.getMonth(), rDate.getDate());
+                const rKalanGun = Math.round((rStart - todayStart) / (1000 * 60 * 60 * 24));
+                
+                if (rKalanGun >= 0 && rKalanGun <= oncesiGun) {
+                    if (rKalanGun < minKalanGun) {
+                        minKalanGun = rKalanGun;
+                        closestBayram = { saat: entry.ramazan, tarih: entry.tarih, kalanGun: rKalanGun };
+                    }
+                }
+            }
+        }
 
-        return { saat, tarih: tarihStr, kalanGun };
+        // --- Kurban Bayramı Kontrolü ---
+        if (entry.kurban && entry.kurban_tarih) {
+            const kDate = _parseMiladiDate(entry.kurban_tarih);
+            if (kDate) {
+                const kStart = new Date(kDate.getFullYear(), kDate.getMonth(), kDate.getDate());
+                const kKalanGun = Math.round((kStart - todayStart) / (1000 * 60 * 60 * 24));
+                
+                if (kKalanGun >= 0 && kKalanGun <= oncesiGun) {
+                    if (kKalanGun < minKalanGun) {
+                        minKalanGun = kKalanGun;
+                        closestBayram = { saat: entry.kurban, tarih: entry.kurban_tarih, kalanGun: kKalanGun };
+                    }
+                }
+            }
+        }
+
+        return closestBayram;
     }
 
     // ──────────────────────────────────────────────────────
