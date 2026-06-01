@@ -406,7 +406,7 @@ function initSettingsPage() {
             qrView.style.display = 'flex';
             formView.style.display = 'none';
 
-            const qrUrl = `http://${bridgeIp}:8080/settings.html`;
+            const qrUrl = `http://${bridgeIp}:8090/settings.html`;
             const urlTextElement = document.getElementById('settings-main-qr-url');
             if (urlTextElement) urlTextElement.textContent = qrUrl;
 
@@ -631,7 +631,7 @@ function initSettingsPage() {
                 qrBtn.style.display = 'flex';
                 qrBtn.addEventListener('click', () => {
                     const qrContainer = document.getElementById('qr-code-container');
-                    const urlStr = `http://${ip}:8080/settings.html`;
+                    const urlStr = `http://${ip}:8090/settings.html`;
 
                     document.getElementById('qr-url-text').textContent = urlStr;
                     qrContainer.innerHTML = ''; // Temizle

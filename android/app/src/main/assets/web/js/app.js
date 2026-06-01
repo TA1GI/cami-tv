@@ -409,7 +409,7 @@ const App = (() => {
                     qrView.style.display = 'flex';
                     formView.style.display = 'none';
 
-                    const qrUrl = `http://${bridgeIp}:8080/settings.html`;
+                    const qrUrl = `http://${bridgeIp}:8090/settings.html`;
                     document.getElementById('setup-qr-url-text').textContent = qrUrl;
 
                     const qrContainer = document.getElementById('setup-qr-container');

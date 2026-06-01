@@ -13,6 +13,99 @@
 
 <body>
 
+    <!-- ─── PIN GİRİŞ EKRANI ─────────────────────────────────────── -->
+    <div id="pin-overlay" style="
+        position: fixed; inset: 0; z-index: 9999;
+        background: var(--bg-main, #0f1923);
+        display: flex; align-items: center; justify-content: center;
+        flex-direction: column; gap: 0;
+    ">
+        <div style="
+            background: var(--bg-card, #1a2535);
+            border: 1px solid var(--border, rgba(255,255,255,0.08));
+            border-radius: 24px;
+            padding: 40px 36px 36px;
+            width: 340px;
+            max-width: 90vw;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; align-items: center; gap: 0;
+        ">
+            <img src="img/cami_tv_logo.png" alt="Cami TV" style="width:60px;height:60px;margin-bottom:18px;border-radius:14px;">
+            <div style="font-size:1.4rem;font-weight:700;color:var(--text-primary,#e8eaf0);margin-bottom:6px;">Cami TV Ayarları</div>
+            <div style="font-size:0.9rem;color:var(--text-muted,#8899aa);margin-bottom:28px;">Devam etmek için PIN girin</div>
+
+            <!-- PIN nokta göstergesi -->
+            <div id="pin-dots" style="display:flex;gap:14px;margin-bottom:24px;">
+                <span class="pin-dot"></span>
+                <span class="pin-dot"></span>
+                <span class="pin-dot"></span>
+                <span class="pin-dot"></span>
+                <span class="pin-dot"></span>
+                <span class="pin-dot"></span>
+            </div>
+
+            <!-- Hata mesajı -->
+            <div id="pin-error" style="
+                color:#f87171;font-size:0.85rem;min-height:20px;
+                margin-bottom:12px;font-weight:500;text-align:center;
+                transition:opacity 0.3s;opacity:0;
+            ">PIN yanlış. Tekrar deneyin.</div>
+
+            <!-- Sayısal Tuş Takımı -->
+            <div id="pin-keypad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;">
+                <button class="pin-key" data-v="1">1</button>
+                <button class="pin-key" data-v="2">2</button>
+                <button class="pin-key" data-v="3">3</button>
+                <button class="pin-key" data-v="4">4</button>
+                <button class="pin-key" data-v="5">5</button>
+                <button class="pin-key" data-v="6">6</button>
+                <button class="pin-key" data-v="7">7</button>
+                <button class="pin-key" data-v="8">8</button>
+                <button class="pin-key" data-v="9">9</button>
+                <button class="pin-key pin-key-clear" data-v="clear" style="font-size:1.2rem;">⌫</button>
+                <button class="pin-key" data-v="0">0</button>
+                <button class="pin-key pin-key-ok" data-v="ok">✓</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .pin-dot {
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            border: 2px solid var(--border-accent, rgba(100,200,150,0.5));
+            background: transparent;
+            transition: background 0.2s, transform 0.15s;
+            display: inline-block;
+        }
+        .pin-dot.filled {
+            background: var(--accent, #4ade80);
+            border-color: var(--accent, #4ade80);
+            transform: scale(1.2);
+        }
+        .pin-key {
+            padding: 16px 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: 1px solid var(--border, rgba(255,255,255,0.1));
+            background: var(--bg-main, #0f1923);
+            color: var(--text-primary, #e8eaf0);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+            font-family: inherit;
+        }
+        .pin-key:active, .pin-key:focus {
+            background: var(--accent, #4ade80);
+            color: #0f1923;
+            outline: none;
+            transform: scale(0.95);
+        }
+        .pin-key-clear { color: #f87171 !important; }
+        .pin-key-ok { background: var(--accent, #4ade80) !important; color: #0f1923 !important; }
+        .pin-key-ok:active { opacity: 0.8; }
+    </style>
+
     <div class="settings-page">
         <!-- 1. QR KOD GÖRÜNÜMÜ (TV İÇİN VARSAYILAN) -->
         <div id="settings-qr-view" class="settings-wrapper animate-fade-in-scale qr-split-layout"
@@ -839,8 +932,6 @@
                 </div>
             </section>
 
-
-
             <!-- ════════════════════════════════════════════════════
          TV / ANDROID AYARLARI
       ════════════════════════════════════════════════════ -->
@@ -857,6 +948,37 @@
                         <div class="setting-control">
                             <label class="toggle-switch"><input type="checkbox" id="s-auto-boot" checked><span
                                     class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         GÜVENLİK
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">🔒 Güvenlik</h2>
+                <div class="section-card">
+                    <div class="setting-row">
+                        <span class="setting-icon">🔑</span>
+                        <div class="setting-info">
+                            <div class="setting-label">Ayarlar PIN Kodunu Değiştir</div>
+                            <div class="setting-desc">Varsayılan PIN: 123456 (4–8 rakam)</div>
+                        </div>
+                        <div class="setting-control">
+                            <button id="btn-show-pin-change" class="btn-add" style="font-size:0.85rem;">PIN Değiştir</button>
+                        </div>
+                    </div>
+                    <div id="pin-change-form" style="display:none; padding:12px 16px; border-top:1px solid var(--border);">
+                        <div style="display:flex; flex-direction:column; gap:10px; max-width:320px;">
+                            <input type="password" id="pin-current" class="setting-input" placeholder="Mevcut PIN" inputmode="numeric" maxlength="8">
+                            <input type="password" id="pin-new" class="setting-input" placeholder="Yeni PIN (4-8 rakam)" inputmode="numeric" maxlength="8">
+                            <input type="password" id="pin-new2" class="setting-input" placeholder="Yeni PIN Tekrar" inputmode="numeric" maxlength="8">
+                            <div id="pin-change-msg" style="font-size:0.85rem;min-height:18px;"></div>
+                            <div style="display:flex;gap:8px;">
+                                <button id="btn-pin-save" class="btn-add" style="flex:1;">💾 Kaydet</button>
+                                <button id="btn-pin-cancel" class="btn-danger-small" style="flex:1;">İptal</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -893,9 +1015,6 @@
 
     <!-- ─── JavaScript ─────────────────────────────────────── -->
     <script src="js/locations-data.js"></script>
-    </div>
-
-
 
     <!-- Script Yüklemeleri -->
     <script src="js/data-manager.js"></script>
@@ -904,6 +1023,134 @@
     <script src="js/settings-manager.js"></script>
     <script src="js/qrcode.min.js"></script>
     <script src="js/settings.js"></script>
-</body>
 
+    <!-- ─── PIN YÖNETİM MANTIĞI ─────────────────────────────── -->
+    <script>
+    (function () {
+        const overlay = document.getElementById('pin-overlay');
+        const dots    = document.querySelectorAll('.pin-dot');
+        const errEl   = document.getElementById('pin-error');
+        let pinBuffer = '';
+
+        // TV ekranından açılıyorsa (file:// protokolü) — PIN sorma, overlay'i gizle
+        if (window.location.protocol === 'file:') {
+            if (overlay) overlay.style.display = 'none';
+            // Not: Eskiden burada 'return' vardı, bu yüzden alt kısımdaki "PIN Değiştir" vs. butonları aktifleşmiyordu.
+            // Şimdi sadece overlay gizleniyor, script çalışmaya devam ediyor.
+        }
+
+        function updateDots() {
+            dots.forEach((d, i) => {
+                if (i < pinBuffer.length) {
+                    d.classList.add('filled');
+                } else {
+                    d.classList.remove('filled');
+                }
+            });
+        }
+
+        function showError(msg) {
+            errEl.textContent = msg;
+            errEl.style.opacity = '1';
+            pinBuffer = '';
+            updateDots();
+            setTimeout(() => { errEl.style.opacity = '0'; }, 2500);
+        }
+
+        async function submitPin() {
+            if (!pinBuffer) return;
+            try {
+                const res = await fetch('/api/verify-pin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin: pinBuffer })
+                });
+                if (res.ok) {
+                    overlay.style.transition = 'opacity 0.4s';
+                    overlay.style.opacity = '0';
+                    setTimeout(() => { overlay.style.display = 'none'; }, 400);
+                } else {
+                    showError('PIN yanlış. Tekrar deneyin.');
+                }
+            } catch (e) {
+                showError('Bağlantı hatası. Tekrar deneyin.');
+            }
+        }
+
+        document.querySelectorAll('.pin-key').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const v = btn.dataset.v;
+                if (v === 'clear') {
+                    pinBuffer = pinBuffer.slice(0, -1);
+                    updateDots();
+                } else if (v === 'ok') {
+                    submitPin();
+                } else if (pinBuffer.length < dots.length) {
+                    pinBuffer += v;
+                    updateDots();
+                    if (pinBuffer.length === dots.length) submitPin(); // 6 hane dolunca otomatik denetle
+                }
+            });
+        });
+
+        // Klavye desteği (telefon klavyesi veya bilgisayar)
+        document.addEventListener('keydown', (e) => {
+            if (overlay && overlay.style.display !== 'none') {
+                if (e.key >= '0' && e.key <= '9' && pinBuffer.length < dots.length) {
+                    pinBuffer += e.key; updateDots();
+                    if (pinBuffer.length === dots.length) submitPin();
+                } else if (e.key === 'Backspace') {
+                    pinBuffer = pinBuffer.slice(0, -1); updateDots();
+                } else if (e.key === 'Enter') {
+                    submitPin();
+                }
+            }
+        });
+
+        // PIN Değiştirme Formu
+        const btnShow   = document.getElementById('btn-show-pin-change');
+        const pinForm   = document.getElementById('pin-change-form');
+        const btnSave   = document.getElementById('btn-pin-save');
+        const btnCancel = document.getElementById('btn-pin-cancel');
+        const msgEl     = document.getElementById('pin-change-msg');
+
+        if (btnShow) btnShow.addEventListener('click', () => {
+            pinForm.style.display = pinForm.style.display === 'none' ? 'block' : 'none';
+        });
+        if (btnCancel) btnCancel.addEventListener('click', () => {
+            pinForm.style.display = 'none';
+            ['pin-current','pin-new','pin-new2'].forEach(id => document.getElementById(id).value = '');
+            msgEl.textContent = '';
+        });
+        if (btnSave) btnSave.addEventListener('click', async () => {
+            const cur  = document.getElementById('pin-current').value.trim();
+            const nw   = document.getElementById('pin-new').value.trim();
+            const nw2  = document.getElementById('pin-new2').value.trim();
+            if (!cur || !nw || !nw2) { msgEl.style.color='#f87171'; msgEl.textContent='Tüm alanlar zorunludur.'; return; }
+            if (nw !== nw2)          { msgEl.style.color='#f87171'; msgEl.textContent='Yeni PIN\'ler eşleşmiyor.'; return; }
+            if (!/^\d{4,8}$/.test(nw)) { msgEl.style.color='#f87171'; msgEl.textContent='PIN 4-8 rakamdan oluşmalıdır.'; return; }
+            try {
+                const res = await fetch('/api/change-pin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPin: cur, newPin: nw })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    msgEl.style.color = '#4ade80';
+                    msgEl.textContent = '✓ PIN başarıyla değiştirildi!';
+                    ['pin-current','pin-new','pin-new2'].forEach(id => document.getElementById(id).value = '');
+                    setTimeout(() => { msgEl.textContent=''; pinForm.style.display='none'; }, 2000);
+                } else {
+                    msgEl.style.color = '#f87171';
+                    msgEl.textContent = data.error || 'Hata oluştu.';
+                }
+            } catch(e) {
+                msgEl.style.color = '#f87171';
+                msgEl.textContent = 'Bağlantı hatası.';
+            }
+        });
+    })();
+    </script>
+</body>
 </html>

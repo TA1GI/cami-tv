@@ -14,7 +14,7 @@ import java.net.URLConnection
 class SettingsServer(
     private val context: Context,
     private val webView: WebView,
-    port: Int = 8080
+    port: Int = 8090
 ) : NanoHTTPD(port) {
 
     private val prefs = context.getSharedPreferences("cami_tv_prefs", Context.MODE_PRIVATE)
@@ -26,6 +26,40 @@ class SettingsServer(
     override fun serve(session: IHTTPSession): Response {
         val uri = session.uri
         val method = session.method
+
+        // ─── API: PIN Doğrulama ──────────────────────────────────
+        if (method == Method.POST && uri == "/api/verify-pin") {
+            val map = HashMap<String, String>()
+            session.parseBody(map)
+            val body = map["postData"] ?: return newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "No body")
+            val json = JSONObject(body)
+            val enteredPin = json.optString("pin", "")
+            val savedPin = prefs.getString("settings_pin", "123456") ?: "123456"
+            return if (enteredPin == savedPin) {
+                addCorsHeaders(newFixedLengthResponse(Response.Status.OK, "application/json", "{\"ok\":true}"))
+            } else {
+                addCorsHeaders(newFixedLengthResponse(Response.Status.UNAUTHORIZED, "application/json", "{\"ok\":false}"))
+            }
+        }
+
+        // ─── API: PIN Değiştir ──────────────────────────────────
+        if (method == Method.POST && uri == "/api/change-pin") {
+            val map = HashMap<String, String>()
+            session.parseBody(map)
+            val body = map["postData"] ?: return newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "No body")
+            val json = JSONObject(body)
+            val currentPin = json.optString("currentPin", "")
+            val newPin = json.optString("newPin", "")
+            val savedPin = prefs.getString("settings_pin", "123456") ?: "123456"
+            if (currentPin != savedPin) {
+                return addCorsHeaders(newFixedLengthResponse(Response.Status.UNAUTHORIZED, "application/json", "{\"ok\":false,\"error\":\"Mevcut PIN yanlış\"}"))
+            }
+            if (newPin.length < 4 || newPin.length > 8 || !newPin.all { it.isDigit() }) {
+                return addCorsHeaders(newFixedLengthResponse(Response.Status.BAD_REQUEST, "application/json", "{\"ok\":false,\"error\":\"PIN 4-8 rakamdan oluşmalıdır\"}"))
+            }
+            prefs.edit().putString("settings_pin", newPin).apply()
+            return addCorsHeaders(newFixedLengthResponse(Response.Status.OK, "application/json", "{\"ok\":true}"))
+        }
 
         // ─── API: Arkaplan resmini sun (telefon önizleme için) ──────
         if (method == Method.GET && uri == "/api/bg-image") {
@@ -217,5 +251,12 @@ class SettingsServer(
             uri.endsWith(".html") -> "text/html"
             else -> URLConnection.guessContentTypeFromName(uri) ?: "application/octet-stream"
         }
+    }
+
+    private fun addCorsHeaders(response: Response): Response {
+        response.addHeader("Access-Control-Allow-Origin", "*")
+        response.addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        response.addHeader("Access-Control-Allow-Headers", "Content-Type")
+        return response
     }
 }
