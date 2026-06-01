@@ -36,11 +36,6 @@ class MainActivity : Activity() {
 
     private lateinit var webView: WebView
     private var settingsServer: SettingsServer? = null
-    
-    // OTA Update için Onay Değişkenleri
-    private lateinit var updateButton: Button
-    private var pendingApkUrl: String? = null
-    private var pendingVersion: String? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,55 +73,6 @@ class MainActivity : Activity() {
             )
         }
         rootLayout.addView(webView)
-
-        // Güncelleme Butonu Oluştur (Başlangıçta Gizli, Sağ Üst Köşe)
-        updateButton = Button(this).apply {
-            text = "YENİ SÜRÜM VAR\nYüklemek için tıklayın"
-            visibility = View.GONE
-            
-            // TV Kumandası Uyumlu Odaklanma (Focusable) Ayarları
-            isFocusable = true
-            isFocusableInTouchMode = true
-            
-            setBackgroundColor(Color.parseColor("#1976D2")) // Mavi arka plan
-            setTextColor(Color.WHITE)
-            textSize = 18f
-            setPadding(60, 30, 60, 30)
-            elevation = 15f
-            
-            // Kumanda ile butona gelindiğinde renk/boyut değiştirsin
-            setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                    setBackgroundColor(Color.parseColor("#4CAF50")) // Odaklanınca Yeşil
-                    scaleX = 1.05f
-                    scaleY = 1.05f
-                } else {
-                    setBackgroundColor(Color.parseColor("#1976D2")) // Normal Mavi
-                    scaleX = 1.0f
-                    scaleY = 1.0f
-                }
-            }
-            
-            val params = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                gravity = Gravity.TOP or Gravity.END
-                topMargin = 60
-                rightMargin = 60
-            }
-            layoutParams = params
-            
-            setOnClickListener {
-                visibility = View.GONE
-                pendingApkUrl?.let { url -> 
-                    pendingVersion?.let { ver ->
-                        downloadAndInstall(url, ver)
-                    }
-                }
-            }
-        }
-        rootLayout.addView(updateButton)
 
         setContentView(rootLayout)
 
@@ -295,39 +241,20 @@ class MainActivity : Activity() {
         )
     }
 
-    // ─── OTA Güncelleme Kontrolü ───────────────────────
-
-    private val RELEASES_API = "https://api.github.com/repos/TA1GI/cami-tv/releases/latest"
-    private val CURRENT_VERSION = "1.0.15"
-    private val updateHandler = Handler(Looper.getMainLooper())
-    private val updateRunnable = object : Runnable {
-        override fun run() {
-            checkForUpdate()
-            // 12 saatte bir (12 * 60 * 60 * 1000 ms) tekrar kontrol et
-            updateHandler.postDelayed(this, 12L * 60 * 60 * 1000)
-        }
-    }
-
     override fun onPause() {
         super.onPause()
         webView.onPause()
-        // Uygulama arkaplanındayken periyodik kontrolü durdur
-        updateHandler.removeCallbacks(updateRunnable)
     }
 
     override fun onResume() {
         super.onResume()
         webView.onResume()
         hideSystemUI()
-        // Döngüyü başlat (öncekini temizleyerek çiftlenmesini önle)
-        updateHandler.removeCallbacks(updateRunnable)
-        updateHandler.post(updateRunnable)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         webView.destroy()
-        updateHandler.removeCallbacks(updateRunnable)
         settingsServer?.stop()
         // KeepAwake servisini durdur
         stopService(Intent(this, KeepAwakeService::class.java))
@@ -341,8 +268,6 @@ class MainActivity : Activity() {
             startService(serviceIntent)
         }
     }
-
-    fun checkForUpdate() {
         Thread {
             try {
                 val url = URL(RELEASES_API)
@@ -402,29 +327,4 @@ class MainActivity : Activity() {
         Handler(Looper.getMainLooper()).post {
             Toast.makeText(this, "Yeni sürüm (v$version) indiriliyor...", Toast.LENGTH_LONG).show()
         }
-        Thread {
-            try {
-                val apkFile = File(getExternalFilesDir(null), "cami-tv-update.apk")
-                val conn = URL(apkUrl).openConnection() as HttpURLConnection
-                conn.inputStream.use { input ->
-                    apkFile.outputStream().use { output -> input.copyTo(output) }
-                }
-                val uri: Uri = FileProvider.getUriForFile(
-                    this,
-                    "${packageName}.fileprovider",
-                    apkFile
-                )
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    setDataAndType(uri, "application/vnd.android.package-archive")
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                startActivity(intent)
-            } catch (e: Exception) {
-                Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(this, "Güncelleme indirilemedi.", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }.start()
-    }
 }
