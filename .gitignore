@@ -26,3 +26,9 @@ node_modules/
 
 # TV Scan Data (yerel cihaz tarama verileri)
 tv-scan-data/
+
+# Dahili Raporlar ve Kılavuzlar
+google_play_hazirlik_rehberi.md
+cami_tv_iki_yillik_veri_ve_guncelleme_raporu.md
+*_raporu.md
+*_rehberi.md
