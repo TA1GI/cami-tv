@@ -75,21 +75,8 @@ const App = (() => {
         // 8) Ana uygulamayı başlat
         await startMainApp();
 
-        // 9) Arka planda yıl güncelleme kontrolü (sadece online iken)
-        if (navigator.onLine) {
-            setTimeout(async () => {
-                try {
-                    const ilce = _settings.ilce;
-                    const ilceId = _settings.ilceId;
-                    const updated = await DataManager.checkYearUpdate(ilce, ilceId);
-                    if (updated) {
-                        location.reload();
-                    }
-                } catch (e) {
-                    console.warn('[App] Yıl güncelleme hatası (önemsiz):', e);
-                }
-            }, 5000);
-        }
+        // 9) Akıllı periyodik vakit/bayram güncellemesi (Kiosk TV için 24 saatte bir)
+        schedulePrayerTimesCheck();
     }
 
     // ──────────────────────────────────────────────────────
@@ -117,6 +104,52 @@ const App = (() => {
     function applySabahLogicList(list, settings) {
         if (!list) return list;
         return list.map(pt => applySabahLogic(pt, settings));
+    }
+
+    // ──────────────────────────────────────────────────────
+    // PERİYODİK GÜNCELLEME KONTROLÜ (Kiosk TV / Arka Plan)
+    // ──────────────────────────────────────────────────────
+    function schedulePrayerTimesCheck() {
+        // İlk kontrol: Açılıştan 15 saniye sonra
+        setTimeout(async () => {
+            await runUpdateCheck();
+        }, 15000);
+
+        // Her 24 saatte bir tekrarla
+        setInterval(async () => {
+            await runUpdateCheck();
+        }, 24 * 60 * 60 * 1000);
+    }
+
+    async function runUpdateCheck() {
+        if (!navigator.onLine || !_settings || !_settings.ilce || !_settings.ilceId) return;
+
+        try {
+            console.log('[App] Periyodik vakit/bayram güncelleme kontrolü yapılıyor...');
+            const result = await DataManager.checkPeriodicUpdate(_settings.ilce, _settings.ilceId, false);
+
+            if (result.updated) {
+                console.log('[App] Vakit/Bayram verileri sessizce yenilendi. UI sıcak tazeleniyor...');
+                // Sayfayı reload etmeden UI'ı tazele (Zero-Downtime Hot Refresh)
+                _todayPT = applySabahLogic(DataManager.getTodayPrayerTimes(), _settings);
+                _tomorrowImsak = DataManager.getTomorrowImsak();
+                _dayType = PrayerEngine.getDayType(_todayPT);
+                PowerManager.updatePrayerTimes(_todayPT);
+
+                try {
+                    const newWeekPrayer = applySabahLogicList(DataManager.getWeekPrayerTimes(), _settings);
+                    CarouselManager.refresh(_settings, newWeekPrayer);
+                } catch (cErr) {
+                    console.warn('[App] Carousel tazeleme hatası:', cErr);
+                }
+
+                tick();
+            } else {
+                console.log('[App] Vakit verileri güncel (Durum: ' + (result.reason || 'up-to-date') + ', Kalan gün: ' + (result.remainingDays ?? 'N/A') + ')');
+            }
+        } catch (err) {
+            console.warn('[App] Periyodik güncelleme hatası (önemsiz):', err);
+        }
     }
 
     // ──────────────────────────────────────────────────────

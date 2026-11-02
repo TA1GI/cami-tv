@@ -78,6 +78,101 @@ function initSettingsPage() {
         }
     });
 
+    // ──────────────────────────────────────────────────────
+    // VAKİT VE VERİ DURUMU KARTI
+    // ──────────────────────────────────────────────────────
+    async function updateDataStatusDisplay() {
+        const yearsEl = document.getElementById('data-status-years');
+        const remainingEl = document.getElementById('data-status-remaining');
+        const lastCheckEl = document.getElementById('data-status-last-check');
+
+        if (!yearsEl || !remainingEl || !lastCheckEl) return;
+
+        try {
+            await DataManager.initDB();
+            await DataManager.loadFromDB();
+            const status = await DataManager.getDataStatus();
+
+            yearsEl.textContent = status.coverageYears || 'Yüklenmedi';
+            remainingEl.textContent = status.remainingDays > 0 ? `${status.remainingDays} Gün` : 'Veri Yok';
+
+            const lastTimestamp = status.lastPrayerSuccess || status.lastPrayerCheck || 0;
+            if (lastTimestamp > 0) {
+                const dt = new Date(lastTimestamp);
+                const day = String(dt.getDate()).padStart(2, '0');
+                const month = String(dt.getMonth() + 1).padStart(2, '0');
+                const hour = String(dt.getHours()).padStart(2, '0');
+                const min = String(dt.getMinutes()).padStart(2, '0');
+                lastCheckEl.textContent = `${day}.${month}.${dt.getFullYear()} ${hour}:${min}`;
+            } else {
+                lastCheckEl.textContent = 'Henüz yapılmadı';
+            }
+        } catch (e) {
+            console.warn('[Settings] Veri durumu okuma hatası:', e);
+        }
+    }
+
+    const btnManualSync = document.getElementById('btn-manual-sync');
+    const syncMsg = document.getElementById('manual-sync-msg');
+    const syncIcon = document.getElementById('manual-sync-icon');
+
+    if (btnManualSync) {
+        btnManualSync.addEventListener('click', async () => {
+            const s = SettingsManager.load();
+            if (!s.ilce || !s.ilceId) {
+                if (syncMsg) {
+                    syncMsg.style.color = '#f87171';
+                    syncMsg.textContent = 'Önce il ve ilçe seçip kaydedin.';
+                }
+                return;
+            }
+
+            if (!navigator.onLine) {
+                if (syncMsg) {
+                    syncMsg.style.color = '#f87171';
+                    syncMsg.textContent = 'İnternet bağlantısı yok!';
+                }
+                return;
+            }
+
+            btnManualSync.disabled = true;
+            btnManualSync.style.opacity = '0.7';
+            if (syncIcon) syncIcon.textContent = '⏳';
+            if (syncMsg) {
+                syncMsg.style.color = 'var(--text-secondary)';
+                syncMsg.textContent = 'Vakitler ve bayram verileri indiriliyor...';
+            }
+
+            try {
+                const result = await DataManager.checkPeriodicUpdate(s.ilce, s.ilceId, true);
+                if (result.updated) {
+                    if (syncMsg) {
+                        syncMsg.style.color = '#4ade80';
+                        syncMsg.textContent = '✓ Vakitler ve bayram verileri başarıyla güncellendi!';
+                    }
+                } else {
+                    if (syncMsg) {
+                        syncMsg.style.color = '#38bdf8';
+                        syncMsg.textContent = 'Tüm veriler zaten en güncel durumda.';
+                    }
+                }
+                await updateDataStatusDisplay();
+            } catch (err) {
+                if (syncMsg) {
+                    syncMsg.style.color = '#f87171';
+                    syncMsg.textContent = 'Güncelleme sırasında hata oluştu: ' + (err.message || err);
+                }
+            } finally {
+                btnManualSync.disabled = false;
+                btnManualSync.style.opacity = '1';
+                if (syncIcon) syncIcon.textContent = '🔄';
+            }
+        });
+    }
+
+    // İlk açılışta veri durumunu yükle
+    updateDataStatusDisplay();
+
     // Görünüm
     setVal('s-tema', settings.tema);
     setVal('s-ekran-yonu', settings.ekranYonu);
@@ -696,6 +791,7 @@ function initSettingsPage() {
                         statusEl.textContent = msg;
                     });
                     konumDegisti = true;
+                    await updateDataStatusDisplay();
                 } catch (e) {
                     statusEl.textContent = '✗ Vakitler indirilemedi. İnternet bağlantısını kontrol edin.';
                     statusEl.style.color = '#f87171';

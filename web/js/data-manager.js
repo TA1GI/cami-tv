@@ -145,23 +145,29 @@ const DataManager = (() => {
         }
         onProgress?.('Vakit verisi alındı, kaydediliyor...');
         const vakitJson = await vakitRes.value.json();
+        const now = Date.now();
         await dbPut('prayer_times', 'data', vakitJson);
         await dbPut('meta', 'prayer_year', new Date().getFullYear());
         await dbPut('meta', 'prayer_ilce_id', ilceId);
         await dbPut('meta', 'prayer_ilce', ilce);
         await dbPut('meta', 'prayer_il', il);
+        await dbPut('meta', 'last_prayer_update_check', now);
+        await dbPut('meta', 'last_prayer_update_success', now);
 
         // Bayram dosyası — opsiyonel (başarısız olsa devam et)
+        let bayramJson = null;
         if (bayramRes.status === 'fulfilled' && bayramRes.value.ok) {
             onProgress?.('Bayram namazı verisi kaydediliyor...');
-            const bayramJson = await bayramRes.value.json();
+            bayramJson = await bayramRes.value.json();
             await dbPut('bayram_times', 'data', bayramJson);
+            await dbPut('meta', 'last_bayram_update_check', now);
+            await dbPut('meta', 'last_bayram_update_success', now);
         } else {
             console.warn('[DataManager] Bayram namazı verisi indirilemedi (opsiyonel).');
         }
 
         _prayerData = vakitJson;
-        _bayramData = null; // reloaddan okunacak
+        _bayramData = bayramJson;
 
         onProgress?.('Kurulum tamamlandı!');
         return true;
@@ -363,30 +369,180 @@ const DataManager = (() => {
     }
 
     // ──────────────────────────────────────────────────────
-    // Yıl güncelleme kontrolü (arka planda, sessiz)
+    // Veri Kapsamı ve Durum Bilgisi Yardımcıları
     // ──────────────────────────────────────────────────────
-    async function checkYearUpdate(ilce, ilceId) {
-        try {
-            const savedYear = await dbGet('meta', 'prayer_year');
-            const curYear = new Date().getFullYear();
-            if (savedYear === curYear) return false; // güncel
+    function getRemainingDays() {
+        if (!_prayerData || _prayerData.length === 0) return 0;
+        const lastEntry = _prayerData[_prayerData.length - 1];
+        const lastDate = _parseMiladiDate(lastEntry.miladiTarih);
+        if (!lastDate) return 0;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return Math.max(0, Math.round((lastDate - today) / (1000 * 60 * 60 * 24)));
+    }
 
-            console.log('[DataManager] Yeni yıl tespit edildi, vakit verisi güncelleniyor...');
-            const filename = convertToFilename(ilce);
-            const url = `${BASE_URL}${filename}_${ilceId}.json`;
-            const res = await fetch(url, { cache: 'no-cache' });
-            if (!res.ok) return false;
+    function getDaysToUpcomingBayram() {
+        if (!_prayerData || _prayerData.length === 0) return null;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-            const data = await res.json();
-            await dbPut('prayer_times', 'data', data);
-            await dbPut('meta', 'prayer_year', curYear);
-            _prayerData = data;
-            console.log('[DataManager] Vakit verisi güncellendi.');
-            return true;
-        } catch (e) {
-            console.warn('[DataManager] Yıl güncelleme başarısız (internet yok?):', e);
-            return false;
+        for (const entry of _prayerData) {
+            const hicri = entry.hicriTarih || '';
+            // 1 Şevval (Ramazan) veya 10 Zilhicce (Kurban)
+            if (hicri.includes('1 Şevval') || hicri.includes('10 Zilhicce')) {
+                const bayramDate = _parseMiladiDate(entry.miladiTarih);
+                if (bayramDate && bayramDate >= today) {
+                    const diffDays = Math.round((bayramDate - today) / (1000 * 60 * 60 * 24));
+                    return {
+                        tip: hicri.includes('1 Şevval') ? 'ramazan' : 'kurban',
+                        tarih: entry.miladiTarih,
+                        kalanGun: diffDays
+                    };
+                }
+            }
         }
+        return null;
+    }
+
+    function getDataCoverageYears() {
+        if (!_prayerData || _prayerData.length === 0) return null;
+        const first = _parseMiladiDate(_prayerData[0].miladiTarih);
+        const last = _parseMiladiDate(_prayerData[_prayerData.length - 1].miladiTarih);
+        if (!first || !last) return null;
+        const y1 = first.getFullYear();
+        const y2 = last.getFullYear();
+        return y1 === y2 ? `${y1}` : `${y1} - ${y2}`;
+    }
+
+    async function getDataStatus() {
+        const remainingDays = getRemainingDays();
+        const coverageYears = getDataCoverageYears();
+        const bayramInfo = getDaysToUpcomingBayram();
+        let lastPrayerCheck = 0;
+        let lastPrayerSuccess = 0;
+        let lastBayramSuccess = 0;
+        try {
+            lastPrayerCheck = (await dbGet('meta', 'last_prayer_update_check')) || 0;
+            lastPrayerSuccess = (await dbGet('meta', 'last_prayer_update_success')) || 0;
+            lastBayramSuccess = (await dbGet('meta', 'last_bayram_update_success')) || 0;
+        } catch (e) {
+            console.warn('[DataManager] Meta okuma hatası:', e);
+        }
+        const totalEntries = _prayerData ? _prayerData.length : 0;
+
+        return {
+            totalEntries,
+            remainingDays,
+            coverageYears,
+            bayramInfo,
+            lastPrayerCheck,
+            lastPrayerSuccess,
+            lastBayramSuccess
+        };
+    }
+
+    // ──────────────────────────────────────────────────────
+    // Akıllı Periyodik Güncelleme Kontrolü (Arka plan / Kiosk TV)
+    // ──────────────────────────────────────────────────────
+    async function checkPeriodicUpdate(ilce, ilceId, force = false) {
+        if (!navigator.onLine) {
+            return { updated: false, reason: 'offline', remainingDays: getRemainingDays() };
+        }
+
+        const now = Date.now();
+        let lastCheck = 0;
+        let lastBayramCheck = 0;
+        try {
+            lastCheck = (await dbGet('meta', 'last_prayer_update_check')) || 0;
+            lastBayramCheck = (await dbGet('meta', 'last_bayram_update_check')) || 0;
+        } catch (e) {
+            console.warn('[DataManager] Meta okunamadı, devam ediliyor:', e);
+        }
+
+        const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+        const oneDayMs = 24 * 60 * 60 * 1000;
+
+        const remainingDays = getRemainingDays();
+        const bayramInfo = getDaysToUpcomingBayram();
+
+        // Bayram güncelleme şartı: Bayrama 4 gün veya daha az var ve son 24 saatte bayram verisi çekilmemişse (veya force)
+        const shouldUpdateBayram = force || (bayramInfo && bayramInfo.kalanGun <= 4 && (now - lastBayramCheck > oneDayMs));
+
+        // Vakit güncelleme şartı: 30 gün dolmuşsa VEYA eldeki veri < 365 gün kalmışsa (Ekim tamponu) VEYA force
+        const shouldUpdatePrayer = force || (now - lastCheck > thirtyDaysMs) || (remainingDays < 365);
+
+        if (!shouldUpdatePrayer && !shouldUpdateBayram) {
+            return { updated: false, reason: 'up-to-date', remainingDays };
+        }
+
+        const filename = convertToFilename(ilce);
+        const vakitUrl = `${BASE_URL}${filename}_${ilceId}.json`;
+        const bayramUrl = `${BASE_URL}bayram_namazi.json`;
+
+        let prayerUpdated = false;
+        let bayramUpdated = false;
+
+        // Vakit Güncellemesi
+        if (shouldUpdatePrayer) {
+            try {
+                console.log('[DataManager] Vakit güncellemesi başlatılıyor:', vakitUrl);
+                const res = await fetch(vakitUrl, { cache: 'no-cache' });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data) && data.length > 0) {
+                        await dbPut('prayer_times', 'data', data);
+                        await dbPut('meta', 'last_prayer_update_check', now);
+                        await dbPut('meta', 'last_prayer_update_success', now);
+                        await dbPut('meta', 'prayer_year', new Date().getFullYear());
+                        _prayerData = data;
+                        prayerUpdated = true;
+                        console.log('[DataManager] Vakit verileri başarıyla güncellendi. Toplam gün:', data.length);
+                    }
+                } else {
+                    console.warn('[DataManager] Vakit sunucu yanıtı başarısız:', res.status);
+                    await dbPut('meta', 'last_prayer_update_check', now);
+                }
+            } catch (e) {
+                console.warn('[DataManager] Vakit güncelleme hatası:', e);
+            }
+        }
+
+        // Bayram Güncellemesi
+        if (shouldUpdateBayram) {
+            try {
+                console.log('[DataManager] Bayram verisi güncellemesi başlatılıyor:', bayramUrl);
+                const bRes = await fetch(bayramUrl, { cache: 'no-cache' });
+                if (bRes.ok) {
+                    const bData = await bRes.json();
+                    if (bData && typeof bData === 'object') {
+                        await dbPut('bayram_times', 'data', bData);
+                        await dbPut('meta', 'last_bayram_update_check', now);
+                        await dbPut('meta', 'last_bayram_update_success', now);
+                        _bayramData = bData;
+                        bayramUpdated = true;
+                        console.log('[DataManager] Bayram namazı verileri güncellendi.');
+                    }
+                } else {
+                    console.warn('[DataManager] Bayram sunucu yanıtı başarısız:', bRes.status);
+                    await dbPut('meta', 'last_bayram_update_check', now);
+                }
+            } catch (e) {
+                console.warn('[DataManager] Bayram güncelleme hatası:', e);
+            }
+        }
+
+        return {
+            updated: prayerUpdated || bayramUpdated,
+            prayerUpdated,
+            bayramUpdated,
+            remainingDays: getRemainingDays()
+        };
+    }
+
+    // Geriye dönük uyumluluk için eski fonksiyon
+    async function checkYearUpdate(ilce, ilceId) {
+        const res = await checkPeriodicUpdate(ilce, ilceId, false);
+        return res.updated;
     }
 
     // ──────────────────────────────────────────────────────
@@ -549,6 +705,11 @@ const DataManager = (() => {
         getTomorrowImsak,
         getWeekPrayerTimes,
         getBayramWakti,
+        getRemainingDays,
+        getDaysToUpcomingBayram,
+        getDataCoverageYears,
+        getDataStatus,
+        checkPeriodicUpdate,
         checkYearUpdate,
         fetchFromESP32,
         loadContent: loadContentEnhanced,

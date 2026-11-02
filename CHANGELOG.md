@@ -1,5 +1,14 @@
 # Değişiklik Günlüğü
 
+## v1.0.16 (2026-11-02)
+### 2 Yıllık Kesintisiz Veri, Akıllı Güncelleme ve Google Play Hazırlığı
+- **2 Yıllık (730 Günlük) Kesintisiz Vakit Mimarisi:** Diyanet İşleri Başkanlığı'nın 2 yıllık vakit tablolarıyla tam uyumlu çalışan akıllı periyodik güncelleme motoru (`checkPeriodicUpdate`) entegre edildi. Yılbaşı geçişlerinde veya 1 Ocak tarihlerinde yaşanabilecek olası veri kesintileri tamamen önlendi.
+- **Otomatik Bayram Namazı Güncellemesi:** Ramazan ve Kurban bayramlarına 4 gün veya daha az kala gece botu tarafından güncellenen `bayram_namazi.json` dosyasını otomatik çekme mekanizması kuruldu.
+- **Kiosk TV Yaşam Döngüsü & Sıfır Kesintili Canlı Yenileme (Hot Refresh):** Aylarca açık kalan Kiosk TV'ler için 24 saatlik periyodik kontrol döngüsü başlatıldı. Güncelleme anında sayfa yeniden yüklenmez (`location.reload()` iptal edildi), canlı ekran kesintisiz şekilde bellekte tazelenir.
+- **Ayarlar Ekranında Veri Durumu:** Kapsanan yıllar, kalan veri gün sayısı ve son kontrol zamanı göstergesi ile *"Vakitleri ve Bayramı Şimdi Güncelle"* butonu eklendi.
+- **Google Play & Android TV Uyumluluğu:** `AndroidManifest.xml` içine Leanback ve Touchscreen (`required=false`) TV tanımlamaları eklendi. Harici GitHub OTA kodu temizlendi.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 17, `ScreenBridge.kt`, `settings.html`) `1.0.16` olarak eşitlendi.
+
 ## v1.0.15 (2026-05-26)
 ### Kurban Bayramı Namazı Desteği
 - **Kurban Bayramı Vakti Gösterimi:** `data-manager.js`'deki `getBayramWakti()` fonksiyonu, Ramazan Bayramı'nın yanı sıra Kurban Bayramı namazı saatini de destekleyecek şekilde yeniden yazıldı. `bayram_namazi.json` içindeki `kurban` ve `kurban_tarih` alanları artık okunuyor.

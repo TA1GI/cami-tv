@@ -149,7 +149,7 @@
             <header class="settings-header">
                 <a href="index.html" class="btn-back" aria-label="Geri">←</a>
                 <h1 data-i18n="ayarlar">⚙️ Ayarlar</h1>
-                <span class="version">v1.0.15</span>
+                <span class="version">v1.0.16</span>
             </header>
 
 
@@ -189,6 +189,37 @@
                         <div class="setting-control">
                             <div id="settings-ilce-container"></div>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+                 VAKİT VERİSİ VE GÜNCELLEME
+            ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title">📅 Vakit Verisi ve Güncelleme Durumu</h2>
+                <div class="section-card" style="padding: 16px;">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                        <div style="background: var(--bg-main, #0f1923); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center;">
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Kapsanan Yıllar</div>
+                            <div id="data-status-years" style="font-size: 1.15rem; font-weight: 700; color: var(--accent, #4ade80);">-</div>
+                        </div>
+                        <div style="background: var(--bg-main, #0f1923); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center;">
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Kalan Veri</div>
+                            <div id="data-status-remaining" style="font-size: 1.15rem; font-weight: 700; color: var(--accent, #4ade80);">-</div>
+                        </div>
+                        <div style="background: var(--bg-main, #0f1923); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center;">
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Son Güncelleme</div>
+                            <div id="data-status-last-check" style="font-size: 0.95rem; font-weight: 600; color: var(--text-secondary); margin-top: 3px;">-</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button type="button" id="btn-manual-sync" class="btn" style="background: var(--accent-dim, rgba(74,222,128,0.15)); border: 1px solid var(--accent, #4ade80); color: var(--accent, #4ade80); padding: 12px 18px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span id="manual-sync-icon">🔄</span>
+                            <span id="manual-sync-text">Vakitleri ve Bayramı Şimdi Güncelle</span>
+                        </button>
+                        <div id="manual-sync-msg" style="font-size: 0.85rem; text-align: center; min-height: 18px; font-weight: 500;"></div>
                     </div>
                 </div>
             </section>
