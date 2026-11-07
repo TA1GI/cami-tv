@@ -5,6 +5,12 @@
     <!-- ─── Android TV & Cihaz Uyumluluk Gereksinimleri ── -->
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.hardware.faketouch" android:required="false" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
+    <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
+    <uses-feature android:name="android.hardware.screen.landscape" android:required="false" />
 
 
     <!-- ─── İzinler ─────────────────────────────────────── -->
@@ -34,7 +40,6 @@
             android:exported="true"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
-            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize">
 
             <!-- Uygulama launcher ikonu -->

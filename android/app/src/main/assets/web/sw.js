@@ -4,7 +4,7 @@
  * Tüm statik dosyaları önbelleğe alır.
  */
 
-const CACHE_NAME = 'cami-tv-v1.0.17';
+const CACHE_NAME = 'cami-tv-v1.0.18';
 
 const STATIC_FILES = [
     './',

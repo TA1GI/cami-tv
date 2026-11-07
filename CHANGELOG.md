@@ -1,5 +1,11 @@
 # Değişiklik Günlüğü
 
+## v1.0.18 (2026-11-07)
+### Android TV & TV Box Tam Donanım Uyumluluğu
+- **Android TV Cihaz Filtresi İyileştirmesi:** `AndroidManifest.xml` dosyasından televizyonlarda bulunmayan yerçekimi/ivmeölçer sensörü (`screenOrientation="sensor"`) kaldırıldı.
+- **Opsiyonel Donanım Beyanları:** Dokunmatik ekran (`touchscreen`), ivmeölçer (`sensor.accelerometer`), kamera (`camera`), telefon (`telephony`), faketouch, dikey ekran gibi mobil donanımların tümü `required="false"` olarak ayarlandı. Böylece Xiaomi Mi Box, Android TV Box, ADT-3 ve Smart TV cihazları Google Play tarafından %100 uyumlu olarak tanındı.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 21, versionName: `1.0.18`, `ScreenBridge.kt`, `settings.html`, `sw.js`) `1.0.18` olarak senkronize edildi.
+
 ## v1.0.17 (2026-11-07)
 ### İçerik Düzenleyici Çevrimdışı Veri Entegrasyonu ve Sürüm Güncellemesi
 - **İçerik Düzenleyici Çevrimdışı Veri Bağlantısı:** `content-editor.html` sayfasına yerleşik veri kütüphanesi (`content-data.js`) script referansı eklendi. Böylece hem Android WebView (file:// protokolü) hem de yerel telefon web sunucusunda ayet, hadis, dua ve Esmâ-ül Hüsnâ listelerinin boş görünmesi sorunu giderildi.
