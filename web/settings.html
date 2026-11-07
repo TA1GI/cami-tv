@@ -1063,8 +1063,8 @@
         const errEl   = document.getElementById('pin-error');
         let pinBuffer = '';
 
-        // TV ekranından açılıyorsa (file:// protokolü) — PIN sorma, overlay'i gizle
-        if (window.location.protocol === 'file:') {
+        // TV ekranından veya yerel bilgisayardan açılıyorsa (file:// veya localhost) — PIN sorma, overlay'i gizle
+        if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             if (overlay) overlay.style.display = 'none';
             // Not: Eskiden burada 'return' vardı, bu yüzden alt kısımdaki "PIN Değiştir" vs. butonları aktifleşmiyordu.
             // Şimdi sadece overlay gizleniyor, script çalışmaya devam ediyor.

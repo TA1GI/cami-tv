@@ -32,3 +32,9 @@ google_play_hazirlik_rehberi.md
 cami_tv_iki_yillik_veri_ve_guncelleme_raporu.md
 *_raporu.md
 *_rehberi.md
+
+# Yerel Test ve Mağaza Taslakları
+play_store_assets/
+web/_seed.html
+web/vakit_istanbul.json
+

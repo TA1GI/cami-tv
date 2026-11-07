@@ -6,8 +6,7 @@
 - **Otomatik Bayram Namazı Güncellemesi:** Ramazan ve Kurban bayramlarına 4 gün veya daha az kala gece botu tarafından güncellenen `bayram_namazi.json` dosyasını otomatik çekme mekanizması kuruldu.
 - **Kiosk TV Yaşam Döngüsü & Sıfır Kesintili Canlı Yenileme (Hot Refresh):** Aylarca açık kalan Kiosk TV'ler için 24 saatlik periyodik kontrol döngüsü başlatıldı. Güncelleme anında sayfa yeniden yüklenmez (`location.reload()` iptal edildi), canlı ekran kesintisiz şekilde bellekte tazelenir.
 - **Ayarlar Ekranında Veri Durumu:** Kapsanan yıllar, kalan veri gün sayısı ve son kontrol zamanı göstergesi ile *"Vakitleri ve Bayramı Şimdi Güncelle"* butonu eklendi.
-- **Google Play & Android TV Uyumluluğu:** `AndroidManifest.xml` içine Leanback ve Touchscreen (`required=false`) TV tanımlamaları eklendi. Harici GitHub OTA kodu temizlendi.
-- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 17, `ScreenBridge.kt`, `settings.html`) `1.0.16` olarak eşitlendi.
+- **Sürüm Güncellemesi & Play Store Uyumluluğu:** Tüm sürüm sabitleri (`build.gradle` versionCode: 19, versionName: `1.0.16`, `ScreenBridge.kt`, `settings.html`) senkronize edildi. Google Play 2026 gereksinimleri doğrultusunda `compileSdk 36`, `targetSdk 36` ve `minSdk 24` (Android 14+ tam uyum) yapılandırıldı. Kiosk başlatma akışı standartlaştırıldı.
 
 ## v1.0.15 (2026-05-26)
 ### Kurban Bayramı Namazı Desteği

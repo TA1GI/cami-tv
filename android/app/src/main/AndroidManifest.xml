@@ -18,7 +18,6 @@
         tools:ignore="ProtectedPermissions" />
     <!-- Arka plandan Activity başlatma (Android 14+ BAL kısıtlaması için) -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
         android:allowBackup="false"
