@@ -1,5 +1,11 @@
 # Değişiklik Günlüğü
 
+## v1.0.17 (2026-11-07)
+### İçerik Düzenleyici Çevrimdışı Veri Entegrasyonu ve Sürüm Güncellemesi
+- **İçerik Düzenleyici Çevrimdışı Veri Bağlantısı:** `content-editor.html` sayfasına yerleşik veri kütüphanesi (`content-data.js`) script referansı eklendi. Böylece hem Android WebView (file:// protokolü) hem de yerel telefon web sunucusunda ayet, hadis, dua ve Esmâ-ül Hüsnâ listelerinin boş görünmesi sorunu giderildi.
+- **Service Worker Önbellek Genişletmesi:** `sw.js` içine `content-editor.html`, `content-editor.css`, `content-data.js` ve `content-editor.js` dahil edilerek çevrimdışı önbellek güçlendirildi.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 20, versionName: `1.0.17`, `ScreenBridge.kt`, `settings.html`, `sw.js`) `1.0.17` olarak senkronize edildi.
+
 ## v1.0.16 (2026-11-02)
 ### 2 Yıllık Kesintisiz Veri, Akıllı Güncelleme ve Google Play Hazırlığı
 - **2 Yıllık (730 Günlük) Kesintisiz Vakit Mimarisi:** Diyanet İşleri Başkanlığı'nın 2 yıllık vakit tablolarıyla tam uyumlu çalışan akıllı periyodik güncelleme motoru (`checkPeriodicUpdate`) entegre edildi. Yılbaşı geçişlerinde veya 1 Ocak tarihlerinde yaşanabilecek olası veri kesintileri tamamen önlendi.

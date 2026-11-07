@@ -4,20 +4,24 @@
  * Tüm statik dosyaları önbelleğe alır.
  */
 
-const CACHE_NAME = 'cami-tv-v1.0.16';
+const CACHE_NAME = 'cami-tv-v1.0.17';
 
 const STATIC_FILES = [
     './',
     './index.html',
     './settings.html',
+    './content-editor.html',
     './manifest.json',
     './css/base.css',
     './css/landscape.css',
     './css/portrait.css',
     './css/animations.css',
     './css/settings.css',
+    './css/content-editor.css',
     './js/app.js',
     './js/data-manager.js',
+    './js/content-data.js',
+    './js/content-editor.js',
     './js/prayer-engine.js',
     './js/power-manager.js',
     './js/carousel-manager.js',
