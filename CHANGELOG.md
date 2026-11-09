@@ -1,5 +1,16 @@
 # Değişiklik Günlüğü
 
+## v1.0.20 (2026-11-09)
+### Terminoloji İyileştirmeleri, Ayarlar Düzeni ve Görünürlük Optimizasyonu
+- **Sade ve Tam Türkçe Tema İsimleri:** Ayarlar menüsündeki tema seçenekleri alt çizgi, bölü işareti veya teknik terimlerden arındırılarak temiz Türkçe adlara kavuşturuldu (Koyu Yeşil, Altın Sarısı, Zümrüt Yeşili, Kûfi Kahve, Lacivert, Gece Moru, Turkuaz, Okyanus Mavisi, Gökyüzü Mavisi, Buz Mavisi, Gül Kurusu, Zeytin Yeşili, Açık Beyaz, Otomatik).
+- **Sabah Namazı & İmsak Düzeni:** "Sabah Namazı İmsaka Göre" ayarı, doğrudan "Sabah Vaktini Göster" ayarının hemen altına alındı. Ayrıca "Sabah Vaktini Göster" kapalıyken imsak ayarı otomatik gizlenerek gereksiz kalabalık engellendi.
+- **Alt Kayan Yazı Bandı (Ticker) İyileştirmesi:** "Alt Ticker Bandı" ibaresi "Alt Kayan Yazı Bandı" olarak güncellendi ve konumu Cuma Yardımı'nın hemen altına, Duyurular bölümünün hemen üstüne yerleştirildi. Duyuru biçimindeki "Sadece Ticker" da "Sadece Kayan Yazı" olarak yenilendi.
+- **Cemaat ve Kâmet Terminolojisi:** "Cemaat Dakikaları" ibaresi cami kültürüne uygun şekilde "Kâmet / Cemaat Başlama Süresi (Ezandan kaç dk sonra)" olarak güncellendi.
+- **Güç Yönetimi & Akıllı Mod:** Güç yönetimi seçeneklerindeki teknik ve belirsiz "Karma" terimi "Akıllı Mod (Sabit Saat + Namaz Vakti)" olarak netleştirildi.
+- **İçerik Düzenleyici İyileştirmesi:** `content-editor.html` filtrelerindeki "Sunucudan Gelenler" seçeneği "Merkezi Arşiv Verileri" olarak güncellendi.
+- **Cihaz ESP32 Entegrasyonu Bölümü:** Kart, ayarlar sayfasının en altında Tehlikeli Bölge'nin hemen üstüne taşınarak daha az kullanılan bir alana konumlandırıldı.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 23, versionName: `1.0.20`, `ScreenBridge.kt`, `settings.html`, `sw.js`) `1.0.20` olarak senkronize edildi.
+
 ## v1.0.19 (2026-11-09)
 ### TV Kumanda Deneyimi, Otomatik Kayıt (Auto-Save) ve TV Arkaplan Dosya Seçici
 - **Otomatik Kayıt (Auto-Save) Sistemi:** Ayarlar sayfasında seçim yapıldığında (tema, dil, ekran yönü, hava durumu vb.) veya metin girildiğinde (600ms debounce / alandan çıkış) ayarlar anında otomatik kaydedilir. Kullanıcıların sayfa sonuna inip "Kaydet" butonunu arama zorunluluğu ortadan kaldırıldı; ekranın sağ üstünde şık bir *"✓ Kaydedildi"* bildirim rozeti eklendi. Manuel kaydetme butonu da korunmuştur.

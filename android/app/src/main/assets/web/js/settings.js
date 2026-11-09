@@ -429,6 +429,22 @@ function initSettingsPage() {
     renderCamiBilgiList();
 
     setCheck('s-goster-sabah', settings.gosterSabah);
+    setCheck('s-sabah-imsaga-gore', settings.sabahImsagaGore);
+
+    const sabahToggle = document.getElementById('s-goster-sabah');
+    const sabahImsakRow = document.getElementById('row-sabah-imsaga-gore');
+    function updateSabahImsakVisibility() {
+        if (sabahImsakRow) {
+            sabahImsakRow.style.display = sabahToggle?.checked ? '' : 'none';
+        }
+    }
+    updateSabahImsakVisibility();
+    if (sabahToggle) {
+        sabahToggle.addEventListener('change', () => {
+            updateSabahImsakVisibility();
+        });
+    }
+
     setCheck('s-goster-ticker', settings.gosterTickerBant);
     setCheck('s-goster-hicri', settings.gosterHicriTarih);
 
@@ -457,7 +473,6 @@ function initSettingsPage() {
     if (cumaMetinEn) { cumaMetinEn.value = cumaMetinler.en || ''; cumaMetinEn.addEventListener('input', markDirty); }
 
     // Ezan
-    setCheck('s-sabah-imsaga-gore', settings.sabahImsagaGore);
     const ezanSlider = document.getElementById('s-ezan-once');
     const ezanVal = document.getElementById('s-ezan-once-val');
     ezanSlider.value = settings.ezanOnceDk;
@@ -1165,7 +1180,7 @@ function initSettingsPage() {
         }
 
         const GUN_ISIMLERI = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-        const GORUNUM_MAP = { carousel: 'Slayt', 'tam-ekran': 'Tam Ekran', 'sadece-ticker': 'Ticker' };
+        const GORUNUM_MAP = { carousel: 'Slayt', 'tam-ekran': 'Tam Ekran', 'sadece-ticker': 'Kayan Yazı' };
         const TAM_EKRAN_MOD_MAP = { surekli: 'Sürekli', sirali: 'Sıralı' };
         const TEKRAR_MAP = { kalici: 'Kalıcı', gunluk: 'Günlük', haftalik: 'Haftalık', 'tek-sefer': 'Tek Sefer' };
 

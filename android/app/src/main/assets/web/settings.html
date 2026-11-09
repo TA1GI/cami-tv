@@ -177,7 +177,7 @@
             <header class="settings-header">
                 <a href="index.html" class="btn-back" aria-label="Geri">←</a>
                 <h1 data-i18n="ayarlar">⚙️ Ayarlar</h1>
-                <span class="version">v1.0.19</span>
+                <span class="version">v1.0.20</span>
             </header>
 
 
@@ -265,19 +265,19 @@
                         </div>
                         <div class="setting-control">
                             <select id="s-tema" class="setting-select">
-                                <option value="default" data-i18n="tema_yesil">Yeşil (Koyu)</option>
-                                <option value="gold" data-i18n="tema_altin">Altın / Türk</option>
+                                <option value="default" data-i18n="tema_yesil">Koyu Yeşil</option>
+                                <option value="gold" data-i18n="tema_altin">Altın Sarısı</option>
                                 <option value="emerald" data-i18n="tema_zumrut">Zümrüt Yeşili</option>
-                                <option value="kufi" data-i18n="tema_kufi">Kufi (Kahve)</option>
+                                <option value="kufi" data-i18n="tema_kufi">Kûfi Kahve</option>
                                 <option value="navy" data-i18n="tema_lacivert">Lacivert</option>
                                 <option value="purple" data-i18n="tema_mor">Gece Moru</option>
-                                <option value="turquoise" data-i18n="tema_turkuvaz">Turkuvaz</option>
-                                <option value="ocean" data-i18n="tema_okyanus">Okyanus</option>
-                                <option value="sky" data-i18n="tema_gokyuzu">Gökyüzü (Açık Mavi)</option>
+                                <option value="turquoise" data-i18n="tema_turkuvaz">Turkuaz</option>
+                                <option value="ocean" data-i18n="tema_okyanus">Okyanus Mavisi</option>
+                                <option value="sky" data-i18n="tema_gokyuzu">Gökyüzü Mavisi</option>
                                 <option value="ice" data-i18n="tema_buz">Buz Mavisi</option>
-                                <option value="rose" data-i18n="tema_gul">Gül</option>
-                                <option value="olive" data-i18n="tema_zeytin">Zeytin</option>
-                                <option value="light" data-i18n="tema_acik">Açık (Beyaz)</option>
+                                <option value="rose" data-i18n="tema_gul">Gül Kurusu</option>
+                                <option value="olive" data-i18n="tema_zeytin">Zeytin Yeşili</option>
+                                <option value="light" data-i18n="tema_acik">Açık Beyaz</option>
                                 <option value="auto" data-i18n="otomatik">Otomatik</option>
                             </select>
                         </div>
@@ -583,13 +583,15 @@
                         </div>
                     </div>
 
-                    <div class="setting-row">
-                        <span class="setting-icon">📢</span>
+                    <div class="setting-row" id="row-sabah-imsaga-gore" style="display:none;">
+                        <span class="setting-icon">🕋</span>
                         <div class="setting-info">
-                            <div class="setting-label" data-i18n="alt_ticker">Alt Ticker Bandı</div>
+                            <div class="setting-label" data-i18n="sabah_imsaka_gore">Sabah Namazı İmsaka Göre</div>
+                            <div class="setting-desc" data-i18n="sabah_imsaka_gore_aciklama">Sabah ezanı imsakta okunur
+                                ve geri sayım imsaka göre işler</div>
                         </div>
                         <div class="setting-control">
-                            <label class="toggle-switch"><input type="checkbox" id="s-goster-ticker"><span
+                            <label class="toggle-switch"><input type="checkbox" id="s-sabah-imsaga-gore"><span
                                     class="toggle-slider"></span></label>
                         </div>
                     </div>
@@ -663,6 +665,19 @@
                         </div>
                     </div>
 
+                    <!-- ── ALT KAYAN YAZI BANDI ──────────────── -->
+                    <div class="setting-row">
+                        <span class="setting-icon">📢</span>
+                        <div class="setting-info">
+                            <div class="setting-label" data-i18n="alt_ticker">Alt Kayan Yazı Bandı</div>
+                            <div class="setting-desc" data-i18n="alt_ticker_aciklama">Ekranın alt kısmında kayan duyuru, ayet ve bilgi satırını gösterir</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-goster-ticker"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
                 </div>
             </section>
 
@@ -717,7 +732,7 @@
                                 <select id="s-duyuru-gorunum" class="setting-select" style="width:100%;">
                                     <option value="carousel">Slayt</option>
                                     <option value="tam-ekran">Tam Ekran</option>
-                                    <option value="sadece-ticker">Sadece Ticker</option>
+                                    <option value="sadece-ticker">Sadece Kayan Yazı</option>
                                 </select>
                             </div>
                             <div>
@@ -804,19 +819,6 @@
                     </div>
 
                     <div class="setting-row">
-                        <span class="setting-icon">🕋</span>
-                        <div class="setting-info">
-                            <div class="setting-label" data-i18n="sabah_imsaka_gore">Sabah Namazı İmsaka Göre</div>
-                            <div class="setting-desc" data-i18n="sabah_imsaka_gore_aciklama">Sabah ezanı imsakta okunur
-                                ve geri sayım imsaka göre işler</div>
-                        </div>
-                        <div class="setting-control">
-                            <label class="toggle-switch"><input type="checkbox" id="s-sabah-imsaga-gore"><span
-                                    class="toggle-slider"></span></label>
-                        </div>
-                    </div>
-
-                    <div class="setting-row">
                         <span class="setting-icon">🕌</span>
                         <div class="setting-info">
                             <div class="setting-label" data-i18n="cemaat_goster">Cemaatle Namaz Saatlerini Göster</div>
@@ -833,7 +835,7 @@
                     <div id="cemaat-offsets-panel"
                         style="display:none; padding:12px 8px 4px; border-top:1px solid var(--border); margin-top:4px;">
                         <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;"
-                            data-i18n="cemaat_dakikalari">Cemaat Dakikaları (ezanın kaç dk sonrası)</div>
+                            data-i18n="cemaat_dakikalari">Kâmet / Cemaat Başlama Süresi (Ezandan kaç dk sonra)</div>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                             <div class="cemaat-row"><span>İmsak</span><input type="number" id="co-imsak" min="0"
                                     max="60" value="0" class="setting-number"></div>
@@ -871,7 +873,7 @@
                                 <option value="always">Her Zaman Açık</option>
                                 <option value="fixed">Sabit Saat Aralığı</option>
                                 <option value="prayer">Namaz Vakti Bazlı</option>
-                                <option value="hybrid">Karma</option>
+                                <option value="hybrid">Akıllı Mod (Sabit Saat + Namaz Vakti)</option>
                             </select>
                         </div>
                     </div>
@@ -947,51 +949,6 @@
             </section>
 
             <!-- ════════════════════════════════════════════════════
-         ESP32 ENTEGRASYONU
-      ════════════════════════════════════════════════════ -->
-            <section class="settings-section">
-                <h2 class="section-title" data-i18n="esp32_entegrasyonu">🔌 Cihaz ESP32 Entegrasyonu</h2>
-                <div class="section-card">
-
-                    <div class="setting-row">
-                        <span class="setting-icon">🔌</span>
-                        <div class="setting-info">
-                            <div class="setting-label">ESP32 Bağlantısı</div>
-                            <div class="setting-desc">Yerel ağdaki ESP32 cihazına bağlan</div>
-                        </div>
-                        <div class="setting-control">
-                            <label class="toggle-switch"><input type="checkbox" id="s-esp32-aktif"><span
-                                    class="toggle-slider"></span></label>
-                        </div>
-                    </div>
-
-                    <div id="s-esp32-details" class="hidden">
-                        <div class="setting-row">
-                            <span class="setting-icon">🌐</span>
-                            <div class="setting-info">
-                                <div class="setting-label" data-i18n="esp32_ip">ESP32 IP Adresi</div>
-                            </div>
-                            <div class="setting-control">
-                                <input type="text" id="s-esp32-ip" class="setting-input" placeholder="192.168.1.100">
-                            </div>
-                        </div>
-
-                        <div class="setting-row">
-                            <span class="setting-icon">🌡️</span>
-                            <div class="setting-info">
-                                <div class="setting-label">Sıcaklık/Nem Göster</div>
-                            </div>
-                            <div class="setting-control">
-                                <label class="toggle-switch"><input type="checkbox" id="s-esp32-sicaklik"><span
-                                        class="toggle-slider"></span></label>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-            <!-- ════════════════════════════════════════════════════
          TV / ANDROID AYARLARI
       ════════════════════════════════════════════════════ -->
             <section class="settings-section">
@@ -1040,6 +997,51 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════
+         ESP32 ENTEGRASYONU
+      ════════════════════════════════════════════════════ -->
+            <section class="settings-section">
+                <h2 class="section-title" data-i18n="esp32_entegrasyonu">🔌 Cihaz ESP32 Entegrasyonu</h2>
+                <div class="section-card">
+
+                    <div class="setting-row">
+                        <span class="setting-icon">🔌</span>
+                        <div class="setting-info">
+                            <div class="setting-label">ESP32 Bağlantısı</div>
+                            <div class="setting-desc">Yerel ağdaki ESP32 cihazına bağlan</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch"><input type="checkbox" id="s-esp32-aktif"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+
+                    <div id="s-esp32-details" class="hidden">
+                        <div class="setting-row">
+                            <span class="setting-icon">🌐</span>
+                            <div class="setting-info">
+                                <div class="setting-label" data-i18n="esp32_ip">ESP32 IP Adresi</div>
+                            </div>
+                            <div class="setting-control">
+                                <input type="text" id="s-esp32-ip" class="setting-input" placeholder="192.168.1.100">
+                            </div>
+                        </div>
+
+                        <div class="setting-row">
+                            <span class="setting-icon">🌡️</span>
+                            <div class="setting-info">
+                                <div class="setting-label">Sıcaklık/Nem Göster</div>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch"><input type="checkbox" id="s-esp32-sicaklik"><span
+                                        class="toggle-slider"></span></label>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </section>
 
