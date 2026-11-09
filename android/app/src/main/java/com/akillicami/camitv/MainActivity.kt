@@ -11,6 +11,8 @@ import android.os.Looper
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -24,8 +26,13 @@ import android.widget.FrameLayout
  */
 class MainActivity : Activity() {
 
+    companion object {
+        private const val FILE_CHOOSER_REQUEST_CODE = 1001
+    }
+
     private lateinit var webView: WebView
     private var settingsServer: SettingsServer? = null
+    private var fileUploadCallback: ValueCallback<Array<Uri>>? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,13 +119,41 @@ class MainActivity : Activity() {
             }
         }
 
+        // ─── WebChromeClient (Dosya Seçici / input[type=file]) ───
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onShowFileChooser(
+                view: WebView?,
+                filePathCallback: ValueCallback<Array<Uri>>?,
+                fileChooserParams: FileChooserParams?
+            ): Boolean {
+                fileUploadCallback?.onReceiveValue(null)
+                fileUploadCallback = filePathCallback
+
+                val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "image/*"
+                }
+                return try {
+                    startActivityForResult(
+                        Intent.createChooser(intent, "Arkaplan Resmi Seç"),
+                        FILE_CHOOSER_REQUEST_CODE
+                    )
+                    true
+                } catch (e: Exception) {
+                    fileUploadCallback?.onReceiveValue(null)
+                    fileUploadCallback = null
+                    false
+                }
+            }
+        }
+
         // ─── Ana sayfayı yükle ─────────────────────────────
         // Web dosyaları assets/web/ klasöründe
         webView.loadUrl("file:///android_asset/web/index.html")
 
         // ─── Yerel Web Sunucuyu Başlat (Telefonla Ayar) ────
         try {
-            settingsServer = SettingsServer(this, webView, 8080)
+            settingsServer = SettingsServer(this, webView, 8090)
             settingsServer?.start()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -148,6 +183,26 @@ class MainActivity : Activity() {
                     e.printStackTrace()
                 }
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                val uris: Array<Uri>? = when {
+                    data?.clipData != null -> {
+                        val count = data.clipData!!.itemCount
+                        Array(count) { i -> data.clipData!!.getItemAt(i).uri }
+                    }
+                    data?.data != null -> arrayOf(data.data!!)
+                    else -> null
+                }
+                fileUploadCallback?.onReceiveValue(uris)
+            } else {
+                fileUploadCallback?.onReceiveValue(null)
+            }
+            fileUploadCallback = null
         }
     }
 

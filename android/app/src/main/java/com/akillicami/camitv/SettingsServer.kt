@@ -148,10 +148,12 @@ class SettingsServer(
                 val phoneSettings = prepareSettingsForPhone(currentSettings)
 
                 val b64Settings = Base64.encodeToString(phoneSettings.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
+                val isDefaultPin = (prefs.getString("settings_pin", "123456") == "123456")
 
                 // HTML'in <head> etiketinin hemen altına telefonun localStorage'ına TV ayarlarını kopyalayan betik enjekte et
                 val scriptInject = """
                     <script>
+                        window.IS_DEFAULT_PIN = $isDefaultPin;
                         localStorage.setItem('cami_tv_settings', new TextDecoder().decode(Uint8Array.from(atob('$b64Settings'), c=>c.charCodeAt(0))));
                     </script>
                 """.trimIndent()

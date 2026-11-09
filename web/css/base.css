@@ -736,8 +736,13 @@ body {
 }
 
 .setup-field select:focus,
-.setup-field input:focus {
-  border-color: var(--accent);
+.setup-field input:focus,
+.ss-trigger:focus,
+.btn-primary:focus {
+  border-color: var(--accent, #4ade80) !important;
+  outline: 3px solid var(--accent, #4ade80) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 18px rgba(74, 222, 128, 0.7) !important;
 }
 
 .setup-progress {
@@ -914,6 +919,30 @@ body:hover #settings-trigger {
 /* ────────────────────────────────────────────────────────────
    SEARCHABLE SELECT BİLEŞENİ
    ──────────────────────────────────────────────────────────── */
+.ss-native-select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: calc(var(--font-scale) * 0.95rem);
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.ss-native-select:focus {
+  border-color: var(--accent, #4ade80) !important;
+  box-shadow: 0 0 0 2px var(--accent-glow, rgba(74, 222, 128, 0.3));
+}
+
+.setup-field .ss-native-select {
+  padding: 12px 16px;
+  font-size: calc(var(--font-scale) * 1rem);
+}
+
 .ss-wrapper {
   position: relative;
   width: 100%;
@@ -980,18 +1009,11 @@ body:hover #settings-trigger {
   border: 1px solid var(--border-accent);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
-  opacity: 0;
-  transform: translateY(-6px);
-  pointer-events: none;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  max-height: 0;
-  overflow: hidden;
+  display: none !important;
 }
 
 .ss-open .ss-dropdown {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  display: block !important;
   max-height: 320px;
   overflow: visible;
 }
@@ -1027,16 +1049,19 @@ body:hover #settings-trigger {
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 
+.ss-option:focus,
 .ss-option:hover,
 .ss-option.ss-focused {
-  background: var(--accent-dim);
-  color: var(--accent);
+  background: var(--accent, #4ade80) !important;
+  color: #0f1923 !important;
+  outline: none;
+  font-weight: 700;
 }
 
 .ss-option.ss-selected {
   background: var(--accent-dim);
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .ss-empty {

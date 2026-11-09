@@ -1,5 +1,13 @@
 # Değişiklik Günlüğü
 
+## v1.0.19 (2026-11-09)
+### TV Kumanda Deneyimi, Otomatik Kayıt (Auto-Save) ve TV Arkaplan Dosya Seçici
+- **Otomatik Kayıt (Auto-Save) Sistemi:** Ayarlar sayfasında seçim yapıldığında (tema, dil, ekran yönü, hava durumu vb.) veya metin girildiğinde (600ms debounce / alandan çıkış) ayarlar anında otomatik kaydedilir. Kullanıcıların sayfa sonuna inip "Kaydet" butonunu arama zorunluluğu ortadan kaldırıldı; ekranın sağ üstünde şık bir *"✓ Kaydedildi"* bildirim rozeti eklendi. Manuel kaydetme butonu da korunmuştur.
+- **TV Kumandası (D-Pad) İçin Yerel İl/İlçe Seçim Modalleri:** Televizyonda `SearchableSelect` yerine Android OS'un yerel tekli seçim diyaloğu (`<select>`) tetiklenerek çift imleç, sayfa kayma ve geri tuşu çakışmaları tamamen çözüldü. Kumandadan Geri tuşuna basıldığında ayarlar sayfasından çıkmadan sadece seçim diyaloğu kapatılır.
+- **Mobil/Web Görünümünde Arama Kutusu Korundu:** TV dışı cihazlarda (telefon/bilgisayar) il ve ilçe seçimlerindeki hızlı arama (`🔍 Ara...`) kutusu eksiksiz korunarak çalışmaya devam ediyor.
+- **TV Üzerinden Doğrudan Arkaplan Resmi Seçebilme:** Android `WebChromeClient` dosya seçici (`onShowFileChooser`) entegre edilerek TV üzerinde takılı USB bellek veya dosya yöneticilerinden resim seçebilme özelliği aktif hale getirildi.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 22, versionName: `1.0.19`, `ScreenBridge.kt`, `settings.html`, `sw.js`) `1.0.19` olarak senkronize edildi.
+
 ## v1.0.18 (2026-11-07)
 ### Android TV & TV Box Tam Donanım Uyumluluğu
 - **Android TV Cihaz Filtresi İyileştirmesi:** `AndroidManifest.xml` dosyasından televizyonlarda bulunmayan yerçekimi/ivmeölçer sensörü (`screenOrientation="sensor"`) kaldırıldı.

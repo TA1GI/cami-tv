@@ -23,7 +23,7 @@ class ScreenBridge(private val activity: Activity) {
     fun isAvailable(): Boolean = true
 
     @JavascriptInterface
-    fun getVersion(): String = "1.0.18"
+    fun getVersion(): String = "1.0.19"
 
     // ─── Otomatik Başlatma (Boot) ──────────────────────────
 
@@ -45,6 +45,12 @@ class ScreenBridge(private val activity: Activity) {
     fun syncSettings(json: String) {
         val prefs = activity.getSharedPreferences("cami_tv_prefs", Context.MODE_PRIVATE)
         prefs.edit().putString("settings", json).apply()
+    }
+
+    @JavascriptInterface
+    fun isDefaultPin(): Boolean {
+        val prefs = activity.getSharedPreferences("cami_tv_prefs", Context.MODE_PRIVATE)
+        return prefs.getString("settings_pin", "123456") == "123456"
     }
 
     // ─── Ekran aç/kapat ────────────────────────────────────

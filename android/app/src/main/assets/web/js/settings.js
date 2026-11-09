@@ -175,6 +175,14 @@ function initSettingsPage() {
 
     // Görünüm
     setVal('s-tema', settings.tema);
+    document.getElementById('s-tema')?.addEventListener('change', (e) => {
+        const theme = e.target.value;
+        if (theme && theme !== 'default' && theme !== 'auto') {
+            root.setAttribute('data-theme', theme);
+        } else {
+            root.removeAttribute('data-theme');
+        }
+    });
     setVal('s-ekran-yonu', settings.ekranYonu);
     setVal('s-yazi-boyu', settings.yaziBoyu);
 
@@ -182,7 +190,7 @@ function initSettingsPage() {
         setVal('s-dil', settings.dil || 'tr');
         document.getElementById('s-dil').addEventListener('change', (e) => {
             if (window.I18n) window.I18n.setLanguage(e.target.value);
-            markDirty();
+            markDirty(0);
         });
     }
 
@@ -524,13 +532,25 @@ function initSettingsPage() {
                 }
             }
 
+            const qrPinHint = document.getElementById('tv-qr-pin-hint');
+            if (qrPinHint) {
+                const isDefault = window.AndroidBridge && typeof AndroidBridge.isDefaultPin === 'function' ? AndroidBridge.isDefaultPin() : true;
+                qrPinHint.style.display = isDefault ? 'block' : 'none';
+            }
+
             // Kumandayla devam et butonu eylemi
             const btnContinue = document.getElementById('btn-settings-continue-tv');
             if (btnContinue) {
                 btnContinue.onclick = () => {
                     qrView.style.display = 'none';
                     formView.style.display = 'block';
+                    setTimeout(() => {
+                        const firstFocusable = formView.querySelector('a.btn-back, input, select, button, .ss-trigger');
+                        if (firstFocusable) firstFocusable.focus();
+                    }, 50);
                 };
+                // Kumanda ile kolayca basılabilmesi için butona otomatik odaklan
+                setTimeout(() => btnContinue.focus(), 150);
             }
         } else {
             // IP Yoksa doğrudan formu göster
@@ -664,7 +684,7 @@ function initSettingsPage() {
         editDuyuruId = null;
         document.getElementById('s-duyuru-ekle').textContent = '📢 Duyuru Ekle';
         document.getElementById('s-duyuru-iptal').style.display = 'none';
-        
+
         // Formu temizle
         document.getElementById('s-duyuru-metin').value = '';
         document.getElementById('s-duyuru-metin-ar').value = '';
@@ -702,18 +722,99 @@ function initSettingsPage() {
     });
 
     // ──────────────────────────────────────────────────────
-    // DEĞİŞİKLİK TAKİBİ
+    // DEĞİŞİKLİK TAKİBİ & OTOMATİK KAYIT
     // ──────────────────────────────────────────────────────
-    document.querySelectorAll('input, select').forEach(el => {
-        el.addEventListener('change', markDirty);
-        el.addEventListener('input', markDirty);
+    let autoSaveTimer = null;
+    let saveBadgeTimer = null;
+
+    function showAutoSaveBadge(text = '✓ Kaydedildi', isError = false) {
+        let badge = document.getElementById('auto-save-badge');
+        if (!badge) {
+            badge = document.createElement('div');
+            badge.id = 'auto-save-badge';
+            badge.className = 'auto-save-badge';
+            badge.setAttribute('aria-live', 'polite');
+            document.body.appendChild(badge);
+        }
+        badge.textContent = text;
+        if (isError) {
+            badge.classList.add('error');
+        } else {
+            badge.classList.remove('error');
+        }
+        badge.classList.add('visible');
+
+        if (saveBadgeTimer) clearTimeout(saveBadgeTimer);
+        saveBadgeTimer = setTimeout(() => {
+            badge.classList.remove('visible');
+        }, 1800);
+    }
+
+    function triggerAutoSave(delayMs = 400) {
+        if (autoSaveTimer) clearTimeout(autoSaveTimer);
+        if (delayMs === 0) {
+            executeSave(true);
+        } else {
+            autoSaveTimer = setTimeout(() => {
+                executeSave(true);
+            }, delayMs);
+        }
+    }
+
+    function markDirty(delayMs = 400) {
+        isDirty = true;
+        document.getElementById('save-bar')?.classList.add('visible');
+        if (delayMs !== null && delayMs !== undefined) {
+            triggerAutoSave(delayMs);
+        }
+    }
+
+    // Form içi tüm elemanlar için kapsamlı event delegasyonu
+    if (formView) {
+        // Dropdown, toggle, checkbox değişimlerinde anında kaydet
+        formView.addEventListener('change', (e) => {
+            if (e.target && e.target.type === 'file') return;
+            markDirty(0);
+        });
+
+        // Metin yazma ve slider hareketlerinde debounce ile kaydet
+        formView.addEventListener('input', (e) => {
+            if (e.target && e.target.type === 'range') {
+                markDirty(300);
+            } else if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                markDirty(600);
+            } else {
+                markDirty(400);
+            }
+        });
+
+        // Metin kutusundan çıkıldığı (veya TV kumandasıyla başka satıra geçildiği) an beklemeden kaydet
+        formView.addEventListener('focusout', (e) => {
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                if (autoSaveTimer) {
+                    clearTimeout(autoSaveTimer);
+                }
+                executeSave(true);
+            }
+        });
+    }
+
+    // Sayfadan çıkış anında bekleyen kayıt varsa anında uygula
+    window.addEventListener('beforeunload', () => {
+        if (autoSaveTimer) {
+            clearTimeout(autoSaveTimer);
+            executeSave(true);
+        }
     });
 
-    function markDirty() {
-        if (isDirty) return;
-        isDirty = true;
-        document.getElementById('save-bar').classList.add('visible');
-    }
+    document.querySelectorAll('.btn-back').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (autoSaveTimer) {
+                clearTimeout(autoSaveTimer);
+                executeSave(true);
+            }
+        });
+    });
 
     // ──────────────────────────────────────────────────────
     // UZAKTAN AYAR (QR KOD)
@@ -750,9 +851,9 @@ function initSettingsPage() {
     }
 
     // ──────────────────────────────────────────────────────
-    // KAYDET
+    // KAYDET & OTOMATİK KAYIT ÇEKİRDEĞİ
     // ──────────────────────────────────────────────────────
-    document.getElementById('btn-save')?.addEventListener('click', async () => {
+    async function executeSave(isAutoSave = false) {
         const statusEl = document.getElementById('save-status');
         const btnSave = document.getElementById('btn-save');
         const s = SettingsManager.load();
@@ -769,12 +870,20 @@ function initSettingsPage() {
 
             if (s.il !== il || s.ilceId !== ilceId) {
                 if (!navigator.onLine) {
-                    alert('Konum değişikliği için internet bağlantısı gereklidir.');
+                    if (isAutoSave) {
+                        showAutoSaveBadge('✗ Konum için internet gerekli', true);
+                    } else {
+                        alert('Konum değişikliği için internet bağlantısı gereklidir.');
+                    }
                     return;
                 }
 
-                statusEl.textContent = 'Önbellek temizleniyor...';
-                statusEl.style.color = 'var(--text-primary)';
+                if (isAutoSave) {
+                    showAutoSaveBadge('⏳ Vakitler indiriliyor...');
+                } else if (statusEl) {
+                    statusEl.textContent = 'Önbellek temizleniyor...';
+                    statusEl.style.color = 'var(--text-primary)';
+                }
                 if (btnSave) btnSave.disabled = true;
 
                 s.il = il;
@@ -785,16 +894,23 @@ function initSettingsPage() {
                 await DataManager.clearAllData();
 
                 // Yeni konum için vakitleri indir
-                statusEl.textContent = 'Vakitler indiriliyor...';
                 try {
                     await DataManager.downloadAndSetup(il, ilce, ilceId, (msg) => {
-                        statusEl.textContent = msg;
+                        if (isAutoSave) {
+                            showAutoSaveBadge(msg);
+                        } else if (statusEl) {
+                            statusEl.textContent = msg;
+                        }
                     });
                     konumDegisti = true;
                     await updateDataStatusDisplay();
                 } catch (e) {
-                    statusEl.textContent = '✗ Vakitler indirilemedi. İnternet bağlantısını kontrol edin.';
-                    statusEl.style.color = '#f87171';
+                    if (isAutoSave) {
+                        showAutoSaveBadge('✗ Vakitler indirilemedi', true);
+                    } else if (statusEl) {
+                        statusEl.textContent = '✗ Vakitler indirilemedi. İnternet bağlantısını kontrol edin.';
+                        statusEl.style.color = '#f87171';
+                    }
                     if (btnSave) btnSave.disabled = false;
                     return;
                 }
@@ -888,33 +1004,57 @@ function initSettingsPage() {
             if (location.protocol === 'http:') {
                 fetch('/api/save', { method: 'POST', body: JSON.stringify(s) })
                     .then(() => {
-                        statusEl.textContent = '✓ TV\'ye Gönderildi';
-                        statusEl.style.color = 'var(--accent)';
+                        if (isAutoSave) {
+                            showAutoSaveBadge('✓ TV\'ye Kaydedildi');
+                        } else if (statusEl) {
+                            statusEl.textContent = '✓ TV\'ye Gönderildi';
+                            statusEl.style.color = 'var(--accent)';
+                            setTimeout(() => location.reload(), 1500);
+                        }
                         isDirty = false;
-                        setTimeout(() => location.reload(), 1500);
                     })
                     .catch(err => {
-                        statusEl.textContent = '✗ Gönderim hatası';
-                        statusEl.style.color = '#f87171';
+                        if (isAutoSave) {
+                            showAutoSaveBadge('✗ TV\'ye gönderim hatası', true);
+                        } else if (statusEl) {
+                            statusEl.textContent = '✗ Gönderim hatası';
+                            statusEl.style.color = '#f87171';
+                        }
                     });
                 return;
             }
 
-            statusEl.textContent = '✓ Kaydedildi';
-            statusEl.style.color = 'var(--accent)';
+            // TV / Yerel ortam
+            showAutoSaveBadge('✓ Kaydedildi');
+            if (statusEl) {
+                statusEl.textContent = '✓ Kaydedildi';
+                statusEl.style.color = 'var(--accent)';
+            }
             isDirty = false;
-            setTimeout(() => {
-                document.getElementById('save-bar').classList.remove('visible');
-                statusEl.textContent = '';
-                // Dinamik konum değişikliği sonrası veya normal kaydetme sonrası sayfayı yenilemek en temizi
-                if (konumDegisti) {
-                    location.href = 'index.html';
-                }
-            }, 1000);
+
+            if (!isAutoSave) {
+                setTimeout(() => {
+                    document.getElementById('save-bar')?.classList.remove('visible');
+                    if (statusEl) statusEl.textContent = '';
+                    if (konumDegisti) {
+                        location.href = 'index.html';
+                    }
+                }, 1000);
+            } else if (konumDegisti) {
+                showAutoSaveBadge('✓ Vakitler Güncellendi');
+            }
         } else {
-            statusEl.textContent = '✗ Kaydetme hatası';
-            statusEl.style.color = '#f87171';
+            if (isAutoSave) {
+                showAutoSaveBadge('✗ Kaydetme hatası', true);
+            } else if (statusEl) {
+                statusEl.textContent = '✗ Kaydetme hatası';
+                statusEl.style.color = '#f87171';
+            }
         }
+    }
+
+    document.getElementById('btn-save')?.addEventListener('click', () => {
+        executeSave(false);
     });
 
     // ──────────────────────────────────────────────────────

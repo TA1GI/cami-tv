@@ -70,6 +70,10 @@
                     style="font-size: 0.85rem; color: #fbbf24; font-weight: bold; background: rgba(251, 191, 36, 0.1); padding: 8px 12px; border-radius: 6px; display: inline-block; text-align: center;">
                     ⚠️ Telefonunuzun TV ile aynı Wi-Fi ağında<br>olduğundan emin olun.
                 </div>
+                <div id="setup-qr-pin-hint"
+                    style="margin-top: 10px; font-size: 0.85rem; color: #a7f3d0; background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.25); padding: 8px 12px; border-radius: 6px; text-align: center;">
+                    💡 İlk Giriş Varsayılan PIN: <strong style="color: #ffffff; letter-spacing: 1px;">123456</strong>
+                </div>
             </div>
         </div>
 
@@ -86,18 +90,17 @@
 
             <div class="setup-field">
                 <label for="setup-cami">Cami Adı</label>
-                <input type="text" id="setup-cami" placeholder="örn: Fatih Camii" autocomplete="off" spellcheck="false"
-                    tabindex="1">
+                <input type="text" id="setup-cami" placeholder="örn: Fatih Camii" autocomplete="off" spellcheck="false">
             </div>
 
             <div class="setup-field">
                 <label>İl</label>
-                <div id="setup-il-container" tabindex="2"></div>
+                <div id="setup-il-container"></div>
             </div>
 
             <div class="setup-field">
                 <label>İlçe</label>
-                <div id="setup-ilce-container" tabindex="3"></div>
+                <div id="setup-ilce-container"></div>
             </div>
 
             <!-- İndirme ilerleme bilgisi -->
@@ -108,7 +111,7 @@
 
             <p id="setup-error" class="setup-error" role="alert"></p>
 
-            <button id="setup-kaydet" class="btn-primary" tabindex="4">
+            <button id="setup-kaydet" class="btn-primary">
                 Vakitleri İndir ve Başlat
             </button>
 

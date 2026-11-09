@@ -333,15 +333,34 @@ const App = (() => {
             const isFormScreen = setupVisible || window.location.href.includes('settings.html');
 
             if (isFormScreen) {
-                if (e.key === 'ArrowDown' || e.key === 'Down') {
+                // Eğer SearchableSelect dropdown açıksa, ok tuşlarını o yönetsin
+                if (document.querySelector('.ss-wrapper.ss-open')) {
+                    return;
+                }
+                const isDown = e.key === 'ArrowDown' || e.key === 'Down' || e.keyCode === 20;
+                const isUp = e.key === 'ArrowUp' || e.key === 'Up' || e.keyCode === 19;
+                if (isDown) {
                     e.preventDefault();
+                    e.stopPropagation();
                     moveFocus(1);
                     return;
                 }
-                if (e.key === 'ArrowUp' || e.key === 'Up') {
+                if (isUp) {
                     e.preventDefault();
+                    e.stopPropagation();
                     moveFocus(-1);
                     return;
+                }
+                // Enter / OK ile metin kutusunu düzenleme moduna al (klavyeyi bilerek aç)
+                const isEnter = e.key === 'Enter' || e.key === 'Return' || e.key === ' ' || e.keyCode === 23 || e.keyCode === 66;
+                const cur = document.activeElement;
+                if (isEnter && cur && cur.tagName === 'INPUT' && (cur.type === 'text' || cur.type === 'password')) {
+                    if (cur.readOnly) {
+                        e.preventDefault();
+                        cur.readOnly = false;
+                        cur.focus();
+                        return;
+                    }
                 }
             }
 
@@ -380,6 +399,13 @@ const App = (() => {
                     _settingsKeyCount = 0;
                 }, 1500);
             }
+        }, true); // Capture phase: odaklanan elemanların tuşları yutmasını engeller
+
+        // Focus kaybolunca metin kutusunu kitle
+        document.addEventListener('focusout', (e) => {
+            if (e.target && e.target.tagName === 'INPUT' && (e.target.type === 'text' || e.target.type === 'password')) {
+                e.target.readOnly = true;
+            }
         });
 
         // Mouse / dokunma — ekranı uyandır
@@ -387,12 +413,14 @@ const App = (() => {
         document.addEventListener('touchstart', () => PowerManager.wakeTemporary(10000));
     }
 
-    // Odağı tabindex sırasına göre ileri/geri taşı, elemanı görünür alana kaydır
+    // Odağı etkileşimli elemanlara göre ileri/geri taşı, elemanı görünür alana kaydır
     function moveFocus(direction) {
+        const formView = document.getElementById('setup-form-view');
+        const container = (formView && formView.style.display !== 'none') ? formView : document;
+
         const focusable = Array.from(
-            document.querySelectorAll('[tabindex]:not([tabindex="-1"]):not([disabled])')
-        ).filter(el => el.offsetParent !== null) // Sadece görünür elemanlar
-            .sort((a, b) => (parseInt(a.tabIndex) || 0) - (parseInt(b.tabIndex) || 0));
+            container.querySelectorAll('button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]):not([type="hidden"]), select:not([disabled]):not([tabindex="-1"]), .ss-trigger:not([disabled])')
+        ).filter(el => el.offsetParent !== null && !el.closest('[style*="display: none"]'));
 
         if (focusable.length === 0) return;
 
@@ -409,7 +437,14 @@ const App = (() => {
             else next = focusable[newIdx];
         }
 
+        if (current && typeof current.blur === 'function') {
+            current.blur();
+        }
+
         if (next) {
+            if (next.tagName === 'INPUT' && (next.type === 'text' || next.type === 'password')) {
+                next.readOnly = true;
+            }
             next.focus();
             next.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -445,6 +480,12 @@ const App = (() => {
                     const qrUrl = `http://${bridgeIp}:8090/settings.html`;
                     document.getElementById('setup-qr-url-text').textContent = qrUrl;
 
+                    const qrPinHint = document.getElementById('setup-qr-pin-hint');
+                    if (qrPinHint) {
+                        const isDefault = window.AndroidBridge && typeof AndroidBridge.isDefaultPin === 'function' ? AndroidBridge.isDefaultPin() : true;
+                        qrPinHint.style.display = isDefault ? 'block' : 'none';
+                    }
+
                     const qrContainer = document.getElementById('setup-qr-container');
                     if (qrContainer) {
                         qrContainer.innerHTML = '';
@@ -474,6 +515,8 @@ const App = (() => {
                             const firstInput = document.getElementById('setup-cami');
                             if (firstInput) firstInput.focus();
                         };
+                        // TV kumandasıyla hızlıca geçiş için butona otomatik odaklan
+                        setTimeout(() => btnContinue.focus(), 150);
                     }
                 } else {
                     // IP Yoksa doğrudan formu göster

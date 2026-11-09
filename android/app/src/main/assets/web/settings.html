@@ -66,6 +66,27 @@
                 <button class="pin-key" data-v="0">0</button>
                 <button class="pin-key pin-key-ok" data-v="ok">✓</button>
             </div>
+
+            <!-- İlk Giriş İçin Varsayılan PIN Bilgilendirmesi (Sadece PIN henüz değiştirilmediyse gösterilir) -->
+            <div id="pin-default-hint" style="
+                margin-top: 18px;
+                padding: 12px 14px;
+                background: rgba(74, 222, 128, 0.08);
+                border: 1px solid rgba(74, 222, 128, 0.25);
+                border-radius: 12px;
+                color: #a7f3d0;
+                font-size: 0.82rem;
+                line-height: 1.45;
+                text-align: center;
+                width: 100%;
+                box-sizing: border-box;
+            ">
+                <div style="font-weight: 600; color: #4ade80; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span>💡</span> <span>İlk Kurulum Bilgilendirmesi</span>
+                </div>
+                Varsayılan PIN: <strong style="color: #ffffff; letter-spacing: 2px; font-size: 1rem; background: rgba(255,255,255,0.12); padding: 1px 7px; border-radius: 4px;">123456</strong><br>
+                <span style="color: var(--text-muted, #94a3b8); font-size: 0.78rem;">Ayarlar açıldıktan sonra Güvenlik bölümünden şifrenizi değiştirebilirsiniz.</span>
+            </div>
         </div>
     </div>
 
@@ -107,6 +128,9 @@
     </style>
 
     <div class="settings-page">
+        <!-- ─── OTOMATİK KAYIT BİLDİRİM ROZETİ ──────────────────────── -->
+        <div id="auto-save-badge" class="auto-save-badge" aria-live="polite">✓ Kaydedildi</div>
+
         <!-- 1. QR KOD GÖRÜNÜMÜ (TV İÇİN VARSAYILAN) -->
         <div id="settings-qr-view" class="settings-wrapper animate-fade-in-scale qr-split-layout"
             style="display:none; max-width: 900px; margin: auto; background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow-lg); border-radius: 20px;">
@@ -139,6 +163,10 @@
                     style="font-size: 0.9rem; color: #fbbf24; font-weight: bold; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); padding: 8px 15px; border-radius: 8px; text-align: center;">
                     ⚠️ Aynı Wi-Fi ağına bağlı olmalısınız
                 </div>
+                <div id="tv-qr-pin-hint"
+                    style="margin-top: 10px; font-size: 0.85rem; color: #a7f3d0; background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.25); padding: 8px 15px; border-radius: 8px; text-align: center;">
+                    💡 İlk Giriş Şifresi: <strong style="color: #ffffff; letter-spacing: 1px;">123456</strong>
+                </div>
             </div>
         </div>
 
@@ -149,7 +177,7 @@
             <header class="settings-header">
                 <a href="index.html" class="btn-back" aria-label="Geri">←</a>
                 <h1 data-i18n="ayarlar">⚙️ Ayarlar</h1>
-                <span class="version">v1.0.18</span>
+                <span class="version">v1.0.19</span>
             </header>
 
 
@@ -1061,7 +1089,17 @@
         const overlay = document.getElementById('pin-overlay');
         const dots    = document.querySelectorAll('.pin-dot');
         const errEl   = document.getElementById('pin-error');
+        const defaultHintEl = document.getElementById('pin-default-hint');
         let pinBuffer = '';
+
+        // İlk kurulum varsayılan PIN uyarısı kontrolü
+        if (defaultHintEl) {
+            if (window.IS_DEFAULT_PIN === false) {
+                defaultHintEl.style.display = 'none';
+            } else {
+                defaultHintEl.style.display = 'block';
+            }
+        }
 
         // TV ekranından veya yerel bilgisayardan açılıyorsa (file:// veya localhost) — PIN sorma, overlay'i gizle
         if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -1170,6 +1208,8 @@
                 if (data.ok) {
                     msgEl.style.color = '#4ade80';
                     msgEl.textContent = '✓ PIN başarıyla değiştirildi!';
+                    window.IS_DEFAULT_PIN = false;
+                    if (defaultHintEl) defaultHintEl.style.display = 'none';
                     ['pin-current','pin-new','pin-new2'].forEach(id => document.getElementById(id).value = '');
                     setTimeout(() => { msgEl.textContent=''; pinForm.style.display='none'; }, 2000);
                 } else {
@@ -1180,6 +1220,128 @@
                 msgEl.style.color = '#f87171';
                 msgEl.textContent = 'Bağlantı hatası.';
             }
+        });
+    })();
+    </script>
+
+    <!-- ─── TV KUMANDASI (D-PAD) NAVİGASYON BETİĞİ ──────────────── -->
+    <script>
+    (function initTvRemoteNavigation() {
+        function getFocusableElements() {
+            const qrView = document.getElementById('settings-qr-view');
+            const isQrActive = qrView && qrView.style.display !== 'none';
+            const activeView = isQrActive ? qrView : document.getElementById('settings-form-view');
+            if (!activeView) return [];
+
+            // Eğer SearchableSelect listesi açıksa, tuşları o yönetsin
+            if (document.querySelector('.ss-wrapper.ss-open')) return [];
+
+            const selector = 'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([type="hidden"]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), .ss-trigger:not([disabled])';
+            return Array.from(activeView.querySelectorAll(selector)).filter(el => {
+                return el.offsetParent !== null && !el.closest('[style*="display: none"]');
+            });
+        }
+
+        function focusItem(el) {
+            if (!el) return;
+            if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
+            // TV kumandasıyla geçerken sanal klavyenin ekranı kapatmasını önle
+            if (el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'password')) {
+                el.readOnly = true;
+            }
+            document.querySelectorAll('.tv-row-focused').forEach(r => r.classList.remove('tv-row-focused'));
+            el.focus();
+            const row = el.closest('.setting-row') || el.closest('.sub-setting-row');
+            if (row) row.classList.add('tv-row-focused');
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const pinOverlay = document.getElementById('pin-overlay');
+            if (pinOverlay && pinOverlay.style.display !== 'none') return;
+            // Eğer SearchableSelect listesi açıksa dropdown kendi gezintisini yönetsin
+            if (document.querySelector('.ss-wrapper.ss-open')) return;
+
+            const isDpad = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key) ||
+                           [19, 20, 21, 22, 23, 66].includes(e.keyCode);
+            if (!isDpad) return;
+
+            const items = getFocusableElements();
+            if (items.length === 0) return;
+
+            let current = document.activeElement;
+            let idx = items.indexOf(current);
+
+            // Aşağı Ok (D-PAD DOWN / KEYCODE 20)
+            if (e.key === 'ArrowDown' || e.keyCode === 20) {
+                e.preventDefault();
+                e.stopPropagation();
+                const nextIdx = (idx === -1 || idx >= items.length - 1) ? 0 : idx + 1;
+                focusItem(items[nextIdx]);
+            }
+            // Yukarı Ok (D-PAD UP / KEYCODE 19)
+            else if (e.key === 'ArrowUp' || e.keyCode === 19) {
+                e.preventDefault();
+                e.stopPropagation();
+                const prevIdx = (idx <= 0) ? items.length - 1 : idx - 1;
+                focusItem(items[prevIdx]);
+            }
+            // Sol / Sağ Ok (D-PAD LEFT / RIGHT / KEYCODES 21, 22)
+            else if (e.key === 'ArrowLeft' || e.keyCode === 21 || e.key === 'ArrowRight' || e.keyCode === 22) {
+                if (!current) return;
+                const dir = (e.key === 'ArrowRight' || e.keyCode === 22) ? 1 : -1;
+                if (current.tagName === 'SELECT') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const newIdx = Math.max(0, Math.min(current.options.length - 1, current.selectedIndex + dir));
+                    if (newIdx !== current.selectedIndex) {
+                        current.selectedIndex = newIdx;
+                        current.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                } else if (current.type === 'checkbox') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    current.checked = !current.checked;
+                    current.dispatchEvent(new Event('change', { bubbles: true }));
+                } else if (current.type === 'number' || current.type === 'range') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const step = parseFloat(current.step) || 1;
+                    const min = current.min !== '' ? parseFloat(current.min) : -Infinity;
+                    const max = current.max !== '' ? parseFloat(current.max) : Infinity;
+                    let val = (parseFloat(current.value) || 0) + (dir * step);
+                    val = Math.max(min, Math.min(max, val));
+                    current.value = val;
+                    current.dispatchEvent(new Event('input', { bubbles: true }));
+                    current.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+            // OK / Enter (D-PAD CENTER / KEYCODES 23, 66)
+            else if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 23 || e.keyCode === 66) {
+                if (current && current.tagName === 'INPUT' && (current.type === 'text' || current.type === 'password')) {
+                    if (current.readOnly) {
+                        e.preventDefault();
+                        current.readOnly = false;
+                        current.focus();
+                    }
+                } else if (current && current.type === 'checkbox') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    current.checked = !current.checked;
+                    current.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+        }, true); // Capture phase: <select> ve diğer elemanların tuşları yutmasını engeller
+
+        // Focus kaybolunca satır parlamasını temizle ve metin kutusunu kitle
+        document.addEventListener('focusout', (e) => {
+            if (e.target && e.target.tagName === 'INPUT' && (e.target.type === 'text' || e.target.type === 'password')) {
+                e.target.readOnly = true;
+            }
+            const row = e.target.closest && (e.target.closest('.setting-row') || e.target.closest('.sub-setting-row'));
+            if (row) row.classList.remove('tv-row-focused');
         });
     })();
     </script>

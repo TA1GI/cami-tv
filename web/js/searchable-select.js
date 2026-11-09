@@ -1,7 +1,11 @@
 /**
  * CAMI TV — searchable-select.js
- * Tekrar kullanılabilir aranabilir dropdown bileşeni.
- * Arama kutusu her açılışta boş başlar.
+ * 
+ * - TV Modunda (AndroidBridge mevcut): Yerel Android modal diyaloğunu tetikleyen <select>
+ *   kullanır. Böylece TV kumandasında sayfa kayması, çift imleç ve Geri (Back) tuşuyla
+ *   sayfadan atma sorunları tamamen çözülür.
+ * - Telefon / PC Modunda (Tarayıcıdan bağlantı): Arama kutulu (Search input) tam aranabilir
+ *   özel dropdown kullanılır. Telefonla bağlanan kullanıcılar şehir ve ilçeyi yazarak kolayca bulur.
  */
 
 class SearchableSelect {
@@ -21,17 +25,53 @@ class SearchableSelect {
         this.selectedLabel = '';
         this.isOpen = false;
 
+        // TV tespiti: Yalnızca Android TV uygulamasının WebView ortamında (AndroidBridge mevcutsa)
+        // veya yerel dosya sisteminden TV modunda çalışıyorsa TV kabul edilir.
+        // Telefondan Wi-Fi ile bağlanan kullanıcılarda AndroidBridge tanımsızdır, dolayısıyla
+        // telefonlar arama kutulu (search input) zengin arayüzü kullanır.
+        this._isTv = typeof window !== 'undefined' && (
+            !!window.AndroidBridge ||
+            (window.location.protocol === 'file:' && !navigator.userAgent.toLowerCase().includes('mobile'))
+        );
+
         this._build();
         if (opts.disabled) this.setDisabled(true);
 
-        // Dışarı tıklanınca kapat
-        this._onDocClick = (e) => {
-            if (!this.el.contains(e.target)) this.close();
-        };
-        document.addEventListener('click', this._onDocClick);
+        if (!this._isTv) {
+            // Dışarı tıklanınca kapat (sadece telefon/PC özel dropdown modunda)
+            this._onDocClick = (e) => {
+                if (this.el && !this.el.contains(e.target)) this.close();
+            };
+            document.addEventListener('click', this._onDocClick);
+        }
     }
 
     _build() {
+        // ─── 1. TV MODU: Yerel Android <select> (Modal Diyalog) ───
+        if (this._isTv) {
+            this.nativeSelect = document.createElement('select');
+            this.nativeSelect.className = 'setting-select ss-native-select';
+            this.nativeSelect.style.width = '100%';
+
+            const defOpt = document.createElement('option');
+            defOpt.value = '';
+            defOpt.textContent = this.placeholder;
+            this.nativeSelect.appendChild(defOpt);
+
+            this.nativeSelect.addEventListener('change', () => {
+                const sel = this.nativeSelect.options[this.nativeSelect.selectedIndex];
+                const val = this.nativeSelect.value;
+                const lbl = sel && val ? sel.text : '';
+                this.selectedValue = val;
+                this.selectedLabel = lbl;
+                this.onSelect(val, lbl);
+            });
+
+            this.container.appendChild(this.nativeSelect);
+            return;
+        }
+
+        // ─── 2. TELEFON / PC MODU: Aranabilir Özel Dropdown ───
         this.el = document.createElement('div');
         this.el.className = 'ss-wrapper';
 
@@ -49,7 +89,7 @@ class SearchableSelect {
         this.dropdown = document.createElement('div');
         this.dropdown.className = 'ss-dropdown';
 
-        // Arama kutusu
+        // Arama kutusu (Telefonda ve PC'de tamamen görünür ve aktiftir!)
         this.searchInput = document.createElement('input');
         this.searchInput.type = 'text';
         this.searchInput.className = 'ss-search';
@@ -57,48 +97,14 @@ class SearchableSelect {
         this.searchInput.autocomplete = 'off';
         this.searchInput.addEventListener('input', () => this._filter());
 
-        // Klavye / TV Kumandası (D-Pad) Navigasyonu
         this.searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.close();
                 this.trigger.focus();
-                return;
-            }
-            if (!this.isOpen && (e.key === 'ArrowDown' || e.key === 'Enter')) {
-                e.preventDefault();
-                this.open();
-                return;
-            }
-            if (this.isOpen) {
-                const options = Array.from(this.listEl.querySelectorAll('.ss-option'));
-                if (options.length === 0) return;
-
-                if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    this.focusedOptionIndex = (this.focusedOptionIndex + 1) % options.length;
-                    this._updateFocus(options);
-                } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    this.focusedOptionIndex = (this.focusedOptionIndex - 1 + options.length) % options.length;
-                    this._updateFocus(options);
-                } else if (e.key === 'Enter') {
-                    e.preventDefault();
-                    if (this.focusedOptionIndex >= 0 && this.focusedOptionIndex < options.length) {
-                        options[this.focusedOptionIndex].click();
-                        this.trigger.focus();
-                    }
-                }
-            }
-        });
-
-        // Trigger butonu klavye kontrolü
-        this.trigger.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.isOpen ? this.close() : this.open();
             } else if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                if (!this.isOpen) this.open();
+                const first = this.listEl.querySelector('.ss-option');
+                if (first) first.focus();
             }
         });
 
@@ -114,65 +120,103 @@ class SearchableSelect {
         this.container.appendChild(this.el);
     }
 
-    /**
-     * Seçenekleri ayarla / güncelle
-     * @param {Array<{value:string, label:string}>} options
-     */
     setOptions(options) {
-        this.options = options;
-        this._renderList(options);
+        this.options = options || [];
+
+        // TV Modunda yerel <select> seçeneklerini doldur
+        if (this._isTv && this.nativeSelect) {
+            this.nativeSelect.innerHTML = '';
+            const defOpt = document.createElement('option');
+            defOpt.value = '';
+            defOpt.textContent = this.placeholder;
+            this.nativeSelect.appendChild(defOpt);
+
+            this.options.forEach(opt => {
+                const o = document.createElement('option');
+                o.value = opt.value;
+                o.textContent = opt.label;
+                if (opt.value === this.selectedValue) {
+                    o.selected = true;
+                }
+                this.nativeSelect.appendChild(o);
+            });
+            return;
+        }
+
+        // Telefon / PC Modunda özel listeyi doldur
+        this._renderList(this.options);
     }
 
-    /**
-     * Mevcut seçili değeri göster (arama kutusunu doldurmaz)
-     */
     setValue(value, label) {
-        this.selectedValue = value;
+        this.selectedValue = value || '';
         this.selectedLabel = label || '';
-        const trigText = this.trigger.querySelector('.ss-trigger-text');
-        trigText.textContent = label || this.placeholder;
-        trigText.classList.toggle('ss-has-value', !!label);
+
+        if (this._isTv && this.nativeSelect) {
+            this.nativeSelect.value = this.selectedValue;
+            return;
+        }
+
+        if (this.trigger) {
+            const trigText = this.trigger.querySelector('.ss-trigger-text');
+            if (trigText) {
+                trigText.textContent = label || this.placeholder;
+                trigText.classList.toggle('ss-has-value', !!label);
+            }
+        }
     }
 
     getValue() {
+        if (this._isTv && this.nativeSelect) {
+            return this.nativeSelect.value;
+        }
         return this.selectedValue;
     }
 
     getLabel() {
+        if (this._isTv && this.nativeSelect) {
+            const sel = this.nativeSelect.options[this.nativeSelect.selectedIndex];
+            return sel && this.nativeSelect.value ? sel.text : '';
+        }
         return this.selectedLabel;
     }
 
     setDisabled(disabled) {
-        this.trigger.disabled = disabled;
-        this.el.classList.toggle('ss-disabled', disabled);
-        if (disabled) this.close();
+        if (this._isTv && this.nativeSelect) {
+            this.nativeSelect.disabled = !!disabled;
+            return;
+        }
+
+        if (this.trigger) {
+            this.trigger.disabled = !!disabled;
+        }
+        if (this.el) {
+            this.el.classList.toggle('ss-disabled', !!disabled);
+        }
+        if (disabled && this.isOpen) {
+            this.close();
+        }
     }
 
     open() {
-        if (this.trigger.disabled) return;
+        if (this._isTv || (this.trigger && this.trigger.disabled)) return;
         this.isOpen = true;
         this.el.classList.add('ss-open');
-        // Arama kutusu her zaman boş başlasın
         this.searchInput.value = '';
         this._renderList(this.options);
-        // Kısa gecikme ile focus (animasyon için)
+
         requestAnimationFrame(() => {
             this.searchInput.focus();
-            // Seçili öğe varsa ona kaydır
-            const selected = this.listEl.querySelector('.ss-selected');
-            if (selected) {
-                selected.scrollIntoView({ block: 'nearest' });
-                // Odaklanmış öğe indexini seçili öğeye ayarla
-                const allOpts = Array.from(this.listEl.querySelectorAll('.ss-option'));
-                this.focusedOptionIndex = allOpts.indexOf(selected);
-                this._updateFocus(allOpts);
-            }
+            const target = this.listEl.querySelector('.ss-selected');
+            if (target) target.scrollIntoView({ block: 'nearest' });
         });
     }
 
     close() {
+        if (this._isTv) return;
         this.isOpen = false;
-        this.el.classList.remove('ss-open');
+        if (this.el) {
+            this.el.classList.remove('ss-open');
+        }
     }
 
     _filter() {
@@ -187,7 +231,6 @@ class SearchableSelect {
 
     _renderList(items) {
         this.listEl.innerHTML = '';
-        this.focusedOptionIndex = -1;
 
         if (items.length === 0) {
             const empty = document.createElement('div');
@@ -197,35 +240,44 @@ class SearchableSelect {
             return;
         }
 
-        items.forEach(item => {
+        items.forEach((item, idx) => {
             const opt = document.createElement('div');
             opt.className = 'ss-option';
+            opt.tabIndex = 0;
+            opt.setAttribute('role', 'option');
+            opt.dataset.value = item.value;
+            opt.dataset.index = idx;
             if (item.value === this.selectedValue) opt.classList.add('ss-selected');
             opt.textContent = item.label;
-            opt.addEventListener('click', (e) => {
-                e.stopPropagation();
+
+            const selectOption = () => {
                 this.setValue(item.value, item.label);
                 this.close();
                 this.onSelect(item.value, item.label);
+                if (this.trigger) this.trigger.focus();
+            };
+
+            // Fare / dokunma seçimi (Telefon ve PC için)
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectOption();
             });
+
             this.listEl.appendChild(opt);
         });
     }
 
-    _updateFocus(options) {
-        options.forEach((opt, idx) => {
-            if (idx === this.focusedOptionIndex) {
-                opt.classList.add('ss-focused');
-                opt.scrollIntoView({ block: 'nearest' });
-            } else {
-                opt.classList.remove('ss-focused');
-            }
-        });
-    }
-
     destroy() {
-        document.removeEventListener('click', this._onDocClick);
-        this.el.remove();
+        if (this._isTv && this.nativeSelect) {
+            this.nativeSelect.remove();
+            return;
+        }
+        if (this._onDocClick) {
+            document.removeEventListener('click', this._onDocClick);
+        }
+        if (this.el) {
+            this.el.remove();
+        }
     }
 }
 
