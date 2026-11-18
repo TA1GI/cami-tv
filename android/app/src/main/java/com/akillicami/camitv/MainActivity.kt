@@ -307,10 +307,6 @@ class MainActivity : Activity() {
 
     private fun startKeepAwakeService() {
         val serviceIntent = Intent(this, KeepAwakeService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent)
-        } else {
-            startService(serviceIntent)
-        }
+        startService(serviceIntent)
     }
 }

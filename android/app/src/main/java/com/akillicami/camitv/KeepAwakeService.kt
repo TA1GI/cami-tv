@@ -1,13 +1,8 @@
 package com.akillicami.camitv
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -16,10 +11,10 @@ import android.provider.Settings
 import android.util.Log
 
 /**
- * KeepAwakeService — Foreground Service
+ * KeepAwakeService — Arka Plan Servisi
  *
  * TV'nin otomatik standby/uyku moduna geçmesini engeller.
- * 3 katmanlı koruma:
+ * Koruma katmanları:
  *   1) PARTIAL_WAKE_LOCK → CPU uyumasın
  *   2) Periyodik vendor-ayarı sıfırlama → Axen/Hikeen gibi TV'lerin
  *      kendi uyku zamanlayıcılarını devre dışı bırakır
@@ -29,8 +24,6 @@ class KeepAwakeService : Service() {
 
     companion object {
         private const val TAG = "KeepAwakeService"
-        private const val CHANNEL_ID = "camitv_keep_awake"
-        private const val NOTIFICATION_ID = 1
         // Her 30 dakikada bir vendor ayarlarını sıfırla
         private const val RESET_INTERVAL_MS = 30L * 60 * 1000
     }
@@ -61,10 +54,6 @@ class KeepAwakeService : Service() {
         // 2) Vendor ayarlarını hemen sıfırla ve periyodik döngüyü başlat
         resetVendorSleepSettings()
         handler.postDelayed(vendorResetRunnable, RESET_INTERVAL_MS)
-
-        // 3) Foreground Service olarak başlat
-        startForeground(NOTIFICATION_ID, createNotification())
-        Log.i(TAG, "Foreground Service aktif")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -116,44 +105,5 @@ class KeepAwakeService : Service() {
             // Bazı cihazlarda bu ayarlar olmayabilir — sessizce yoksay
             Log.w(TAG, "Vendor ayarları sıfırlanamadı: ${e.message}")
         }
-    }
-
-    private fun createNotification(): Notification {
-        // Notification Channel oluştur (API 26+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Cami TV Aktif",
-                NotificationManager.IMPORTANCE_LOW  // Ses çıkarmaz, minimal görünüm
-            ).apply {
-                description = "Cami TV ekranın açık kalmasını sağlar"
-                setShowBadge(false)
-            }
-            val nm = getSystemService(NotificationManager::class.java)
-            nm.createNotificationChannel(channel)
-        }
-
-        // Bildirime tıklayınca uygulamayı aç
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder(this, CHANNEL_ID)
-        } else {
-            @Suppress("DEPRECATION")
-            Notification.Builder(this)
-        }
-
-        return builder
-            .setContentTitle("Cami TV")
-            .setContentText("Ekran açık tutuluyor")
-            .setSmallIcon(android.R.drawable.ic_lock_idle_lock) // Sistem ikonu kullan
-            .setContentIntent(pendingIntent)
-            .setOngoing(true)
-            .build()
     }
 }

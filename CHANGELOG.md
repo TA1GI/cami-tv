@@ -1,5 +1,12 @@
 # Değişiklik Günlüğü
 
+## v1.0.21 (2026-11-18)
+### Android 15 & Google Play Uyumluluk Onarımı
+- **Android 15 Açılış Kilitlenmesi Giderildi:** Android 15 (API 35+) ile gelen `BOOT_COMPLETED` üzerinden kısıtlı ön plan hizmeti başlatma yasağı (`ForegroundServiceStartNotAllowedException: FGS type mediaPlayback not allowed to start from BOOT_COMPLETED!`) tamamen çözüldü. `BootReceiver.kt` içerisinden doğrudan servis başlatma çağrısı kaldırıldı; açılış akışı `MainActivity` üzerinden yürütülecek şekilde optimize edildi.
+- **Ön Plan Servis İzinleri Temizlendi (Google Play Politikası):** Medya oynatıcısı olmayan uygulamaların `FOREGROUND_SERVICE_MEDIA_PLAYBACK` iznini kullanması Google Play politikalarına aykırı olduğundan, bu izin ve `FOREGROUND_SERVICE` izni `AndroidManifest.xml` dosyasından kaldırıldı.
+- **KeepAwakeService Sadeleştirildi:** TV'nin ve CPU'nun uykuya geçmesini engelleyen `PARTIAL_WAKE_LOCK` ve 30 dakikalık TV uyku sayacı sıfırlama mekanizması (`resetVendorSleepSettings()`) korunarak servis standart arka plan servisine dönüştürüldü. TV ekranında lüzumsuz bildirim çubuğu uyarısı çıkması engellendi.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 24, versionName: `1.0.21`, `ScreenBridge.kt`, `settings.html`, `sw.js`) `1.0.21` olarak senkronize edildi.
+
 ## v1.0.20 (2026-11-09)
 ### Terminoloji İyileştirmeleri, Ayarlar Düzeni ve Görünürlük Optimizasyonu
 - **Sade ve Tam Türkçe Tema İsimleri:** Ayarlar menüsündeki tema seçenekleri alt çizgi, bölü işareti veya teknik terimlerden arındırılarak temiz Türkçe adlara kavuşturuldu (Koyu Yeşil, Altın Sarısı, Zümrüt Yeşili, Kûfi Kahve, Lacivert, Gece Moru, Turkuaz, Okyanus Mavisi, Gökyüzü Mavisi, Buz Mavisi, Gül Kurusu, Zeytin Yeşili, Açık Beyaz, Otomatik).

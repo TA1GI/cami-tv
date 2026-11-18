@@ -18,8 +18,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
     <!-- Arka plandan Activity başlatma (Android 14+ BAL kısıtlaması için) -->
@@ -67,8 +65,7 @@
         <!-- ─── Keep Awake Service (Ekranı açık tut) ──── -->
         <service
             android:name=".KeepAwakeService"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
+            android:exported="false" />
 
 
     </application>

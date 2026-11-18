@@ -65,19 +65,6 @@ class BootReceiver : BroadcastReceiver() {
         // Notification kanalını oluştur (Android 8+)
         createNotificationChannel(context)
 
-        // KeepAwake servisini hemen başlat
-        try {
-            val serviceIntent = Intent(context, KeepAwakeService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(serviceIntent)
-            } else {
-                context.startService(serviceIntent)
-            }
-            Log.i(TAG, "KeepAwakeService başlatıldı.")
-        } catch (e: Exception) {
-            Log.e(TAG, "KeepAwakeService başlatılamadı: ${e.message}")
-        }
-
         // ── Kısa denemeler: Handler ──────────────────────
         val handler = Handler(Looper.getMainLooper())
         for ((index, delay) in SHORT_DELAYS.withIndex()) {
