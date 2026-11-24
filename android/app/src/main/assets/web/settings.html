@@ -177,7 +177,7 @@
             <header class="settings-header">
                 <a href="index.html" class="btn-back" aria-label="Geri">←</a>
                 <h1 data-i18n="ayarlar">⚙️ Ayarlar</h1>
-                <span class="version">v1.0.21</span>
+                <span class="version">v1.0.25</span>
             </header>
 
 
@@ -678,6 +678,16 @@
                         </div>
                     </div>
 
+                    <div class="content-sub-settings" id="sub-ticker" style="display:none;">
+                        <div class="sub-setting-row">
+                            <span>⚡ Kayma Hızı</span>
+                            <div class="range-group">
+                                <input type="range" id="s-ticker-hiz" min="20" max="120" step="5" value="45">
+                                <span class="range-value" id="s-ticker-hiz-val">45 px/sn</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </section>
 
@@ -754,6 +764,11 @@
                             </select>
                         </div>
 
+                        <div id="s-duyuru-slayt-sure-wrap" style="margin-bottom:8px;">
+                            <label style="font-size:0.75rem;color:var(--text-muted);">Slayt Süresi (Saniye - Boşsa Genel 25 sn)</label>
+                            <input type="number" id="s-duyuru-slayt-sure" class="form-input" min="5" max="120" step="5" placeholder="25" style="width:100%;">
+                        </div>
+
                         <!-- Gün Seçimi -->
                         <div style="margin-bottom:8px;">
                             <label style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px;display:block;">Gösterilecek Günler (boş = her gün)</label>
@@ -789,8 +804,7 @@
                         </div>
 
                         <div style="display:flex;gap:8px;">
-                            <button id="s-duyuru-ekle" class="btn-add" style="flex:1;">📢 Duyuru Ekle</button>
-                            <button id="s-duyuru-iptal" class="btn-danger-small" style="display:none;flex:1;">İptal</button>
+                            <button id="s-duyuru-ekle" class="btn-add" style="flex:1;">📢 Yeni Duyuru Ekle</button>
                         </div>
                     </div>
                 </div>
@@ -1079,6 +1093,7 @@
 
     <!-- Script Yüklemeleri -->
     <script src="js/data-manager.js"></script>
+    <script src="js/tv-select-modal.js"></script>
     <script src="js/searchable-select.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/settings-manager.js"></script>
@@ -1235,10 +1250,11 @@
             const activeView = isQrActive ? qrView : document.getElementById('settings-form-view');
             if (!activeView) return [];
 
-            // Eğer SearchableSelect listesi açıksa, tuşları o yönetsin
+            // Eğer SearchableSelect veya TvSelectModal açık ise sayfa tuşları durdurulsun
+            if (typeof TvSelectModal !== 'undefined' && TvSelectModal.isOpen) return [];
             if (document.querySelector('.ss-wrapper.ss-open')) return [];
 
-            const selector = 'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([type="hidden"]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), .ss-trigger:not([disabled])';
+            const selector = 'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([type="hidden"]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), .ss-trigger:not([disabled]), .ss-tv-trigger:not([disabled])';
             return Array.from(activeView.querySelectorAll(selector)).filter(el => {
                 return el.offsetParent !== null && !el.closest('[style*="display: none"]');
             });
@@ -1263,7 +1279,8 @@
         document.addEventListener('keydown', (e) => {
             const pinOverlay = document.getElementById('pin-overlay');
             if (pinOverlay && pinOverlay.style.display !== 'none') return;
-            // Eğer SearchableSelect listesi açıksa dropdown kendi gezintisini yönetsin
+            // Eğer TvSelectModal veya SearchableSelect listesi açıksa dropdown kendi gezintisini yönetsin
+            if (typeof TvSelectModal !== 'undefined' && TvSelectModal.isOpen) return;
             if (document.querySelector('.ss-wrapper.ss-open')) return;
 
             const isDpad = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key) ||
@@ -1333,9 +1350,26 @@
                     e.stopPropagation();
                     current.checked = !current.checked;
                     current.dispatchEvent(new Event('change', { bubbles: true }));
+                } else if (current && current.tagName === 'SELECT') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof TvSelectModal !== 'undefined') {
+                        TvSelectModal.openForSelect(current);
+                    }
                 }
             }
         }, true); // Capture phase: <select> ve diğer elemanların tuşları yutmasını engeller
+
+        // TV ortamında tüm <select> etiketlerine fare/dokunma ile tıklandığında da TvSelectModal aç
+        if (typeof TvSelectModal !== 'undefined' && TvSelectModal.isTv) {
+            document.querySelectorAll('select.setting-select').forEach(sel => {
+                sel.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    TvSelectModal.openForSelect(sel);
+                });
+            });
+        }
 
         // Focus kaybolunca satır parlamasını temizle ve metin kutusunu kitle
         document.addEventListener('focusout', (e) => {
@@ -1347,5 +1381,122 @@
         });
     })();
     </script>
+    <!-- ─── DUYURU DÜZENLEME MODALI ─── -->
+    <div id="duyuru-edit-modal-backdrop" class="tv-modal-backdrop" style="display:none; z-index:2147483646;">
+        <div class="duyuru-modal-card" style="background:var(--bg-card, #131c26); border:1px solid var(--border, #2a3e52); border-radius:14px; width:92%; max-width:620px; max-height:88vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.85); overflow:hidden; animation:fade-in-scale 0.2s ease-out;">
+            <!-- Modal Başlık -->
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border, #2a3e52); background:rgba(0,0,0,0.25);">
+                <div style="font-size:1.1rem; font-weight:700; color:var(--accent, #4ade80); display:flex; align-items:center; gap:8px;">
+                    <span>✏️</span> Duyuru Düzenle
+                </div>
+                <button id="m-duyuru-btn-close" style="background:transparent; border:none; color:var(--text-muted, #94a3b8); font-size:1.4rem; cursor:pointer; padding:4px 8px; border-radius:6px; line-height:1;">✕</button>
+            </div>
+            
+            <!-- Modal Gövde (Kaydırılabilir) -->
+            <div style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:12px;">
+                <!-- Metin (TR) -->
+                <div>
+                    <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Metin (Türkçe) *</label>
+                    <textarea id="m-duyuru-metin" rows="2" class="form-input" placeholder="Duyuru metnini yazın..." style="width:100%; resize:vertical;"></textarea>
+                </div>
+                
+                <!-- Metin (AR) -->
+                <div>
+                    <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Metin (Arapça)</label>
+                    <textarea id="m-duyuru-metin-ar" rows="2" class="form-input" placeholder="الإعلان..." dir="rtl" style="width:100%; resize:vertical;"></textarea>
+                </div>
+
+                <!-- Metin (EN) -->
+                <div>
+                    <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Metin (English)</label>
+                    <textarea id="m-duyuru-metin-en" rows="2" class="form-input" placeholder="Announcement text..." style="width:100%; resize:vertical;"></textarea>
+                </div>
+
+                <!-- Tip + Gösterim + Tekrar -->
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Tip</label>
+                        <select id="m-duyuru-tip" class="setting-select" style="width:100%;">
+                            <option value="normal">Normal</option>
+                            <option value="acil">Acil</option>
+                            <option value="cenaze">Cenaze</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Gösterim</label>
+                        <select id="m-duyuru-gorunum" class="setting-select" style="width:100%;">
+                            <option value="carousel">Slayt</option>
+                            <option value="tam-ekran">Tam Ekran</option>
+                            <option value="sadece-ticker">Sadece Kayan Yazı</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Tekrar</label>
+                        <select id="m-duyuru-tekrar" class="setting-select" style="width:100%;">
+                            <option value="kalici">Kalıcı</option>
+                            <option value="gunluk">Günlük</option>
+                            <option value="haftalik">Haftalık</option>
+                            <option value="tek-sefer">Tek Seferlik</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tam Ekran Modu -->
+                <div id="m-duyuru-tam-ekran-modu-wrap" style="display:none;">
+                    <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Tam Ekran Modu</label>
+                    <select id="m-duyuru-tam-ekran-modu" class="setting-select" style="width:100%;">
+                        <option value="surekli">Sürekli (Varsayılan)</option>
+                        <option value="sirali">Sıralı (Slayt İçinde)</option>
+                    </select>
+                </div>
+
+                <!-- Slayt Süresi -->
+                <div id="m-duyuru-slayt-sure-wrap">
+                    <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Slayt Gösterim Süresi (Saniye)</label>
+                    <input type="number" id="m-duyuru-slayt-sure" class="form-input" min="5" max="120" step="5" placeholder="Genel ayar (25 sn)" style="width:100%;">
+                </div>
+
+                <!-- Gün Seçimi -->
+                <div>
+                    <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:6px;">Gösterilecek Günler (boş = her gün)</label>
+                    <div id="m-duyuru-gunler" style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <label class="day-chip"><input type="checkbox" value="1"><span>Pzt</span></label>
+                        <label class="day-chip"><input type="checkbox" value="2"><span>Sal</span></label>
+                        <label class="day-chip"><input type="checkbox" value="3"><span>Çar</span></label>
+                        <label class="day-chip"><input type="checkbox" value="4"><span>Per</span></label>
+                        <label class="day-chip"><input type="checkbox" value="5"><span>Cum</span></label>
+                        <label class="day-chip"><input type="checkbox" value="6"><span>Cmt</span></label>
+                        <label class="day-chip"><input type="checkbox" value="0"><span>Paz</span></label>
+                    </div>
+                </div>
+
+                <!-- Saat & Tarih -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Başlangıç Saati</label>
+                        <input type="time" id="m-duyuru-zaman-baslangic" class="setting-time" style="width:100%;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Bitiş Saati</label>
+                        <input type="time" id="m-duyuru-zaman-bitis" class="setting-time" style="width:100%;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Başlangıç Tarihi</label>
+                        <input type="date" id="m-duyuru-tarih-baslangic" class="setting-time" style="width:100%;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Bitiş Tarihi</label>
+                        <input type="date" id="m-duyuru-tarih-bitis" class="setting-time" style="width:100%;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Alt Butonlar -->
+            <div style="display:flex; gap:10px; padding:14px 20px; border-top:1px solid var(--border, #2a3e52); background:rgba(0,0,0,0.25);">
+                <button id="m-duyuru-btn-save" class="btn-add" style="flex:2;">💾 Değişiklikleri Kaydet</button>
+                <button id="m-duyuru-btn-cancel" class="btn-danger-small" style="flex:1;">İptal</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

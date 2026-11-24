@@ -184,7 +184,16 @@ const CarouselManager = (() => {
     // ──────────────────────────────────────────────────────
     // Mevcut slide'ın süresini al (per-content)
     // ──────────────────────────────────────────────────────
-    function getSlideDuration(slideType) {
+    function getSlideDuration(slide) {
+        if (!slide) return 15000;
+        const slideType = typeof slide === 'string' ? slide : slide.type;
+        if (slideType === 'duyuru' || slideType === 'tam-ekran-duyuru') {
+            if (typeof slide === 'object' && slide.data?.sureSaniye && slide.data.sureSaniye > 0) {
+                return slide.data.sureSaniye * 1000;
+            }
+            const cfg = _settings.icerikAyarlari?.duyuru;
+            return (cfg?.sure || 25) * 1000;
+        }
         const ia = _settings.icerikAyarlari || {};
         const cfg = ia[slideType];
         return (cfg?.sure || _settings.carouselSure || 15) * 1000;
@@ -197,7 +206,7 @@ const CarouselManager = (() => {
         if (_timer) clearTimeout(_timer);
         showCurrent();
 
-        const durationMs = getSlideDuration(_queue[_currentIdx]?.type);
+        const durationMs = getSlideDuration(_queue[_currentIdx]);
         _timer = setTimeout(next, durationMs);
         startProgress(durationMs);
     }
@@ -222,7 +231,7 @@ const CarouselManager = (() => {
         }
 
         showCurrent();
-        const durationMs = getSlideDuration(_queue[_currentIdx]?.type);
+        const durationMs = getSlideDuration(_queue[_currentIdx]);
         if (_timer) clearTimeout(_timer);
         _timer = setTimeout(next, durationMs);
         startProgress(durationMs);
@@ -279,8 +288,11 @@ const CarouselManager = (() => {
         if (active.length > 0) {
             return active.map(d => d.metin);
         }
-        // Duyuru yoksa anlık bilgi
-        return ['Allah\'a emanet olunuz.', 'Namazlarınızı vaktinde kılınız.'];
+        // Duyuru yoksa varsayılan cami adabı ve hatırlatma metinleri
+        return [
+            'Camimizde lütfen cep telefonlarımızı sessize alalım veya kapatalım.',
+            'Saflarımızı sık ve düzgün tutalım; zira safların düzgünlüğü namazın kemalindendir.'
+        ];
     }
 
     // ──────────────────────────────────────────────────────

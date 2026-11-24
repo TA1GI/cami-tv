@@ -143,7 +143,7 @@
     function getFilteredItems() {
         let items = getMergedItems();
         const filter = document.getElementById('ce-filter').value;
-        const search = document.getElementById('ce-search').value.trim().toLowerCase();
+        const rawSearch = document.getElementById('ce-search').value.trim();
         const disabled = _customContent.disabled[_activeTab] || [];
 
         if (filter === 'active') items = items.filter(i => !disabled.includes(itemUID(i)));
@@ -151,10 +151,20 @@
         else if (filter === 'custom') items = items.filter(i => i._custom);
         else if (filter === 'original') items = items.filter(i => !i._custom);
 
-        if (search) {
+        if (rawSearch) {
+            const norm = (s) => String(s || '').toLocaleLowerCase('tr-TR')
+                .replace(/i̇/g, 'i').replace(/ı/g, 'i').replace(/ğ/g, 'g')
+                .replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c');
+            const sTr = rawSearch.toLocaleLowerCase('tr-TR');
+            const sNorm = norm(rawSearch);
+
             items = items.filter(i => {
                 const fields = Object.values(i).filter(v => typeof v === 'string');
-                return fields.some(f => f.toLowerCase().includes(search));
+                return fields.some(f => {
+                    const fTr = f.toLocaleLowerCase('tr-TR');
+                    const fNorm = norm(f);
+                    return fTr.includes(sTr) || fNorm.includes(sNorm);
+                });
             });
         }
 

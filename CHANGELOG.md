@@ -1,5 +1,39 @@
 # Değişiklik Günlüğü
 
+## v1.0.25 (2026-11-24)
+### Kayan Yazı Hız Slider'ı, Bağımsız Duyuru Modalı ve Sürüm Senkronizasyonu
+- **Kayan Yazı Hız Slider'ı (`px/sn`):** Alt kayan yazı bandı için fiziksel hız slider'ı eklendi (20-120 px/sn, varsayılan: 45 px/sn).
+- **Alt Panel Otomatik Gizleme:** Alt kayan yazı bandı kapatıldığında bağlı hız ayar paneli otomatik olarak gizlenir.
+- **Ayrı Duyuru Düzenleme Modalı:** Duyuru düzenleme işlemi sayfa içi karmaşadan ayrılarak bağımsız modal penceresine taşındı.
+- **Sürüm Senkronizasyonu:** Tüm sürüm numaraları (`versionCode: 28`, `versionName: "1.0.25"`) senkronize edildi ve başlık sürümü `AndroidBridge.getVersion()` köprüsüne bağlandı.
+
+## v1.0.24 (2026-11-24)
+### Kayan Yazı Hız Slider'ı, Alt Panel Gizleme ve Ayrı Duyuru Düzenleme Modalı
+- **Kayan Yazı Hız Slider'ı (`px/sn`):** Kayan yazı hız ayarı süre bazlı sabit seçeneklerden çıkarılarak diğer ayarlar gibi slider (`range`) formatına dönüştürüldü (20 - 120 px/sn, varsayılan: 45 px/sn). Metin uzunluğu ne olursa olsun fiziksel hız sabit kalarak TV'de en pürüzsüz kayma sağlandı.
+- **Alt Kayan Yazı Bandı Kapalıyken Ayarları Gizleme:** Alt Kayan Yazı Bandı kapalı olduğunda, hız slider'ı ve ilgili alt panel otomatik olarak gizlendi (`#sub-ticker`).
+- **Ayrı Duyuru Düzenleme Modalı (`duyuru-modal`):** Duyurular listesinde "Düzenle" (✏️) butonuna basıldığında sayfanın altına kayıp formun değişmesi yerine, doğrudan ekranın ortasında açılan bağımsız ve şık bir düzenleme modalı (`#duyuru-edit-modal-backdrop`) geliştirildi. Yeni duyuru ekleme formu ile düzenleme akışı tamamen birbirinden ayrıldı.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 27, versionName: `1.0.24`, `ScreenBridge.kt`, `sw.js`) `1.0.24` olarak senkronize edildi.
+
+## v1.0.23 (2026-11-24)
+### Kayan Yazı Akıcılık & Hız Ayarı, Düzenlenebilir Varsayılan Duyurular ve Slayt Süresi Kontrolü
+- **TV Kayan Yazı Donanım Hızlandırması & 60fps Akıcılık:** Televizyon panellerinde göz yoran ve titremeye (judder/stutter) sebep olan CSS marquee hareketi, GPU donanım hızlandırma katmanı (`translate3d`, `will-change: transform`, `backface-visibility: hidden`, `contain: paint`) ile optimize edildi. Çizim işlemi TV CPU'sundan GPU Compositor iş parçacığına taşınarak 60fps yağ gibi akıcı hale getirildi.
+- **Kayan Yazı Hızı Ayarı:** Ayarlar menüsüne "Kayan Yazı Hızı" seçeneği eklendi (Çok Yavaş [60s], Yavaş [Önerilen - 45s], Normal [32s], Hızlı [20s]). TV panelleri için önerilen "Yavaş" hızı varsayılan yapılarak göz yorulması engellendi.
+- **Düzenlenebilir Varsayılan Cami Adabı Duyuruları:** Varsayılan cami hatırlatma ve adabı metinleri ("Camimizde lütfen cep telefonlarımızı sessize alalım veya kapatalım.", "Saflarımızı sık ve düzgün tutalım...") Ayarlar -> Duyurular listesine düzenlenebilir ve silinebilir duyuru olarak eklendi.
+- **Duyuru Slayt Gösterim Süresi:** Duyuru ekleme ve düzenleme formuna "Slayt Süresi (sn)" alanı eklendi (`sureSaniye`). Genel duyuru slayt süresi 25 saniye olarak belirlendi; istenirse her slayt duyurusuna özel süre tanımlanabiliyor.
+- **Sabah Namazı İmsak Ayarı:** Kullanıcı talebi doğrultusunda "Sabah Namazı İmsaka Göre" seçeneği varsayılan olarak kapalı (`false`) yapıldı.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 26, versionName: `1.0.23`, `ScreenBridge.kt`, `sw.js`) `1.0.23` olarak senkronize edildi.
+
+## v1.0.22 (2026-11-24)
+### Evrensel TV Seçim Modalı (TvSelectModal), Akıllı Varsayılanlar ve Arama Geliştirmeleri
+- **Evrensel TV Seçim Modalı (`TvSelectModal`):** Atmaca, Sunny, Hi-Level, AOSP ve Google sertifikalı olmayan Android TV WebView bileşenlerinde HTML `<select>` etiketlerinin yerel işletim sistemi seçim pencerelerini açmaması/çökmesi sorunu tamamen giderildi. Kumanda D-Pad yön tuşları (Yukarı/Aşağı), OK (Enter) ve Geri (Back) tuşları ile %100 uyumlu, yüksek kontrastlı ve modern bir TV seçim modal penceresi geliştirildi.
+- **TV Modal Tekil Odak & Koyu Tasarım:** Kumanda ile gezinirken önceden seçilmiş eleman ile o anki odak birbirinden netleştirildi; çift seçili görünümü engellendi. İlk kurulum ekranındaki il/ilçe tetikleyicileri koyu ve şık tema arka planına kavuşturuldu.
+- **Türkçe Karakter Toleranslı Arama:** İl, ilçe ve içerik arama kutularında büyük/küçük harf ve Türkçe karakter hassasiyeti (İ/i/ı/I, ş/s, ç/c vb.) giderildi; "istanbul" yazıldığında "İstanbul" anında bulunuyor.
+- **Akıllı Cami Varsayılan Ayarları:** Varsayılan tema "Zümrüt Yeşili", hava durumu "Açık", güç modu "Namaz Vakti Bazlı" (%100 aktif / %0 pasif karartma), sabah namazı "İmsaka Göre" olarak güncellendi. Ayet (30s), Hadis (30s), Dua (30s), Esma (15s), İmsakiye (45s) süreleri cemaatin okuma hızına göre optimize edildi.
+- **Varsayılan Cami Hatırlatma Bandı:** Alt kayan yazı bandı varsayılan metinleri cami adabına uygun olarak güncellendi ("Lütfen camimizde cep telefonlarınızı sessize alınız...", "Saflarınızı sık ve düzgün tutunuz...").
+- **TV Kumandası Geri (Back) Tuşu Yalıtımı:** `MainActivity.kt` ve `ScreenBridge.kt` seviyesinde TV modalının açık olma durumu dinlenerek, Geri tuşuna basıldığında ayarlar sayfasından veya uygulamadan çıkmadan yalnızca modal penceresinin kapanması sağlandı.
+- **Ağ ve Wi-Fi Kanal Kararlılığı:** Cami içi 2.4 GHz frekansında komşu kanallarla çakışmayı ve paket kaybını önleyecek optimizasyonlar yapılarak TV yerel web sunucusu yanıt süresi milisaniye seviyesine indirildi.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 25, versionName: `1.0.22`, `ScreenBridge.kt`, `sw.js`) `1.0.22` olarak güncellendi.
+
 ## v1.0.21 (2026-11-18)
 ### Android 15 & Google Play Uyumluluk Onarımı
 - **Android 15 Açılış Kilitlenmesi Giderildi:** Android 15 (API 35+) ile gelen `BOOT_COMPLETED` üzerinden kısıtlı ön plan hizmeti başlatma yasağı (`ForegroundServiceStartNotAllowedException: FGS type mediaPlayback not allowed to start from BOOT_COMPLETED!`) tamamen çözüldü. `BootReceiver.kt` içerisinden doğrudan servis başlatma çağrısı kaldırıldı; açılış akışı `MainActivity` üzerinden yürütülecek şekilde optimize edildi.

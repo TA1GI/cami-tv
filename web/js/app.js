@@ -333,7 +333,10 @@ const App = (() => {
             const isFormScreen = setupVisible || window.location.href.includes('settings.html');
 
             if (isFormScreen) {
-                // Eğer SearchableSelect dropdown açıksa, ok tuşlarını o yönetsin
+                // Eğer TvSelectModal veya SearchableSelect açık ise sayfa tuşları durdurulsun
+                if (typeof TvSelectModal !== 'undefined' && TvSelectModal.isOpen) {
+                    return;
+                }
                 if (document.querySelector('.ss-wrapper.ss-open')) {
                     return;
                 }
@@ -419,7 +422,7 @@ const App = (() => {
         const container = (formView && formView.style.display !== 'none') ? formView : document;
 
         const focusable = Array.from(
-            container.querySelectorAll('button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]):not([type="hidden"]), select:not([disabled]):not([tabindex="-1"]), .ss-trigger:not([disabled])')
+            container.querySelectorAll('button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]):not([type="hidden"]), select:not([disabled]):not([tabindex="-1"]), .ss-trigger:not([disabled]), .ss-tv-trigger:not([disabled])')
         ).filter(el => el.offsetParent !== null && !el.closest('[style*="display: none"]'));
 
         if (focusable.length === 0) return;
@@ -557,9 +560,11 @@ const App = (() => {
                 ilceSS.setValue('', '');
                 ilceSS.setDisabled(!value);
                 if (!value || !_locations[value]) {
+                    ilceSS.setPlaceholder('— Önce il seçin —');
                     ilceSS.setOptions([]);
                     return;
                 }
+                ilceSS.setPlaceholder('— İlçe seçin —');
                 const ilceOpts = Object.entries(_locations[value])
                     .map(([ilce, id]) => ({ value: `${ilce}::${id}`, label: ilce }))
                     .sort((a, b) => a.label.localeCompare(b.label, 'tr'));

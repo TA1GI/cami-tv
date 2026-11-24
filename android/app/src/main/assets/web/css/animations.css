@@ -135,11 +135,11 @@
    ──────────────────────────────────────────────────────────── */
 @keyframes ticker-scroll {
     from {
-        transform: translateX(100vw);
+        transform: translate3d(100vw, 0, 0);
     }
 
     to {
-        transform: translateX(-100%);
+        transform: translate3d(-100%, 0, 0);
     }
 }
 

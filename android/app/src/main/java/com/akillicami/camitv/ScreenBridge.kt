@@ -19,11 +19,21 @@ class ScreenBridge(private val activity: Activity) {
 
     // ─── Temel kontrol ─────────────────────────────────────
 
+    @Volatile
+    private var modalOpen = false
+
+    @JavascriptInterface
+    fun setModalOpen(open: Boolean) {
+        this.modalOpen = open
+    }
+
+    fun isModalOpen(): Boolean = modalOpen
+
     @JavascriptInterface
     fun isAvailable(): Boolean = true
 
     @JavascriptInterface
-    fun getVersion(): String = "1.0.21"
+    fun getVersion(): String = "1.0.25"
 
     // ─── Otomatik Başlatma (Boot) ──────────────────────────
 

@@ -781,6 +781,7 @@
     overflow: hidden;
     display: flex;
     white-space: nowrap;
+    contain: paint;
 }
 
 #ls-ticker .ticker-inner {
@@ -788,7 +789,12 @@
     align-items: center;
     gap: 60px;
     white-space: nowrap;
-    animation: ticker-scroll 25s linear infinite;
+    animation: ticker-scroll var(--ticker-duration, 45s) linear infinite;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* ticker duraksatma — duyuru yok ya da hover */

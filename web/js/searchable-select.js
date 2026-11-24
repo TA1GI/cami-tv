@@ -47,27 +47,42 @@ class SearchableSelect {
     }
 
     _build() {
-        // ─── 1. TV MODU: Yerel Android <select> (Modal Diyalog) ───
+        // ─── 1. TV MODU: Kumanda Uyumlu TvSelectModal Tetikleyicisi ───
         if (this._isTv) {
-            this.nativeSelect = document.createElement('select');
-            this.nativeSelect.className = 'setting-select ss-native-select';
-            this.nativeSelect.style.width = '100%';
+            this.tvTrigger = document.createElement('button');
+            this.tvTrigger.type = 'button';
+            this.tvTrigger.className = 'setting-select ss-tv-trigger';
+            this.tvTrigger.tabIndex = 0;
+            this.tvTrigger.innerHTML = `<span class="ss-trigger-text">${this.selectedLabel || this.placeholder}</span><span class="ss-arrow">▾</span>`;
 
-            const defOpt = document.createElement('option');
-            defOpt.value = '';
-            defOpt.textContent = this.placeholder;
-            this.nativeSelect.appendChild(defOpt);
+            const openTvModal = (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                if (this.tvTrigger.disabled) return;
+                if (typeof TvSelectModal === 'undefined') return;
 
-            this.nativeSelect.addEventListener('change', () => {
-                const sel = this.nativeSelect.options[this.nativeSelect.selectedIndex];
-                const val = this.nativeSelect.value;
-                const lbl = sel && val ? sel.text : '';
-                this.selectedValue = val;
-                this.selectedLabel = lbl;
-                this.onSelect(val, lbl);
+                TvSelectModal.open({
+                    title: this.placeholder,
+                    options: this.options,
+                    selectedValue: this.selectedValue,
+                    triggerEl: this.tvTrigger,
+                    onSelect: (val, lbl) => {
+                        this.setValue(val, lbl);
+                        this.onSelect(val, lbl);
+                    }
+                });
+            };
+
+            this.tvTrigger.addEventListener('click', openTvModal);
+            this.tvTrigger.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 23 || e.keyCode === 66 || e.keyCode === 13) {
+                    openTvModal(e);
+                }
             });
 
-            this.container.appendChild(this.nativeSelect);
+            this.container.appendChild(this.tvTrigger);
             return;
         }
 
@@ -123,23 +138,14 @@ class SearchableSelect {
     setOptions(options) {
         this.options = options || [];
 
-        // TV Modunda yerel <select> seçeneklerini doldur
-        if (this._isTv && this.nativeSelect) {
-            this.nativeSelect.innerHTML = '';
-            const defOpt = document.createElement('option');
-            defOpt.value = '';
-            defOpt.textContent = this.placeholder;
-            this.nativeSelect.appendChild(defOpt);
-
-            this.options.forEach(opt => {
-                const o = document.createElement('option');
-                o.value = opt.value;
-                o.textContent = opt.label;
-                if (opt.value === this.selectedValue) {
-                    o.selected = true;
+        // TV Modunda seçenekler güncellendiğinde mevcut seçimin etiketini tazele
+        if (this._isTv && this.tvTrigger) {
+            if (this.selectedValue) {
+                const found = this.options.find(o => String(o.value) === String(this.selectedValue));
+                if (found) {
+                    this.setValue(found.value, found.label);
                 }
-                this.nativeSelect.appendChild(o);
-            });
+            }
             return;
         }
 
@@ -151,8 +157,16 @@ class SearchableSelect {
         this.selectedValue = value || '';
         this.selectedLabel = label || '';
 
-        if (this._isTv && this.nativeSelect) {
-            this.nativeSelect.value = this.selectedValue;
+        if (this._isTv && this.tvTrigger) {
+            if (!this.selectedLabel && this.selectedValue && this.options.length > 0) {
+                const found = this.options.find(o => String(o.value) === String(this.selectedValue));
+                if (found) this.selectedLabel = found.label;
+            }
+            const trigText = this.tvTrigger.querySelector('.ss-trigger-text');
+            if (trigText) {
+                trigText.textContent = this.selectedLabel || this.placeholder;
+                trigText.classList.toggle('ss-has-value', !!this.selectedLabel);
+            }
             return;
         }
 
@@ -166,23 +180,16 @@ class SearchableSelect {
     }
 
     getValue() {
-        if (this._isTv && this.nativeSelect) {
-            return this.nativeSelect.value;
-        }
         return this.selectedValue;
     }
 
     getLabel() {
-        if (this._isTv && this.nativeSelect) {
-            const sel = this.nativeSelect.options[this.nativeSelect.selectedIndex];
-            return sel && this.nativeSelect.value ? sel.text : '';
-        }
         return this.selectedLabel;
     }
 
     setDisabled(disabled) {
-        if (this._isTv && this.nativeSelect) {
-            this.nativeSelect.disabled = !!disabled;
+        if (this._isTv && this.tvTrigger) {
+            this.tvTrigger.disabled = !!disabled;
             return;
         }
 
@@ -194,6 +201,21 @@ class SearchableSelect {
         }
         if (disabled && this.isOpen) {
             this.close();
+        }
+    }
+
+    setPlaceholder(placeholder) {
+        this.placeholder = placeholder || '— Seçin —';
+        if (this._isTv && this.tvTrigger) {
+            if (!this.selectedLabel && !this.selectedValue) {
+                const trigText = this.tvTrigger.querySelector('.ss-trigger-text');
+                if (trigText) trigText.textContent = this.placeholder;
+            }
+            return;
+        }
+        if (this.trigger && !this.selectedLabel) {
+            const trigText = this.trigger.querySelector('.ss-trigger-text');
+            if (trigText) trigText.textContent = this.placeholder;
         }
     }
 
@@ -219,13 +241,35 @@ class SearchableSelect {
         }
     }
 
+    static normalize(str) {
+        if (!str) return '';
+        return String(str)
+            .toLocaleLowerCase('tr-TR')
+            .replace(/i̇/g, 'i')
+            .replace(/ı/g, 'i')
+            .replace(/ğ/g, 'g')
+            .replace(/ü/g, 'u')
+            .replace(/ş/g, 's')
+            .replace(/ö/g, 'o')
+            .replace(/ç/g, 'c')
+            .trim();
+    }
+
     _filter() {
-        const q = this.searchInput.value.toLowerCase().trim();
-        if (!q) {
+        const raw = (this.searchInput.value || '').trim();
+        if (!raw) {
             this._renderList(this.options);
             return;
         }
-        const filtered = this.options.filter(o => o.label.toLowerCase().includes(q));
+        const qTr = raw.toLocaleLowerCase('tr-TR');
+        const qNorm = SearchableSelect.normalize(raw);
+
+        const filtered = this.options.filter(o => {
+            if (!o || !o.label) return false;
+            const lTr = o.label.toLocaleLowerCase('tr-TR');
+            const lNorm = SearchableSelect.normalize(o.label);
+            return lTr.includes(qTr) || lNorm.includes(qNorm);
+        });
         this._renderList(filtered);
     }
 
@@ -268,8 +312,8 @@ class SearchableSelect {
     }
 
     destroy() {
-        if (this._isTv && this.nativeSelect) {
-            this.nativeSelect.remove();
+        if (this._isTv && this.tvTrigger) {
+            this.tvTrigger.remove();
             return;
         }
         if (this._onDocClick) {

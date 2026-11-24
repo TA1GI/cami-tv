@@ -4,7 +4,7 @@
  * Tüm statik dosyaları önbelleğe alır.
  */
 
-const CACHE_NAME = 'cami-tv-v1.0.21';
+const CACHE_NAME = 'cami-tv-v1.0.25';
 
 const STATIC_FILES = [
     './',
@@ -28,6 +28,7 @@ const STATIC_FILES = [
     './js/display-manager.js',
     './js/settings-manager.js',
     './js/settings.js',
+    './js/tv-select-modal.js',
     './js/searchable-select.js',
     './data/ayetler.json',
     './data/hadisler.json',

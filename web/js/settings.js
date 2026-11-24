@@ -21,6 +21,19 @@ function initSettingsPage() {
         root.setAttribute('data-theme', settings.tema);
     }
 
+    // Sürüm bilgisini göster
+    const versionEl = document.querySelector('.settings-header .version');
+    if (versionEl) {
+        if (window.AndroidBridge && typeof AndroidBridge.getVersion === 'function') {
+            try {
+                const appVer = AndroidBridge.getVersion();
+                if (appVer) versionEl.textContent = 'v' + appVer;
+            } catch (e) {}
+        } else {
+            versionEl.textContent = 'v1.0.25';
+        }
+    }
+
     // ──────────────────────────────────────────────────────
     // FORM → SETTINGS Eşleme
     // ──────────────────────────────────────────────────────
@@ -41,8 +54,10 @@ function initSettingsPage() {
             ilceSS.setValue('', '');
             ilceSS.setDisabled(!value);
             if (!value || !_locations[value]) {
+                ilceSS.setPlaceholder('— Önce il seçin —');
                 ilceSS.setOptions([]);
             } else {
+                ilceSS.setPlaceholder('— İlçe seçin —');
                 const ilceOpts = Object.entries(_locations[value])
                     .map(([ilce, id]) => ({ value: `${ilce}::${id}`, label: ilce }))
                     .sort((a, b) => a.label.localeCompare(b.label, 'tr'));
@@ -446,6 +461,35 @@ function initSettingsPage() {
     }
 
     setCheck('s-goster-ticker', settings.gosterTickerBant);
+    const subTicker = document.getElementById('sub-ticker');
+    const tickerToggle = document.getElementById('s-goster-ticker');
+    const tickerHizSlider = document.getElementById('s-ticker-hiz');
+    const tickerHizVal = document.getElementById('s-ticker-hiz-val');
+
+    function updateTickerSubPanel() {
+        if (subTicker) subTicker.style.display = tickerToggle?.checked ? 'block' : 'none';
+    }
+    updateTickerSubPanel();
+    if (tickerToggle) {
+        tickerToggle.addEventListener('change', () => {
+            updateTickerSubPanel();
+            markDirty();
+        });
+    }
+
+    let speedVal = parseInt(settings.tickerHiz);
+    if (isNaN(speedVal) || speedVal < 15) {
+        const speedMap = { 'cok-yavas': 30, 'yavas': 45, 'normal': 65, 'hizli': 90 };
+        speedVal = speedMap[settings.tickerHiz] || 45;
+    }
+    if (tickerHizSlider) {
+        tickerHizSlider.value = speedVal;
+        if (tickerHizVal) tickerHizVal.textContent = speedVal + ' px/sn';
+        tickerHizSlider.addEventListener('input', () => {
+            if (tickerHizVal) tickerHizVal.textContent = tickerHizSlider.value + ' px/sn';
+            markDirty();
+        });
+    }
     setCheck('s-goster-hicri', settings.gosterHicriTarih);
 
     // ── Cuma Yardımı ──────────────────────────────────────
@@ -616,11 +660,16 @@ function initSettingsPage() {
 
     function updateTamEkranModuVisibility() {
         const isTamEkran = duyuruGorunumEl?.value === 'tam-ekran';
+        const isTickerOnly = duyuruGorunumEl?.value === 'sadece-ticker';
         if (duyuruTamEkranModuWrapEl) {
             duyuruTamEkranModuWrapEl.style.display = isTamEkran ? 'block' : 'none';
         }
         if (!isTamEkran && duyuruTamEkranModuEl) {
             duyuruTamEkranModuEl.value = 'surekli';
+        }
+        const slaytSureWrap = document.getElementById('s-duyuru-slayt-sure-wrap');
+        if (slaytSureWrap) {
+            slaytSureWrap.style.display = isTickerOnly ? 'none' : 'block';
         }
     }
 
@@ -632,7 +681,7 @@ function initSettingsPage() {
     }
     updateTamEkranModuVisibility();
 
-    // Gelişmiş duyuru ekleme / düzenleme
+    // Gelişmiş duyuru ekleme (Yeni Duyuru)
     document.getElementById('s-duyuru-ekle')?.addEventListener('click', () => {
         const metinEl = document.getElementById('s-duyuru-metin');
         const metin = metinEl?.value?.trim();
@@ -657,16 +706,10 @@ function initSettingsPage() {
             zamanBitis: document.getElementById('s-duyuru-zaman-bitis')?.value || '',
             tarihBaslangic: document.getElementById('s-duyuru-tarih-baslangic')?.value || '',
             tarihBitis: document.getElementById('s-duyuru-tarih-bitis')?.value || '',
+            sureSaniye: parseInt(document.getElementById('s-duyuru-slayt-sure')?.value) || 0,
         };
 
-        if (editDuyuruId !== null) {
-            SettingsManager.updateDuyuru(editDuyuruId, duyuruData);
-            editDuyuruId = null;
-            document.getElementById('s-duyuru-ekle').textContent = '📢 Duyuru Ekle';
-            document.getElementById('s-duyuru-iptal').style.display = 'none';
-        } else {
-            SettingsManager.addDuyuru(duyuruData);
-        }
+        SettingsManager.addDuyuru(duyuruData);
 
         // Formu temizle
         if (metinEl) metinEl.value = '';
@@ -686,34 +729,104 @@ function initSettingsPage() {
         const tipEl = document.getElementById('s-duyuru-tip');
         const gorunumEl = document.getElementById('s-duyuru-gorunum');
         const tekrarEl = document.getElementById('s-duyuru-tekrar');
+        const slaytSureEl = document.getElementById('s-duyuru-slayt-sure');
         if (tipEl) tipEl.value = 'normal';
         if (gorunumEl) gorunumEl.value = 'carousel';
         if (tekrarEl) tekrarEl.value = 'kalici';
+        if (slaytSureEl) slaytSureEl.value = '';
         if (duyuruTamEkranModuEl) duyuruTamEkranModuEl.value = 'surekli';
         updateTamEkranModuVisibility();
 
         renderDuyurular();
     });
 
-    document.getElementById('s-duyuru-iptal')?.addEventListener('click', () => {
-        editDuyuruId = null;
-        document.getElementById('s-duyuru-ekle').textContent = '📢 Duyuru Ekle';
-        document.getElementById('s-duyuru-iptal').style.display = 'none';
+    // ─── Ayrı Duyuru Düzenleme Modalı Fonksiyonları ───
+    function openDuyuruModal(d) {
+        editDuyuruId = d.id;
+        document.getElementById('m-duyuru-metin').value = d.metin || '';
+        document.getElementById('m-duyuru-metin-ar').value = d.metinAr || '';
+        document.getElementById('m-duyuru-metin-en').value = d.metinEn || '';
+        document.getElementById('m-duyuru-tip').value = d.tip || 'normal';
+        document.getElementById('m-duyuru-gorunum').value = d.gorunum || 'carousel';
+        const mTamEkranEl = document.getElementById('m-duyuru-tam-ekran-modu');
+        if (mTamEkranEl) mTamEkranEl.value = d.tamEkranModu || 'surekli';
+        const mSlaytSureEl = document.getElementById('m-duyuru-slayt-sure');
+        if (mSlaytSureEl) mSlaytSureEl.value = d.sureSaniye || '';
+        document.getElementById('m-duyuru-tekrar').value = d.tekrar || 'kalici';
+        document.getElementById('m-duyuru-zaman-baslangic').value = d.zamanBaslangic || '';
+        document.getElementById('m-duyuru-zaman-bitis').value = d.zamanBitis || '';
+        document.getElementById('m-duyuru-tarih-baslangic').value = d.tarihBaslangic || '';
+        document.getElementById('m-duyuru-tarih-bitis').value = d.tarihBitis || '';
 
-        // Formu temizle
-        document.getElementById('s-duyuru-metin').value = '';
-        document.getElementById('s-duyuru-metin-ar').value = '';
-        document.getElementById('s-duyuru-metin-en').value = '';
-        document.querySelectorAll('#s-duyuru-gunler input[type=checkbox]').forEach(cb => cb.checked = false);
-        document.getElementById('s-duyuru-zaman-baslangic').value = '';
-        document.getElementById('s-duyuru-zaman-bitis').value = '';
-        document.getElementById('s-duyuru-tarih-baslangic').value = '';
-        document.getElementById('s-duyuru-tarih-bitis').value = '';
-        document.getElementById('s-duyuru-tip').value = 'normal';
-        document.getElementById('s-duyuru-gorunum').value = 'carousel';
-        document.getElementById('s-duyuru-tekrar').value = 'kalici';
-        if (duyuruTamEkranModuEl) duyuruTamEkranModuEl.value = 'surekli';
-        updateTamEkranModuVisibility();
+        document.querySelectorAll('#m-duyuru-gunler input[type=checkbox]').forEach(cb => {
+            const val = parseInt(cb.value);
+            cb.checked = d.gunler && d.gunler.includes(val);
+        });
+
+        updateModalTamEkranModuVisibility();
+        const modal = document.getElementById('duyuru-edit-modal-backdrop');
+        if (modal) modal.style.display = 'flex';
+        if (window.AndroidBridge && typeof AndroidBridge.setModalOpen === 'function') {
+            AndroidBridge.setModalOpen(true);
+        }
+    }
+
+    function closeDuyuruModal() {
+        const modal = document.getElementById('duyuru-edit-modal-backdrop');
+        if (modal) modal.style.display = 'none';
+        editDuyuruId = null;
+        if (window.AndroidBridge && typeof AndroidBridge.setModalOpen === 'function') {
+            AndroidBridge.setModalOpen(false);
+        }
+    }
+
+    function updateModalTamEkranModuVisibility() {
+        const mGorunumEl = document.getElementById('m-duyuru-gorunum');
+        const isTamEkran = mGorunumEl?.value === 'tam-ekran';
+        const isTickerOnly = mGorunumEl?.value === 'sadece-ticker';
+        const mTamEkranWrap = document.getElementById('m-duyuru-tam-ekran-modu-wrap');
+        if (mTamEkranWrap) mTamEkranWrap.style.display = isTamEkran ? 'block' : 'none';
+        const mSlaytSureWrap = document.getElementById('m-duyuru-slayt-sure-wrap');
+        if (mSlaytSureWrap) mSlaytSureWrap.style.display = isTickerOnly ? 'none' : 'block';
+    }
+
+    document.getElementById('m-duyuru-gorunum')?.addEventListener('change', updateModalTamEkranModuVisibility);
+    document.getElementById('m-duyuru-btn-close')?.addEventListener('click', closeDuyuruModal);
+    document.getElementById('m-duyuru-btn-cancel')?.addEventListener('click', closeDuyuruModal);
+    document.getElementById('duyuru-edit-modal-backdrop')?.addEventListener('click', (e) => {
+        if (e.target.id === 'duyuru-edit-modal-backdrop') closeDuyuruModal();
+    });
+
+    // Modal Kaydet Butonu
+    document.getElementById('m-duyuru-btn-save')?.addEventListener('click', () => {
+        if (editDuyuruId === null) return;
+        const metin = document.getElementById('m-duyuru-metin')?.value?.trim();
+        if (!metin) { alert('Lütfen en az Türkçe metin girin.'); return; }
+
+        const gunler = [];
+        document.querySelectorAll('#m-duyuru-gunler input[type=checkbox]:checked').forEach(cb => {
+            gunler.push(parseInt(cb.value));
+        });
+
+        const duyuruData = {
+            metin: metin,
+            metinAr: document.getElementById('m-duyuru-metin-ar')?.value?.trim() || '',
+            metinEn: document.getElementById('m-duyuru-metin-en')?.value?.trim() || '',
+            tip: document.getElementById('m-duyuru-tip')?.value || 'normal',
+            gorunum: document.getElementById('m-duyuru-gorunum')?.value || 'carousel',
+            tamEkranModu: document.getElementById('m-duyuru-tam-ekran-modu')?.value || 'surekli',
+            tekrar: document.getElementById('m-duyuru-tekrar')?.value || 'kalici',
+            gunler: gunler,
+            zamanBaslangic: document.getElementById('m-duyuru-zaman-baslangic')?.value || '',
+            zamanBitis: document.getElementById('m-duyuru-zaman-bitis')?.value || '',
+            tarihBaslangic: document.getElementById('m-duyuru-tarih-baslangic')?.value || '',
+            tarihBitis: document.getElementById('m-duyuru-tarih-bitis')?.value || '',
+            sureSaniye: parseInt(document.getElementById('m-duyuru-slayt-sure')?.value) || 0,
+        };
+
+        SettingsManager.updateDuyuru(editDuyuruId, duyuruData);
+        closeDuyuruModal();
+        renderDuyurular();
     });
 
     // Tümünü sıfırla
@@ -966,6 +1079,7 @@ function initSettingsPage() {
         s.camiBilgiMetin = currentCamiBilgi.map(m => m.trim()).filter(m => m !== '');
         s.gosterSabah = getCheck('s-goster-sabah');
         s.gosterTickerBant = getCheck('s-goster-ticker');
+        s.tickerHiz = parseInt(document.getElementById('s-ticker-hiz')?.value) || 45;
         s.gosterHicriTarih = getCheck('s-goster-hicri');
 
         // Cuma Yardımı
@@ -1202,6 +1316,9 @@ function initSettingsPage() {
             if (d.gunler && d.gunler.length > 0 && d.gunler.length < 7) {
                 detaylar.push(d.gunler.map(g => GUN_ISIMLERI[g]).join(','));
             }
+            if (d.sureSaniye && d.sureSaniye > 0 && d.gorunum !== 'sadece-ticker') {
+                detaylar.push(`⏱️ ${d.sureSaniye}sn`);
+            }
             if (d.zamanBaslangic || d.zamanBitis) {
                 detaylar.push(`${d.zamanBaslangic || '...'}-${d.zamanBitis || '...'}`);
             }
@@ -1229,38 +1346,13 @@ function initSettingsPage() {
             listEl.appendChild(item);
         });
 
-        // Düzenle butonları
+        // Düzenle butonları -> Ayrı Modal Aç
         listEl.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = parseInt(btn.dataset.duyuruId);
                 const d = duyurular.find(x => x.id === id);
                 if (!d) return;
-
-                editDuyuruId = id;
-                document.getElementById('s-duyuru-metin').value = d.metin || '';
-                document.getElementById('s-duyuru-metin-ar').value = d.metinAr || '';
-                document.getElementById('s-duyuru-metin-en').value = d.metinEn || '';
-                document.getElementById('s-duyuru-tip').value = d.tip || 'normal';
-                document.getElementById('s-duyuru-gorunum').value = d.gorunum || 'carousel';
-                if (duyuruTamEkranModuEl) duyuruTamEkranModuEl.value = d.tamEkranModu || 'surekli';
-                document.getElementById('s-duyuru-tekrar').value = d.tekrar || 'kalici';
-                document.getElementById('s-duyuru-zaman-baslangic').value = d.zamanBaslangic || '';
-                document.getElementById('s-duyuru-zaman-bitis').value = d.zamanBitis || '';
-                document.getElementById('s-duyuru-tarih-baslangic').value = d.tarihBaslangic || '';
-                document.getElementById('s-duyuru-tarih-bitis').value = d.tarihBitis || '';
-                updateTamEkranModuVisibility();
-
-                // Günleri seç
-                document.querySelectorAll('#s-duyuru-gunler input[type=checkbox]').forEach(cb => {
-                    const val = parseInt(cb.value);
-                    cb.checked = d.gunler && d.gunler.includes(val);
-                });
-
-                document.getElementById('s-duyuru-ekle').textContent = '💾 Değişiklikleri Kaydet';
-                document.getElementById('s-duyuru-iptal').style.display = 'block';
-
-                // Ekranda form görünecek şekilde scroll
-                document.querySelector('.duyuru-add-form').scrollIntoView({ behavior: 'smooth' });
+                openDuyuruModal(d);
             });
         });
 

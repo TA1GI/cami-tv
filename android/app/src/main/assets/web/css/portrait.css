@@ -208,6 +208,7 @@
 #pt-ticker .ticker-scroll {
     flex: 1;
     overflow: hidden;
+    contain: paint;
 }
 
 #pt-ticker .ticker-inner {
@@ -215,7 +216,12 @@
     align-items: center;
     gap: 50px;
     white-space: nowrap;
-    animation: ticker-scroll 20s linear infinite;
+    animation: ticker-scroll var(--ticker-duration, 45s) linear infinite;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-font-smoothing: antialiased;
 }
 
 #pt-ticker .ticker-item {

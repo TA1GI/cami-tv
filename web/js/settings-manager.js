@@ -20,7 +20,7 @@ const SettingsManager = (() => {
     ilceId: 0,
 
     // Görünüm
-    tema: 'default',   // default | navy | purple | light | turquoise | ocean | sky | ice | rose | olive | auto
+    tema: 'emerald',   // default | emerald | navy | purple | light | turquoise | ocean | sky | ice | rose | olive | auto
     dil: 'tr',        // tr | ar | en
     yaziBoyu: 'normal',    // small | normal | large | xlarge
     ekranYonu: 'auto',      // auto | landscape | portrait
@@ -34,9 +34,10 @@ const SettingsManager = (() => {
     gosterCamiBilgi: false,
     camiBilgiMetin: [], // Artık dizi
     gosterImsakiye: true,
-    gosterHavaDurumu: false,  // internet gerektirir (Open-Meteo API)
+    gosterHavaDurumu: true,  // internet varsa otomatik gösterilir
     gosterKible: true,
     gosterTickerBant: true,
+    tickerHiz: 45,            // piksel / saniye kayma hızı (20 - 120, varsayılan: 45 px/sn)
     gosterHicriTarih: true,
     gosterCemaat: false,
 
@@ -55,16 +56,17 @@ const SettingsManager = (() => {
 
     // İçerik bazlı ayarlar (her biri için süre ve yazı boyutu)
     icerikAyarlari: {
-      ayet: { sure: 15, yaziBoyu: 100 },
-      hadis: { sure: 15, yaziBoyu: 100 },
+      ayet: { sure: 30, yaziBoyu: 100 },
+      hadis: { sure: 30, yaziBoyu: 100 },
       esma: { sure: 15, yaziBoyu: 100 },
-      dua: { sure: 15, yaziBoyu: 100 },
-      camibilgi: { sure: 20, yaziBoyu: 100 },
-      imsakiye: { sure: 15, yaziBoyu: 100 },
+      dua: { sure: 30, yaziBoyu: 100 },
+      camibilgi: { sure: 25, yaziBoyu: 100 },
+      imsakiye: { sure: 45, yaziBoyu: 100 },
+      duyuru: { sure: 25, yaziBoyu: 100 },
     },
 
     // Ezan ekranı
-    sabahImsagaGore: false, // Sabah ezanını imsaka göre hesaba kat
+    sabahImsagaGore: false, // Sabah ezanını imsaka göre hesaba kat (varsayılan: kapalı)
     ezanOnceDk: 15,       // kaç dakika önce açılsın
     cemaatOffsets: {         // her vakit için cemaat dakikası (dk sonra)
       imsak: 0,
@@ -78,25 +80,25 @@ const SettingsManager = (() => {
     ezanSesi: false,         // ezan sesi oynatılsın mı
 
     // Güç yönetimi
-    gucMod: 'always',        // always | fixed | prayer | hybrid
+    gucMod: 'prayer',        // always | fixed | prayer | hybrid
     // Sabit saat modu
     gucAcisSaati: '05:30',
     gucKapanisSaati: '23:00',
     // Namaz vakti bazlı mod
     gucPrayerOffsets: {
-      imsak: { aktif: true, onceDk: 30, sonraDk: 20 },
-      sabah: { aktif: true, onceDk: 0, sonraDk: 20 },
+      imsak: { aktif: false, onceDk: 30, sonraDk: 20 },
+      sabah: { aktif: true, onceDk: 30, sonraDk: 60 },
       gunes: { aktif: false, onceDk: 0, sonraDk: 0 },
-      ogle: { aktif: true, onceDk: 15, sonraDk: 45 },
-      ikindi: { aktif: true, onceDk: 15, sonraDk: 30 },
-      aksam: { aktif: true, onceDk: 30, sonraDk: 30 },
-      yatsi: { aktif: true, onceDk: 20, sonraDk: 30 },
-      cuma: { aktif: true, onceDk: 60, sonraDk: 90 },
+      ogle: { aktif: true, onceDk: 30, sonraDk: 45 },
+      ikindi: { aktif: true, onceDk: 30, sonraDk: 40 },
+      aksam: { aktif: true, onceDk: 25, sonraDk: 35 },
+      yatsi: { aktif: true, onceDk: 30, sonraDk: 50 },
+      cuma: { aktif: true, onceDk: 60, sonraDk: 60 },
       bayram: { aktif: true, onceDk: 60, sonraDk: 90 },
     },
     // Parlaklık
     gucAktifParlaklik: 100,  // %
-    gucPasifParlaklik: 10,   // % (CSS karartma)
+    gucPasifParlaklik: 0,    // % (CSS tam karartma)
 
     // ESP32 entegrasyonu — varsayılan: KAPALI
     esp32Aktif: false,
@@ -111,8 +113,47 @@ const SettingsManager = (() => {
     arkaplanBulaniklik: 0,      // 0-20 px
 
     // Duyurular (gelişmiş)
-    duyurular: [],
-    // Her duyuru: { id, tip, metin, metinAr, metinEn, gorunum, tamEkranModu, zamanBaslangic, zamanBitis, gunler, tekrar, tarihBaslangic, tarihBitis, tarihEkle, sureDk, aktif }
+    duyurular: [
+      {
+        id: 1,
+        tip: 'normal',
+        metin: 'Camimizde lütfen cep telefonlarımızı sessize alalım veya kapatalım.',
+        metinAr: '',
+        metinEn: '',
+        gorunum: 'sadece-ticker',
+        tamEkranModu: 'surekli',
+        zamanBaslangic: '',
+        zamanBitis: '',
+        gunler: [],
+        tekrar: 'kalici',
+        tarihBaslangic: '',
+        tarihBitis: '',
+        tarihEkle: '2026-01-01T00:00:00.000Z',
+        sureDk: 0,
+        sureSaniye: 0,
+        aktif: true,
+      },
+      {
+        id: 2,
+        tip: 'normal',
+        metin: 'Saflarımızı sık ve düzgün tutalım; zira safların düzgünlüğü namazın kemalindendir.',
+        metinAr: '',
+        metinEn: '',
+        gorunum: 'sadece-ticker',
+        tamEkranModu: 'surekli',
+        zamanBaslangic: '',
+        zamanBitis: '',
+        gunler: [],
+        tekrar: 'kalici',
+        tarihBaslangic: '',
+        tarihBitis: '',
+        tarihEkle: '2026-01-01T00:00:00.000Z',
+        sureDk: 0,
+        sureSaniye: 0,
+        aktif: true,
+      }
+    ],
+    // Her duyuru: { id, tip, metin, metinAr, metinEn, gorunum, tamEkranModu, zamanBaslangic, zamanBitis, gunler, tekrar, tarihBaslangic, tarihBitis, tarihEkle, sureDk, sureSaniye, aktif }
   };
 
   // ──────────────────────────────────────────────────────
@@ -133,12 +174,19 @@ const SettingsManager = (() => {
           result.camiBilgiMetin = [];
         }
 
-        // Geri uyumluluk: Duyurularda tamEkranModu alanı yoksa varsayılanı ata
+        // Geri uyumluluk: Duyurularda tamEkranModu ve sureSaniye alanı yoksa varsayılanı ata
         if (Array.isArray(result.duyurular)) {
-          result.duyurular = result.duyurular.map(d => ({
-            ...d,
-            tamEkranModu: d?.tamEkranModu || 'surekli',
-          }));
+          if (result.duyurular.length === 0) {
+            result.duyurular = structuredClone(DEFAULTS.duyurular);
+          } else {
+            result.duyurular = result.duyurular.map(d => ({
+              ...d,
+              tamEkranModu: d?.tamEkranModu || 'surekli',
+              sureSaniye: d?.sureSaniye || 0,
+            }));
+          }
+        } else {
+          result.duyurular = structuredClone(DEFAULTS.duyurular);
         }
       }
 
@@ -213,6 +261,7 @@ const SettingsManager = (() => {
       tarihBitis: duyuruData.tarihBitis || '',     // YYYY-MM-DD
       tarihEkle: new Date().toISOString(),
       sureDk: duyuruData.sureDk || 0,         // 0 = kalıcı
+      sureSaniye: parseInt(duyuruData.sureSaniye) || 0, // 0 = varsayılan slayt süresi
       aktif: true,
     };
     s.duyurular.push(yeni);
@@ -228,6 +277,7 @@ const SettingsManager = (() => {
         ...s.duyurular[idx],
         ...duyuruData,
         tamEkranModu: duyuruData.tamEkranModu || s.duyurular[idx].tamEkranModu || 'surekli',
+        sureSaniye: duyuruData.sureSaniye !== undefined ? (parseInt(duyuruData.sureSaniye) || 0) : (s.duyurular[idx].sureSaniye || 0),
       };
       save(s);
       return s.duyurular[idx];

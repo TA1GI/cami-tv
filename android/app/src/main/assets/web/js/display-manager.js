@@ -111,6 +111,9 @@ const DisplayManager = (() => {
         const tickerEls = document.querySelectorAll('.ticker-wrap, #ls-ticker, #pt-ticker');
         tickerEls.forEach(el => el.classList.toggle('hidden', !settings.gosterTickerBant));
 
+        // Ticker hızı ayarla (Piksel/Saniye bazlı dinamik CSS --ticker-duration değişkeni)
+        recalculateTickerDuration(settings);
+
         // Arkaplan resim uygula
         applyBackgroundImage(settings);
     }
@@ -726,6 +729,23 @@ const DisplayManager = (() => {
     }
 
     // ──────────────────────────────────────────────────────
+    // TICKER süresi ve hızı hesapla
+    // ──────────────────────────────────────────────────────
+    function recalculateTickerDuration(settings) {
+        const s = settings || _settings;
+        let speed = parseInt(s?.tickerHiz);
+        if (isNaN(speed) || speed < 15) {
+            const speedMap = { 'cok-yavas': 30, 'yavas': 45, 'normal': 65, 'hizli': 90 };
+            speed = speedMap[s?.tickerHiz] || 45;
+        }
+        const el = document.getElementById('ls-ticker-inner') || document.getElementById('pt-ticker-inner');
+        const textWidth = el && el.scrollWidth > 50 ? el.scrollWidth : 2500;
+        const totalDistance = window.innerWidth + textWidth;
+        const durationSeconds = Math.max(8, Math.round(totalDistance / speed));
+        document.documentElement.style.setProperty('--ticker-duration', durationSeconds + 's');
+    }
+
+    // ──────────────────────────────────────────────────────
     // TICKER güncelle
     // ──────────────────────────────────────────────────────
     function updateTicker(items) {
@@ -739,6 +759,9 @@ const DisplayManager = (() => {
                 `<span class="ticker-item"><span class="dot"></span>${t}</span>`
             ).join('');
         });
+        setTimeout(() => {
+            recalculateTickerDuration(_settings);
+        }, 60);
     }
 
     // ──────────────────────────────────────────────────────

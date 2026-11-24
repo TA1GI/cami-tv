@@ -33,6 +33,7 @@ class MainActivity : Activity() {
     private lateinit var webView: WebView
     private var settingsServer: SettingsServer? = null
     private var fileUploadCallback: ValueCallback<Array<Uri>>? = null
+    private var screenBridge: ScreenBridge? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +90,7 @@ class MainActivity : Activity() {
 
         // ─── Android ↔ Web Köprüsü ────────────────────────
         val bridge = ScreenBridge(this)
+        screenBridge = bridge
         webView.addJavascriptInterface(bridge, "AndroidBridge")
 
         // ─── WebViewClient (Dahili gezinti) ───────────────
@@ -208,6 +210,12 @@ class MainActivity : Activity() {
 
     // ─── Çıkış ve Navigasyon İçin Geri Tuşu ────────────────
     override fun onBackPressed() {
+        // Eğer TV seçim modalı açıksa sayfadan çıkmadan modalı kapat
+        if (screenBridge?.isModalOpen() == true) {
+            webView.evaluateJavascript("if (typeof window.closeTvModal === 'function') window.closeTvModal();", null)
+            return
+        }
+
         if (webView.canGoBack()) {
             webView.goBack()
             return
