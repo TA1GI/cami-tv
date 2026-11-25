@@ -1,5 +1,11 @@
 # Değişiklik Günlüğü
 
+## v1.0.26 (2026-11-25)
+### Günün Duası Türkçe Anlamı (Meali) Entegrasyonu
+- **Dua Slaytında Türkçe Anlam (Meal):** Günün duası slaytına Arapça metin ve Türkçe okunuşunun ardından tam ve net Türkçe meali (`slide.data.anlam`) eklendi.
+- **İçerik Düzenleyici İyileştirmesi:** İçerik Düzenleyici (Content Editor) listesinde duaların Türkçe anlamının görünürlüğü sağlandı.
+- **Sürüm Güncellemesi:** Tüm sürüm sabitleri (`build.gradle` versionCode: 29, versionName: `1.0.26`, `ScreenBridge.kt`, `settings.html`, `sw.js`) `1.0.26` olarak senkronize edildi.
+
 ## v1.0.25 (2026-11-24)
 ### Kayan Yazı Hız Slider'ı, Bağımsız Duyuru Modalı ve Sürüm Senkronizasyonu
 - **Kayan Yazı Hız Slider'ı (`px/sn`):** Alt kayan yazı bandı için fiziksel hız slider'ı eklendi (20-120 px/sn, varsayılan: 45 px/sn).

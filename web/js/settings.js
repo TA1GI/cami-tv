@@ -30,7 +30,7 @@ function initSettingsPage() {
                 if (appVer) versionEl.textContent = 'v' + appVer;
             } catch (e) {}
         } else {
-            versionEl.textContent = 'v1.0.25';
+            versionEl.textContent = 'v1.0.26';
         }
     }
 

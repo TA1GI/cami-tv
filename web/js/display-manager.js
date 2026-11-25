@@ -450,19 +450,31 @@ const DisplayManager = (() => {
           <div class="slide-esma-meaning text-muted">${slide.data.anlam}</div>
         `;
 
-            case 'dua':
+            case 'dua': {
+                const hasAnlam = !!(slide.data.anlam && slide.data.anlam.trim());
+                const okunusHtml = slide.data.turkce
+                    ? `<div class="slide-reading text-muted" style="font-size:calc(var(--carousel-font-scale) * 0.82rem);font-style:italic;text-align:center;padding:2px 12px;opacity:0.85;">
+                         <div class="marquee-content">${slide.data.turkce}</div>
+                       </div>`
+                    : '';
+                const anlamHtml = hasAnlam
+                    ? `<div class="slide-translation" style="padding-top:4px;">
+                         <div class="marquee-content">${slide.data.anlam}</div>
+                       </div>`
+                    : (slide.data.turkce ? `<div class="slide-translation"><div class="marquee-content">${slide.data.turkce}</div></div>` : '');
+
                 return `
           <div class="slide-header">
             <span class="slide-type-badge">🤲 Dua</span>${counter}
           </div>
           <div class="slide-arabic arabic-text" style="font-size:calc(var(--carousel-font-scale) * clamp(1.2rem,4vmin,1.6rem));flex:1;display:flex;align-items:center;justify-content:center;">
-            <div class="marquee-content">${slide.data.arapca}</div>
+            <div class="marquee-content">${slide.data.arapca || ''}</div>
           </div>
-          <div class="slide-translation text-muted" style="font-size:calc(var(--carousel-font-scale) * 0.8rem);font-style:italic;">
-            <div class="marquee-content">${slide.data.turkce}</div>
-          </div>
-          <div class="slide-reference text-muted">${slide.data.baslik}</div>
+          ${hasAnlam ? okunusHtml : ''}
+          ${anlamHtml}
+          <div class="slide-reference text-muted">${slide.data.baslik || ''}</div>
         `;
+            }
 
             case 'imsakiye':
                 return buildImsakiyeSlide(slide.data, counter);

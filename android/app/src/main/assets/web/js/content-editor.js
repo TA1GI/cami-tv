@@ -214,7 +214,7 @@
             if (item.turkce) {
                 previewHtml += `<div class="ce-item-turkish">${escHtml(item.turkce)}</div>`;
             }
-            if (item.anlam && _activeTab !== 'dualar') {
+            if (item.anlam) {
                 previewHtml += `<div class="ce-item-turkish" style="margin-top:2px;font-style:italic;">${escHtml(item.anlam)}</div>`;
             }
             if (item.referans) {
